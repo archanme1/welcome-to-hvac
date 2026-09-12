@@ -62,6 +62,7 @@ type Draft = {
   source_name: string;
   source_url: string;
   source_reference: string;
+  next_content_id: string;
   relationships: AdminRelationship[];
 };
 
