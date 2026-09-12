@@ -43,6 +43,8 @@ async function resolveOrCreateCustomer(
   return created.id;
 }
 
+const TRIAL_DAYS = 7;
+
 /** Starts an HVAC Pro checkout for the signed-in user. */
 export const createProCheckoutSession = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -55,6 +57,22 @@ export const createProCheckoutSession = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<CheckoutSessionResult> => {
     try {
       const { supabase, userId } = context;
+
+      // Never let an existing member buy a second time.
+      const { data: existing } = await supabase
+        .from("subscriptions")
+        .select("status, current_period_end")
+        .eq("user_id", userId)
+        .in("status", ["active", "trialing"])
+        .limit(5);
+      const stillActive = (existing ?? []).some(
+        (s: { status: string; current_period_end: string | null }) =>
+          !s.current_period_end || new Date(s.current_period_end) > new Date(),
+      );
+      if (stillActive) {
+        return { error: "You already have an active HVAC Pro membership." };
+      }
+
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -70,6 +88,14 @@ export const createProCheckoutSession = createServerFn({ method: "POST" })
         userId,
       });
 
+      // Only first-time subscribers get the free trial.
+      const priorSubs = await stripe.subscriptions.list({
+        customer: customerId,
+        status: "all",
+        limit: 1,
+      });
+      const trialEligible = priorSubs.data.length === 0;
+
       const session = await stripe.checkout.sessions.create({
         line_items: [{ price: stripePrice.id, quantity: 1 }],
         mode: "subscription",
@@ -77,7 +103,10 @@ export const createProCheckoutSession = createServerFn({ method: "POST" })
         return_url: data.returnUrl,
         customer: customerId,
         metadata: { userId, managed_payments: "true" },
-        subscription_data: { metadata: { userId } },
+        subscription_data: {
+          metadata: { userId },
+          ...(trialEligible ? { trial_period_days: TRIAL_DAYS } : {}),
+        },
         managed_payments: { enabled: true },
       } as any);
 
@@ -86,6 +115,7 @@ export const createProCheckoutSession = createServerFn({ method: "POST" })
       return { error: getStripeErrorMessage(error) };
     }
   });
+
 
 /** Opens the billing portal so a subscriber can change or cancel their plan. */
 export const createPortalSession = createServerFn({ method: "POST" })
