@@ -21,6 +21,7 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as StartHereRouteImport } from './routes/start-here'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
+import { Route as AdminPathsRouteImport } from './routes/admin.paths'
 import { Route as AdminPracticeRouteImport } from './routes/admin.practice'
 import { Route as AdminSymptomsRouteImport } from './routes/admin.symptoms'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
@@ -105,6 +106,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
   id: '/categories',
   path: '/categories',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPathsRoute = AdminPathsRouteImport.update({
+  id: '/paths',
+  path: '/paths',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminPracticeRoute = AdminPracticeRouteImport.update({
@@ -246,6 +252,7 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/start-here': typeof StartHereRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/paths': typeof AdminPathsRoute
   '/admin/practice': typeof AdminPracticeRoute
   '/admin/symptoms': typeof AdminSymptomsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -284,6 +291,7 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/start-here': typeof StartHereRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/paths': typeof AdminPathsRoute
   '/admin/practice': typeof AdminPracticeRoute
   '/admin/symptoms': typeof AdminSymptomsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -324,6 +332,7 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/start-here': typeof StartHereRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/paths': typeof AdminPathsRoute
   '/admin/practice': typeof AdminPracticeRoute
   '/admin/symptoms': typeof AdminSymptomsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -365,6 +374,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/start-here'
     | '/admin/categories'
+    | '/admin/paths'
     | '/admin/practice'
     | '/admin/symptoms'
     | '/admin/users'
@@ -403,6 +413,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/start-here'
     | '/admin/categories'
+    | '/admin/paths'
     | '/admin/practice'
     | '/admin/symptoms'
     | '/admin/users'
@@ -442,6 +453,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/start-here'
     | '/admin/categories'
+    | '/admin/paths'
     | '/admin/practice'
     | '/admin/symptoms'
     | '/admin/users'
@@ -587,6 +599,13 @@ declare module '@tanstack/react-router' {
       path: '/categories'
       fullPath: '/admin/categories'
       preLoaderRoute: typeof AdminCategoriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/paths': {
+      id: '/admin/paths'
+      path: '/paths'
+      fullPath: '/admin/paths'
+      preLoaderRoute: typeof AdminPathsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/practice': {
@@ -769,6 +788,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminCategoriesRoute: typeof AdminCategoriesRoute
+  AdminPathsRoute: typeof AdminPathsRoute
   AdminPracticeRoute: typeof AdminPracticeRoute
   AdminSymptomsRoute: typeof AdminSymptomsRoute
   AdminUsersRoute: typeof AdminUsersRoute
@@ -779,6 +799,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminCategoriesRoute: AdminCategoriesRoute,
+  AdminPathsRoute: AdminPathsRoute,
   AdminPracticeRoute: AdminPracticeRoute,
   AdminSymptomsRoute: AdminSymptomsRoute,
   AdminUsersRoute: AdminUsersRoute,
