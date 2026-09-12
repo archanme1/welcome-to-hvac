@@ -20,6 +20,9 @@ function Dashboard() {
     { label: "Questions", value: data?.questions ?? 0 },
     { label: "Quizzes", value: data?.quizzes ?? 0 },
     { label: "Scenarios", value: data?.scenarios ?? 0 },
+    { label: "Symptoms", value: data?.symptoms ?? 0 },
+    { label: "Learning paths", value: data?.paths ?? 0 },
+    { label: "Diagnostic trees", value: data?.trees ?? 0 },
   ];
 
   return (

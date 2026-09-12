@@ -44,16 +44,29 @@ export const adminOverview = createServerFn({ method: "GET" })
       return n ?? 0;
     };
 
-    const [published, drafts, archived, categories, questions, quizzes, scenarios] =
-      await Promise.all([
-        count("content", (q) => q.eq("status", "published")),
-        count("content", (q) => q.eq("status", "draft")),
-        count("content", (q) => q.eq("status", "archived")),
-        count("categories"),
-        count("practice_questions"),
-        count("quizzes"),
-        count("scenarios"),
-      ]);
+    const [
+      published,
+      drafts,
+      archived,
+      categories,
+      questions,
+      quizzes,
+      scenarios,
+      symptoms,
+      paths,
+      trees,
+    ] = await Promise.all([
+      count("content", (q) => q.eq("status", "published")),
+      count("content", (q) => q.eq("status", "draft")),
+      count("content", (q) => q.eq("status", "archived")),
+      count("categories"),
+      count("practice_questions"),
+      count("quizzes"),
+      count("scenarios"),
+      count("symptoms"),
+      count("learning_paths"),
+      count("diagnostic_trees"),
+    ]);
 
     const { data: recent } = await db
       .from("content")
@@ -69,6 +82,9 @@ export const adminOverview = createServerFn({ method: "GET" })
       questions,
       quizzes,
       scenarios,
+      symptoms,
+      paths,
+      trees,
       recent: (recent ?? []) as {
         id: string;
         title: string;
@@ -189,6 +205,7 @@ export type ContentInput = {
   source_name: string | null;
   source_url: string | null;
   source_reference: string | null;
+  next_content_id: string | null;
   relationships: AdminRelationship[];
 };
 
@@ -615,6 +632,454 @@ export const adminSetPro = createServerFn({ method: "POST" })
         .update({ status: "canceled" })
         .eq("user_id", data.userId)
         .in("status", ["active", "trialing"]);
+      if (error) throw new Error(error.message);
+    }
+    return { ok: true };
+  });
+
+/* ------------------------------------------------------------------ */
+/* Symptoms                                                            */
+/* ------------------------------------------------------------------ */
+
+export type AdminSymptomRow = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  category: string | null;
+  severity: string;
+  is_published: boolean;
+  sort_order: number;
+};
+
+export type AdminSymptomLink = {
+  content_id: string;
+  role: string;
+  note: string | null;
+  sort_order: number;
+};
+
+export const adminListSymptoms = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertStaff(context as Ctx);
+    const db = context.supabase as any;
+    const [{ data: rows, error }, { data: links }] = await Promise.all([
+      db
+        .from("symptoms")
+        .select("id, slug, title, description, category, severity, is_published, sort_order")
+        .order("category")
+        .order("sort_order")
+        .order("title"),
+      db.from("content_symptoms").select("symptom_id"),
+    ]);
+    if (error) throw new Error(error.message);
+    const counts = new Map<string, number>();
+    for (const l of (links ?? []) as { symptom_id: string }[]) {
+      counts.set(l.symptom_id, (counts.get(l.symptom_id) ?? 0) + 1);
+    }
+    return ((rows ?? []) as AdminSymptomRow[]).map((r) => ({
+      ...r,
+      link_count: counts.get(r.id) ?? 0,
+    }));
+  });
+
+export const adminSymptomsQuery = (enabled: boolean) =>
+  queryOptions({
+    queryKey: ["admin", "symptoms"],
+    queryFn: () => adminListSymptoms(),
+    enabled,
+  });
+
+export const adminGetSymptomLinks = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { symptomId: string }) => data)
+  .handler(async ({ data, context }) => {
+    await assertStaff(context as Ctx);
+    const { data: rows, error } = await (context.supabase as any)
+      .from("content_symptoms")
+      .select("content_id, role, note, sort_order")
+      .eq("symptom_id", data.symptomId)
+      .order("sort_order");
+    if (error) throw new Error(error.message);
+    return (rows ?? []) as AdminSymptomLink[];
+  });
+
+export const adminSymptomLinksQuery = (symptomId: string, enabled: boolean) =>
+  queryOptions({
+    queryKey: ["admin", "symptom-links", symptomId],
+    queryFn: () => adminGetSymptomLinks({ data: { symptomId } }),
+    enabled,
+  });
+
+export const adminSaveSymptom = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (data: {
+      id?: string | undefined;
+      slug: string;
+      title: string;
+      description: string | null;
+      category: string | null;
+      severity: string;
+      is_published: boolean;
+      sort_order: number;
+      links: AdminSymptomLink[];
+    }) => data,
+  )
+  .handler(async ({ data, context }) => {
+    await assertStaff(context as Ctx);
+    const db = context.supabase as any;
+    const { id, links, ...fields } = data;
+
+    let symptomId = id;
+    if (symptomId) {
+      const { error } = await db.from("symptoms").update(fields).eq("id", symptomId);
+      if (error) throw new Error(error.message);
+    } else {
+      const { data: row, error } = await db.from("symptoms").insert(fields).select("id").single();
+      if (error) throw new Error(error.message);
+      symptomId = row.id as string;
+    }
+
+    await db.from("content_symptoms").delete().eq("symptom_id", symptomId);
+    const clean = links.filter((l) => l.content_id);
+    if (clean.length) {
+      const { error } = await db.from("content_symptoms").insert(
+        clean.map((l, i) => ({
+          symptom_id: symptomId,
+          content_id: l.content_id,
+          role: l.role || "related",
+          note: l.note || null,
+          sort_order: l.sort_order ?? i,
+        })),
+      );
+      if (error) throw new Error(error.message);
+    }
+    return { id: symptomId as string };
+  });
+
+export const adminDeleteSymptom = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { id: string }) => data)
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context as Ctx);
+    const db = context.supabase as any;
+    await db.from("content_symptoms").delete().eq("symptom_id", data.id);
+    const { error } = await db.from("symptoms").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/* ------------------------------------------------------------------ */
+/* Learning paths                                                      */
+/* ------------------------------------------------------------------ */
+
+export type AdminPathItem = { content_id: string; note: string | null; sort_order: number };
+
+export const adminListPaths = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertStaff(context as Ctx);
+    const db = context.supabase as any;
+    const [{ data: rows, error }, { data: items }] = await Promise.all([
+      db
+        .from("learning_paths")
+        .select("id, slug, title, description, level, is_published, sort_order")
+        .order("sort_order"),
+      db.from("learning_path_items").select("path_id"),
+    ]);
+    if (error) throw new Error(error.message);
+    const counts = new Map<string, number>();
+    for (const i of (items ?? []) as { path_id: string }[]) {
+      counts.set(i.path_id, (counts.get(i.path_id) ?? 0) + 1);
+    }
+    return ((rows ?? []) as {
+      id: string;
+      slug: string;
+      title: string;
+      description: string | null;
+      level: Difficulty;
+      is_published: boolean;
+      sort_order: number;
+    }[]).map((r) => ({ ...r, step_count: counts.get(r.id) ?? 0 }));
+  });
+
+export const adminPathsQuery = (enabled: boolean) =>
+  queryOptions({ queryKey: ["admin", "paths"], queryFn: () => adminListPaths(), enabled });
+
+export const adminGetPathItems = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { pathId: string }) => data)
+  .handler(async ({ data, context }) => {
+    await assertStaff(context as Ctx);
+    const { data: rows, error } = await (context.supabase as any)
+      .from("learning_path_items")
+      .select("content_id, note, sort_order")
+      .eq("path_id", data.pathId)
+      .order("sort_order");
+    if (error) throw new Error(error.message);
+    return (rows ?? []) as AdminPathItem[];
+  });
+
+export const adminPathItemsQuery = (pathId: string, enabled: boolean) =>
+  queryOptions({
+    queryKey: ["admin", "path-items", pathId],
+    queryFn: () => adminGetPathItems({ data: { pathId } }),
+    enabled,
+  });
+
+export const adminSavePath = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (data: {
+      id?: string | undefined;
+      slug: string;
+      title: string;
+      description: string | null;
+      level: Difficulty;
+      is_published: boolean;
+      sort_order: number;
+      items: AdminPathItem[];
+    }) => data,
+  )
+  .handler(async ({ data, context }) => {
+    await assertStaff(context as Ctx);
+    const db = context.supabase as any;
+    const { id, items, ...fields } = data;
+
+    let pathId = id;
+    if (pathId) {
+      const { error } = await db.from("learning_paths").update(fields).eq("id", pathId);
+      if (error) throw new Error(error.message);
+    } else {
+      const { data: row, error } = await db
+        .from("learning_paths")
+        .insert(fields)
+        .select("id")
+        .single();
+      if (error) throw new Error(error.message);
+      pathId = row.id as string;
+    }
+
+    await db.from("learning_path_items").delete().eq("path_id", pathId);
+    const clean = items.filter((i) => i.content_id);
+    if (clean.length) {
+      const { error } = await db.from("learning_path_items").insert(
+        clean.map((i, x) => ({
+          path_id: pathId,
+          content_id: i.content_id,
+          note: i.note || null,
+          sort_order: x,
+        })),
+      );
+      if (error) throw new Error(error.message);
+    }
+    return { id: pathId as string };
+  });
+
+export const adminDeletePath = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { id: string }) => data)
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context as Ctx);
+    const db = context.supabase as any;
+    await db.from("learning_path_items").delete().eq("path_id", data.id);
+    const { error } = await db.from("learning_paths").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/* ------------------------------------------------------------------ */
+/* Diagnostic trees                                                    */
+/* ------------------------------------------------------------------ */
+
+export type AdminTreeNode = {
+  key: string;
+  is_root: boolean;
+  question: string;
+  observation: string | null;
+  safety_note: string | null;
+  possible_causes: string[];
+  answers: { label: string; next?: string | null; result?: string | null }[];
+  related_content_id: string | null;
+  sort_order: number;
+};
+
+export const adminListTrees = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertStaff(context as Ctx);
+    const db = context.supabase as any;
+    const [{ data: rows, error }, { data: nodes }] = await Promise.all([
+      db
+        .from("diagnostic_trees")
+        .select("id, slug, title, intro, safety_note, status, content_id, symptom_id")
+        .order("title"),
+      db.from("diagnostic_nodes").select("tree_id"),
+    ]);
+    if (error) throw new Error(error.message);
+    const counts = new Map<string, number>();
+    for (const n of (nodes ?? []) as { tree_id: string }[]) {
+      counts.set(n.tree_id, (counts.get(n.tree_id) ?? 0) + 1);
+    }
+    return ((rows ?? []) as {
+      id: string;
+      slug: string;
+      title: string;
+      intro: string | null;
+      safety_note: string | null;
+      status: ContentStatus;
+      content_id: string | null;
+      symptom_id: string | null;
+    }[]).map((r) => ({ ...r, node_count: counts.get(r.id) ?? 0 }));
+  });
+
+export const adminTreesQuery = (enabled: boolean) =>
+  queryOptions({ queryKey: ["admin", "trees"], queryFn: () => adminListTrees(), enabled });
+
+export const adminGetTreeNodes = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { treeId: string }) => data)
+  .handler(async ({ data, context }) => {
+    await assertStaff(context as Ctx);
+    const { data: rows, error } = await (context.supabase as any)
+      .from("diagnostic_nodes")
+      .select(
+        "key, is_root, question, observation, safety_note, possible_causes, answers, related_content_id, sort_order",
+      )
+      .eq("tree_id", data.treeId)
+      .order("sort_order");
+    if (error) throw new Error(error.message);
+    return (rows ?? []).map((r: any) => ({
+      ...r,
+      possible_causes: (r.possible_causes ?? []) as string[],
+      answers: (r.answers ?? []) as AdminTreeNode["answers"],
+    })) as AdminTreeNode[];
+  });
+
+export const adminTreeNodesQuery = (treeId: string, enabled: boolean) =>
+  queryOptions({
+    queryKey: ["admin", "tree-nodes", treeId],
+    queryFn: () => adminGetTreeNodes({ data: { treeId } }),
+    enabled,
+  });
+
+export const adminSaveTree = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (data: {
+      id?: string | undefined;
+      slug: string;
+      title: string;
+      intro: string | null;
+      safety_note: string | null;
+      status: ContentStatus;
+      content_id: string | null;
+      symptom_id: string | null;
+      nodes: AdminTreeNode[];
+    }) => data,
+  )
+  .handler(async ({ data, context }) => {
+    await assertStaff(context as Ctx);
+    const db = context.supabase as any;
+    const { id, nodes, ...fields } = data;
+
+    let treeId = id;
+    if (treeId) {
+      const { error } = await db.from("diagnostic_trees").update(fields).eq("id", treeId);
+      if (error) throw new Error(error.message);
+    } else {
+      const { data: row, error } = await db
+        .from("diagnostic_trees")
+        .insert(fields)
+        .select("id")
+        .single();
+      if (error) throw new Error(error.message);
+      treeId = row.id as string;
+    }
+
+    await db.from("diagnostic_nodes").delete().eq("tree_id", treeId);
+    const clean = nodes.filter((n) => n.key && n.question);
+    if (clean.length) {
+      const { error } = await db.from("diagnostic_nodes").insert(
+        clean.map((n, i) => ({
+          tree_id: treeId,
+          key: n.key,
+          is_root: n.is_root,
+          question: n.question,
+          observation: n.observation || null,
+          safety_note: n.safety_note || null,
+          possible_causes: n.possible_causes ?? [],
+          answers: n.answers ?? [],
+          related_content_id: n.related_content_id || null,
+          sort_order: n.sort_order ?? i,
+        })),
+      );
+      if (error) throw new Error(error.message);
+    }
+    return { id: treeId as string };
+  });
+
+export const adminDeleteTree = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { id: string }) => data)
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context as Ctx);
+    const db = context.supabase as any;
+    await db.from("diagnostic_nodes").delete().eq("tree_id", data.id);
+    const { error } = await db.from("diagnostic_trees").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/* ------------------------------------------------------------------ */
+/* Level explanations                                                  */
+/* ------------------------------------------------------------------ */
+
+export type AdminTopicLevel = { level: Difficulty; summary: string | null; body: Section[] };
+
+export const adminGetTopicLevels = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { contentId: string }) => data)
+  .handler(async ({ data, context }) => {
+    await assertStaff(context as Ctx);
+    const { data: rows, error } = await (context.supabase as any)
+      .from("topic_levels")
+      .select("level, summary, body")
+      .eq("content_id", data.contentId);
+    if (error) throw new Error(error.message);
+    return (rows ?? []).map((r: any) => ({
+      level: r.level as Difficulty,
+      summary: (r.summary ?? null) as string | null,
+      body: (r.body ?? []) as Section[],
+    })) as AdminTopicLevel[];
+  });
+
+export const adminTopicLevelsQuery = (contentId: string, enabled: boolean) =>
+  queryOptions({
+    queryKey: ["admin", "topic-levels", contentId],
+    queryFn: () => adminGetTopicLevels({ data: { contentId } }),
+    enabled,
+  });
+
+export const adminSaveTopicLevels = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { contentId: string; levels: AdminTopicLevel[] }) => data)
+  .handler(async ({ data, context }) => {
+    await assertStaff(context as Ctx);
+    const db = context.supabase as any;
+    await db.from("topic_levels").delete().eq("content_id", data.contentId);
+    const clean = data.levels.filter((l) => (l.summary ?? "").trim() || l.body.length);
+    if (clean.length) {
+      const { error } = await db.from("topic_levels").insert(
+        clean.map((l) => ({
+          content_id: data.contentId,
+          level: l.level,
+          summary: l.summary || null,
+          body: l.body ?? [],
+        })),
+      );
       if (error) throw new Error(error.message);
     }
     return { ok: true };

@@ -25,8 +25,10 @@ import {
   adminContentQuery,
   adminDeleteContent,
   adminSaveContent,
+  adminSaveTopicLevels,
+  adminTopicLevelsQuery,
 } from "@/lib/admin.functions";
-import type { AdminRelationship } from "@/lib/admin.functions";
+import type { AdminRelationship, AdminTopicLevel } from "@/lib/admin.functions";
 import {
   CONTENT_TYPE_LABEL,
   CONTENT_TYPE_PATH,
@@ -39,7 +41,8 @@ import {
 export const Route = createFileRoute("/admin/content/$id")({ component: Editor });
 
 const DIFFICULTIES: Difficulty[] = ["beginner", "apprentice", "technician", "advanced"];
-const STATUSES: ContentStatus[] = ["draft", "published", "archived"];
+const STATUSES: ContentStatus[] = ["draft", "review", "published", "archived"];
+const LEVELS: Difficulty[] = ["beginner", "apprentice", "technician", "advanced"];
 const RELATIONSHIP_TYPES = ["related", "component-of", "related-concept", "uses-tool", "troubleshoots"];
 
 type Draft = {
@@ -61,6 +64,7 @@ type Draft = {
   source_name: string;
   source_url: string;
   source_reference: string;
+  next_content_id: string;
   relationships: AdminRelationship[];
 };
 
@@ -84,6 +88,7 @@ const emptyDraft: Draft = {
   source_name: "",
   source_url: "",
   source_reference: "",
+  next_content_id: "none",
 };
 
 function slugify(text: string) {
@@ -103,9 +108,15 @@ function Editor() {
   const { data, isLoading } = useQuery(adminContentQuery(id, isStaff && !isNew));
   const { data: categories } = useQuery(adminCategoriesQuery(isStaff));
   const { data: allTopics } = useQuery(adminContentListQuery({}, isStaff));
+  const { data: savedLevels } = useQuery(adminTopicLevelsQuery(id, isStaff && !isNew));
 
   const [draft, setDraft] = useState<Draft>(emptyDraft);
+  const [levels, setLevels] = useState<AdminTopicLevel[]>([]);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (savedLevels) setLevels(savedLevels);
+  }, [savedLevels]);
 
   useEffect(() => {
     const topic = data?.topic;
@@ -130,6 +141,8 @@ function Editor() {
       source_name: (topic as { source_name?: string | null }).source_name ?? "",
       source_url: (topic as { source_url?: string | null }).source_url ?? "",
       source_reference: (topic as { source_reference?: string | null }).source_reference ?? "",
+      next_content_id:
+        (topic as { next_content_id?: string | null }).next_content_id ?? "none",
     });
   }, [data]);
 
@@ -164,12 +177,15 @@ function Editor() {
           source_name: draft.source_name || null,
           source_url: draft.source_url || null,
           source_reference: draft.source_reference || null,
+          next_content_id: draft.next_content_id === "none" ? null : draft.next_content_id,
           relationships: draft.relationships,
         },
       });
+      await adminSaveTopicLevels({ data: { contentId: result.id, levels } });
       if (status) setDraft((d) => ({ ...d, status }));
       toast.success("Saved.");
       await qc.invalidateQueries({ queryKey: ["admin"] });
+      await qc.invalidateQueries({ queryKey: ["hvac"] });
       if (isNew) void navigate({ to: "/admin/content/$id", params: { id: result.id } });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not save this topic.");
@@ -226,6 +242,7 @@ function Editor() {
           <TabsTrigger value="details">Details</TabsTrigger>
           <TabsTrigger value="body">Body</TabsTrigger>
           <TabsTrigger value="related">Related topics</TabsTrigger>
+          <TabsTrigger value="levels">Levels</TabsTrigger>
           <TabsTrigger value="preview">Preview</TabsTrigger>
         </TabsList>
 
@@ -355,6 +372,27 @@ function Editor() {
                   onChange={(e) => setDraft({ ...draft, sort_order: Number(e.target.value) })}
                 />
               </div>
+            </div>
+            <div>
+              <Label className="text-xs">Next topic in reading order</Label>
+              <Select
+                value={draft.next_content_id}
+                onValueChange={(v) => setDraft({ ...draft, next_content_id: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No next topic</SelectItem>
+                  {(allTopics ?? [])
+                    .filter((t) => t.id !== id)
+                    .map((t) => (
+                      <SelectItem key={t.id} value={t.id}>
+                        {t.title} · {CONTENT_TYPE_LABEL[t.content_type]}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -512,6 +550,39 @@ function Editor() {
           >
             Add related topic
           </Button>
+        </TabsContent>
+
+        <TabsContent value="levels" className="mt-4 space-y-6">
+          <p className="text-sm text-muted-foreground">
+            Optional alternative explanations of this topic for each learner level. A level with no
+            summary and no blocks is not saved and never shown on the public page.
+          </p>
+          {LEVELS.map((level) => {
+            const entry = levels.find((l) => l.level === level) ?? {
+              level,
+              summary: "",
+              body: [] as Section[],
+            };
+            const update = (patch: Partial<AdminTopicLevel>) =>
+              setLevels((prev) => {
+                const next = prev.filter((l) => l.level !== level);
+                return [...next, { ...entry, ...patch }];
+              });
+            return (
+              <div key={level} className="space-y-3 rounded-lg border border-border p-4">
+                <h3 className="text-sm font-semibold capitalize">{level}</h3>
+                <div>
+                  <Label className="text-xs">Summary for this level</Label>
+                  <Textarea
+                    rows={2}
+                    value={entry.summary ?? ""}
+                    onChange={(e) => update({ summary: e.target.value })}
+                  />
+                </div>
+                <BlockEditor value={entry.body} onChange={(body) => update({ body })} />
+              </div>
+            );
+          })}
         </TabsContent>
 
         <TabsContent value="preview" className="mt-4">

@@ -8,7 +8,7 @@ export type ContentType =
 
 export type Difficulty = "beginner" | "apprentice" | "technician" | "advanced";
 
-export type ContentStatus = "draft" | "published" | "archived";
+export type ContentStatus = "draft" | "review" | "published" | "archived";
 
 /** A single block inside a topic body. Stored as JSONB so the admin can add
  *  sections without code changes. */
