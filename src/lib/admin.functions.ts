@@ -205,6 +205,7 @@ export type ContentInput = {
   source_name: string | null;
   source_url: string | null;
   source_reference: string | null;
+  next_content_id: string | null;
   relationships: AdminRelationship[];
 };
 
