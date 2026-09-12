@@ -1,11 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { progressQuery } from "@/lib/practice.functions";
+import { createPortalSession } from "@/lib/payments.functions";
+import { getStripeEnvironment, paymentsConfigured } from "@/lib/stripe";
 
 export const Route = createFileRoute("/account")({
   head: () => ({
