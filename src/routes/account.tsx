@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
+import { isUsernameAvailable, normalizeUsername, validateUsername } from "@/lib/username";
 import { supabase } from "@/integrations/supabase/client";
 import { progressQuery } from "@/lib/practice.functions";
 import { createPortalSession } from "@/lib/payments.functions";
@@ -68,7 +71,11 @@ function Page() {
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6">
       <h1 className="text-2xl font-bold tracking-tight">Your account</h1>
-      <p className="mt-2 text-sm text-muted-foreground">{user.email}</p>
+      <p className="mt-2 text-sm font-medium">{username ?? user.email}</p>
+      {username ? <p className="text-xs text-muted-foreground">{user.email}</p> : null}
+
+      {!username ? <UsernameCard onSaved={() => void refreshProfile()} /> : null}
+
 
       <div className="mt-8 rounded-lg border bg-card p-5">
         <p className="text-sm font-semibold">Plan</p>
