@@ -31,6 +31,26 @@ function Page() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: progress } = useQuery(progressQuery(!!user));
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  const openPortal = async () => {
+    if (!paymentsConfigured()) {
+      toast.error("Billing is not available yet.");
+      return;
+    }
+    setPortalLoading(true);
+    try {
+      const result = await createPortalSession({
+        data: { returnUrl: window.location.href, environment: getStripeEnvironment() },
+      });
+      if ("error" in result) throw new Error(result.error);
+      window.open(result.url, "_blank", "noopener");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not open billing.");
+    } finally {
+      setPortalLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!loading && !user) void navigate({ to: "/auth", search: { next: "/account" } });
