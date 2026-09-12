@@ -101,7 +101,7 @@ export function TutorPanel({
             <p className="text-sm font-medium">{title}</p>
           </div>
 
-          <div className="max-h-[28rem] space-y-4 overflow-y-auto px-4 py-4">
+          <div ref={scrollRef} className="max-h-[28rem] space-y-4 overflow-y-auto px-4 py-4">
             {messages.length === 0 ? (
               <p className="text-sm text-muted-foreground">
                 Ask a question, or start with one of the prompts below.
