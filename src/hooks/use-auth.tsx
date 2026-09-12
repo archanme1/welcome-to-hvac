@@ -38,14 +38,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (active) {
           setIsPro(false);
           setIsStaff(false);
+          setUsername(null);
         }
         return;
       }
-      const [roles, subs] = await Promise.all([
+      const [roles, subs, profile] = await Promise.all([
         supabase.from("user_roles").select("role").eq("user_id", userId),
         supabase.from("subscriptions").select("status, current_period_end").eq("user_id", userId),
+        supabase.from("profiles").select("username").eq("id", userId).maybeSingle(),
       ]);
       if (!active) return;
+      setUsername(profile.data?.username ?? null);
       const staff = (roles.data ?? []).some((r) => r.role === "admin" || r.role === "editor");
       const pro = (subs.data ?? []).some(
         (s) =>
