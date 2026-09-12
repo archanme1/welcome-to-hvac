@@ -106,9 +106,15 @@ function Editor() {
   const { data, isLoading } = useQuery(adminContentQuery(id, isStaff && !isNew));
   const { data: categories } = useQuery(adminCategoriesQuery(isStaff));
   const { data: allTopics } = useQuery(adminContentListQuery({}, isStaff));
+  const { data: savedLevels } = useQuery(adminTopicLevelsQuery(id, isStaff && !isNew));
 
   const [draft, setDraft] = useState<Draft>(emptyDraft);
+  const [levels, setLevels] = useState<AdminTopicLevel[]>([]);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (savedLevels) setLevels(savedLevels);
+  }, [savedLevels]);
 
   useEffect(() => {
     const topic = data?.topic;
