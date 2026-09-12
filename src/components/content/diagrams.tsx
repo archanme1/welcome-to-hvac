@@ -219,3 +219,6 @@ export function Diagram({ diagramKey, caption }: { diagramKey: string; caption?:
 export function hasDiagram(key: string | null | undefined) {
   return !!key && key in DIAGRAMS;
 }
+
+/** Every diagram the renderer knows about — used by the admin block editor. */
+export const DIAGRAM_KEYS = Object.keys(DIAGRAMS);
