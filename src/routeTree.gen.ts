@@ -12,6 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AiTutorRouteImport } from './routes/ai-tutor'
 import { Route as ExpertsRouteImport } from './routes/experts'
+import { Route as PracticeRouteImport } from './routes/practice'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as CSlugRouteImport } from './routes/c.$slug'
 import { Route as ComponentsIndexRouteImport } from './routes/components.index'
 import { Route as ComponentsSlugRouteImport } from './routes/components.$slug'
@@ -39,6 +42,21 @@ const AiTutorRoute = AiTutorRouteImport.update({
 const ExpertsRoute = ExpertsRouteImport.update({
   id: '/experts',
   path: '/experts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PracticeRoute = PracticeRouteImport.update({
+  id: '/practice',
+  path: '/practice',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CSlugRoute = CSlugRouteImport.update({
@@ -111,6 +129,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ai-tutor': typeof AiTutorRoute
   '/experts': typeof ExpertsRoute
+  '/practice': typeof PracticeRoute
+  '/pricing': typeof PricingRoute
+  '/search': typeof SearchRoute
   '/c/$slug': typeof CSlugRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
@@ -129,6 +150,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai-tutor': typeof AiTutorRoute
   '/experts': typeof ExpertsRoute
+  '/practice': typeof PracticeRoute
+  '/pricing': typeof PricingRoute
+  '/search': typeof SearchRoute
   '/c/$slug': typeof CSlugRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
@@ -148,6 +172,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/ai-tutor': typeof AiTutorRoute
   '/experts': typeof ExpertsRoute
+  '/practice': typeof PracticeRoute
+  '/pricing': typeof PricingRoute
+  '/search': typeof SearchRoute
   '/c/$slug': typeof CSlugRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
@@ -168,6 +195,9 @@ export interface FileRouteTypes {
     | '/'
     | '/ai-tutor'
     | '/experts'
+    | '/practice'
+    | '/pricing'
+    | '/search'
     | '/c/$slug'
     | '/components/$slug'
     | '/concepts/$slug'
@@ -186,6 +216,9 @@ export interface FileRouteTypes {
     | '/'
     | '/ai-tutor'
     | '/experts'
+    | '/practice'
+    | '/pricing'
+    | '/search'
     | '/c/$slug'
     | '/components/$slug'
     | '/concepts/$slug'
@@ -204,6 +237,9 @@ export interface FileRouteTypes {
     | '/'
     | '/ai-tutor'
     | '/experts'
+    | '/practice'
+    | '/pricing'
+    | '/search'
     | '/c/$slug'
     | '/components/$slug'
     | '/concepts/$slug'
@@ -223,6 +259,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AiTutorRoute: typeof AiTutorRoute
   ExpertsRoute: typeof ExpertsRoute
+  PracticeRoute: typeof PracticeRoute
+  PricingRoute: typeof PricingRoute
+  SearchRoute: typeof SearchRoute
   CSlugRoute: typeof CSlugRoute
   ComponentsSlugRoute: typeof ComponentsSlugRoute
   ConceptsSlugRoute: typeof ConceptsSlugRoute
@@ -259,6 +298,27 @@ declare module '@tanstack/react-router' {
       path: '/experts'
       fullPath: '/experts'
       preLoaderRoute: typeof ExpertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/practice': {
+      id: '/practice'
+      path: '/practice'
+      fullPath: '/practice'
+      preLoaderRoute: typeof PracticeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/c/$slug': {
@@ -359,6 +419,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AiTutorRoute: AiTutorRoute,
   ExpertsRoute: ExpertsRoute,
+  PracticeRoute: PracticeRoute,
+  PricingRoute: PricingRoute,
+  SearchRoute: SearchRoute,
   CSlugRoute: CSlugRoute,
   ComponentsSlugRoute: ComponentsSlugRoute,
   ConceptsSlugRoute: ConceptsSlugRoute,
