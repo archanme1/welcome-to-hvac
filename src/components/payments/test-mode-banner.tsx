@@ -1,4 +1,4 @@
-const clientToken = import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN;
+const clientToken = import.meta.env['VITE_PAYMENTS_CLIENT_TOKEN'];
 
 /** Shown above checkout so nobody mistakes a test payment for a real one. */
 export function PaymentTestModeBanner() {
