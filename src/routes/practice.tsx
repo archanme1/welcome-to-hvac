@@ -31,9 +31,20 @@ export const Route = createFileRoute("/practice")({
 function Page() {
   const { user, isPro } = useAuth();
   const { data: nav } = useSuspenseQuery(navigationQuery);
+  const { data: catalog } = useSuspenseQuery(practiceCatalogQuery);
   const { data: progress } = useQuery(progressQuery(!!user));
 
-  const topics = nav.topics.slice(0, 60);
+  const byId = new Map(catalog.map((row) => [row.content_id, row]));
+  const topics = nav.topics.filter((t) => byId.has(t.id));
+  const totals = catalog.reduce(
+    (acc, row) => ({
+      questions: acc.questions + row.questions,
+      quizzes: acc.quizzes + row.quizzes,
+      scenarios: acc.scenarios + row.troubleshooting + row.equipment,
+    }),
+    { questions: 0, quizzes: 0, scenarios: 0 },
+  );
+
 
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 lg:py-12">
