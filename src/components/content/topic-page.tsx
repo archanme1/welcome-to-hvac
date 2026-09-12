@@ -51,6 +51,8 @@ export function TopicPage({ payload }: { payload: TopicPayload }) {
 
   const toc = [
     ...sections.map((s) => ({ id: s.id, title: s.title })),
+    ...(levels.length ? [{ id: "by-level", title: "By Experience Level" }] : []),
+    ...(symptoms.length ? [{ id: "symptoms", title: "Symptoms" }] : []),
     ...(Object.values(related).some((v) => v.length)
       ? [{ id: "related-topics", title: "Related Topics" }]
       : []),
