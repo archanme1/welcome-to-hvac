@@ -112,7 +112,7 @@ function SidebarSection({
             </span>
           ) : null}
         </AppLink>
-        {children.length > 0 ? (
+        {children.length > 0 || lazyCategoryId ? (
           <button
             type="button"
             aria-label={open ? `Collapse ${title}` : `Expand ${title}`}
@@ -124,9 +124,9 @@ function SidebarSection({
         ) : null}
       </div>
 
-      {open && children.length > 0 ? (
+      {open && items.length > 0 ? (
         <ul className="ml-3 mt-0.5 space-y-0.5 border-l pl-3">
-          {children.map((child) => (
+          {items.map((child) => (
             <li key={child.href}>
               <AppLink
                 to={child.href}
