@@ -96,14 +96,33 @@ async function handleWebhook(req: Request, env: StripeEnv) {
   switch (event.type) {
     case "customer.subscription.created":
     case "customer.subscription.updated":
+    case "customer.subscription.trial_will_end":
       await upsertSubscription(event.data.object, env);
       break;
     case "customer.subscription.deleted":
       await cancelSubscription(event.data.object, env);
       break;
+    case "invoice.paid":
+    case "invoice.payment_failed": {
+      // Renewal outcomes: pull the fresh subscription state so period dates
+      // and status stay accurate even if the subscription event is delayed.
+      const invoice: any = event.data.object;
+      const subId =
+        typeof invoice.subscription === "string"
+          ? invoice.subscription
+          : invoice.subscription?.id ?? invoice.parent?.subscription_details?.subscription;
+      if (subId) {
+        const { createStripeClient } = await import("@/lib/stripe.server");
+        const stripe = createStripeClient(env);
+        const subscription = await stripe.subscriptions.retrieve(subId);
+        await upsertSubscription(subscription, env);
+      }
+      break;
+    }
     default:
       console.log("Unhandled event:", event.type);
   }
+
 }
 
 export const Route = createFileRoute("/api/public/payments/webhook")({
