@@ -118,7 +118,7 @@ function ThemeToggle() {
 }
 
 function AccountMenu() {
-  const { user, isPro, isStaff } = useAuth();
+  const { user, isPro, isStaff, username } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -146,7 +146,7 @@ function AccountMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <div className="px-2 py-1.5">
-          <p className="truncate text-sm font-medium">{user.email}</p>
+          <p className="truncate text-sm font-medium">{username ?? user.email}</p>
           <p className="text-xs text-muted-foreground">{isPro ? "HVAC Pro" : "Free account"}</p>
         </div>
         <DropdownMenuSeparator />

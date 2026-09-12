@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
+import { isUsernameAvailable, normalizeUsername, validateUsername } from "@/lib/username";
 import { supabase } from "@/integrations/supabase/client";
 import { progressQuery } from "@/lib/practice.functions";
 import { createPortalSession } from "@/lib/payments.functions";
@@ -27,7 +30,7 @@ export const Route = createFileRoute("/account")({
 });
 
 function Page() {
-  const { user, loading, isPro, isStaff } = useAuth();
+  const { user, loading, isPro, isStaff, username, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: progress } = useQuery(progressQuery(!!user));
@@ -68,7 +71,11 @@ function Page() {
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6">
       <h1 className="text-2xl font-bold tracking-tight">Your account</h1>
-      <p className="mt-2 text-sm text-muted-foreground">{user.email}</p>
+      <p className="mt-2 text-sm font-medium">{username ?? user.email}</p>
+      {username ? <p className="text-xs text-muted-foreground">{user.email}</p> : null}
+
+      {!username ? <UsernameCard onSaved={() => void refreshProfile()} /> : null}
+
 
       <div className="mt-8 rounded-lg border bg-card p-5">
         <p className="text-sm font-semibold">Plan</p>
@@ -106,6 +113,67 @@ function Page() {
           Sign out
         </Button>
       </div>
+    </div>
+  );
+}
+
+function UsernameCard({ onSaved }: { onSaved: () => void }) {
+  const [value, setValue] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const save = async () => {
+    const name = normalizeUsername(value);
+    const problem = validateUsername(name);
+    if (problem) {
+      toast.error(problem);
+      return;
+    }
+    setBusy(true);
+    const available = await isUsernameAvailable(name);
+    if (available === false) {
+      setBusy(false);
+      toast.error("That username is already taken.");
+      return;
+    }
+    const { data: userData } = await supabase.auth.getUser();
+    const id = userData.user?.id;
+    if (!id) {
+      setBusy(false);
+      return;
+    }
+    const { error } = await supabase.from("profiles").update({ username: name }).eq("id", id);
+    setBusy(false);
+    if (error) {
+      toast.error(
+        error.code === "23505" ? "That username is already taken." : "Could not save your username.",
+      );
+      return;
+    }
+    toast.success("Username saved.");
+    onSaved();
+  };
+
+  return (
+    <div className="mt-6 rounded-lg border bg-card p-5">
+      <p className="text-sm font-semibold">Choose your username</p>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Your username becomes your visible identity across Welcome to HVAC. It can only be set once.
+      </p>
+      <div className="mt-4 space-y-1.5">
+        <Label htmlFor="account-username">Username</Label>
+        <Input
+          id="account-username"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          autoComplete="username"
+        />
+        <p className="text-xs text-muted-foreground">
+          3–24 characters. Letters, numbers, hyphens and underscores.
+        </p>
+      </div>
+      <Button size="sm" className="mt-4" disabled={busy} onClick={() => void save()}>
+        {busy ? "Saving…" : "Save username"}
+      </Button>
     </div>
   );
 }

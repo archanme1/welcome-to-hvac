@@ -14,6 +14,21 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_emails: {
+        Row: {
+          created_at: string
+          email: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+        }
+        Relationships: []
+      }
       analytics_events: {
         Row: {
           content_id: string | null
@@ -590,6 +605,7 @@ export type Database = {
           display_name: string | null
           id: string
           updated_at: string
+          username: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -597,6 +613,7 @@ export type Database = {
           display_name?: string | null
           id: string
           updated_at?: string
+          username?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -604,6 +621,7 @@ export type Database = {
           display_name?: string | null
           id?: string
           updated_at?: string
+          username?: string | null
         }
         Relationships: []
       }
@@ -975,6 +993,7 @@ export type Database = {
       }
       search_count: { Args: { _kind?: string; _q: string }; Returns: number }
       search_tokens: { Args: { _q: string }; Returns: string[] }
+      username_available: { Args: { _username: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "editor" | "user"

@@ -9,6 +9,8 @@ type AuthValue = {
   loading: boolean;
   isPro: boolean;
   isStaff: boolean;
+  username: string | null;
+  refreshProfile: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthValue>({
@@ -17,6 +19,8 @@ const AuthContext = createContext<AuthValue>({
   loading: true,
   isPro: false,
   isStaff: false,
+  username: null,
+  refreshProfile: async () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -24,6 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isPro, setIsPro] = useState(false);
   const [isStaff, setIsStaff] = useState(false);
+  const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -33,14 +38,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (active) {
           setIsPro(false);
           setIsStaff(false);
+          setUsername(null);
         }
         return;
       }
-      const [roles, subs] = await Promise.all([
+      const [roles, subs, profile] = await Promise.all([
         supabase.from("user_roles").select("role").eq("user_id", userId),
         supabase.from("subscriptions").select("status, current_period_end").eq("user_id", userId),
+        supabase.from("profiles").select("username").eq("id", userId).maybeSingle(),
       ]);
       if (!active) return;
+      setUsername(profile.data?.username ?? null);
       const staff = (roles.data ?? []).some((r) => r.role === "admin" || r.role === "editor");
       const pro = (subs.data ?? []).some(
         (s) =>
@@ -70,9 +78,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  const refreshProfile = async () => {
+    const userId = session?.user?.id;
+    if (!userId) return;
+    const { data } = await supabase
+      .from("profiles")
+      .select("username")
+      .eq("id", userId)
+      .maybeSingle();
+    setUsername(data?.username ?? null);
+  };
+
   const value = useMemo<AuthValue>(
-    () => ({ user: session?.user ?? null, session, loading, isPro, isStaff }),
-    [session, loading, isPro, isStaff],
+    () => ({
+      user: session?.user ?? null,
+      session,
+      loading,
+      isPro,
+      isStaff,
+      username,
+      refreshProfile,
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [session, loading, isPro, isStaff, username],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
