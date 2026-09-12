@@ -27,7 +27,7 @@ export const Route = createFileRoute("/account")({
 });
 
 function Page() {
-  const { user, loading, isPro, isStaff } = useAuth();
+  const { user, loading, isPro, isStaff, username, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: progress } = useQuery(progressQuery(!!user));
