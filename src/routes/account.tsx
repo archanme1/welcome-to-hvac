@@ -30,11 +30,14 @@ export const Route = createFileRoute("/account")({
 });
 
 function Page() {
-  const { user, loading, isPro, isStaff, username, refreshProfile } = useAuth();
+  const { user, loading, isPro, isStaff, username, refreshProfile, refreshEntitlements } =
+    useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: progress } = useQuery(progressQuery(!!user));
+  const { data: billing } = useQuery(billingSummaryQuery(!!user));
   const [portalLoading, setPortalLoading] = useState(false);
+  const [syncing, setSyncing] = useState(false);
 
   const openPortal = async () => {
     if (!paymentsConfigured()) {
@@ -54,6 +57,26 @@ function Page() {
       setPortalLoading(false);
     }
   };
+
+  const recheck = async () => {
+    setSyncing(true);
+    try {
+      if (paymentsConfigured()) {
+        const result = await syncMySubscription({
+          data: { environment: getStripeEnvironment() },
+        });
+        if (result.error) throw new Error(result.error);
+      }
+      const pro = await refreshEntitlements();
+      await queryClient.invalidateQueries();
+      toast.success(pro ? "HVAC Pro is active." : "No active membership found.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not check your membership.");
+    } finally {
+      setSyncing(false);
+    }
+  };
+
 
   useEffect(() => {
     if (!loading && !user) void navigate({ to: "/auth", search: { next: "/account" } });
