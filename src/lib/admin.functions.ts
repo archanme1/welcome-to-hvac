@@ -614,28 +614,42 @@ export const adminSetPro = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context as Ctx);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const db = supabaseAdmin as any;
     if (data.grant) {
       const end = new Date();
-      end.setFullYear(end.getFullYear() + (data.interval === "annual" ? 1 : 0));
-      if (data.interval !== "annual") end.setMonth(end.getMonth() + 1);
-      const { error } = await supabaseAdmin.from("subscriptions").insert({
+      if (data.interval === "annual") end.setFullYear(end.getFullYear() + 1);
+      else end.setMonth(end.getMonth() + 1);
+      const row = {
         user_id: data.userId,
         status: "active",
         plan_interval: data.interval ?? "monthly",
+        current_period_start: new Date().toISOString(),
         current_period_end: end.toISOString(),
         provider: "manual",
-      });
+        cancel_at_period_end: false,
+        updated_at: new Date().toISOString(),
+      };
+      const existing = await db
+        .from("subscriptions")
+        .select("id")
+        .eq("user_id", data.userId)
+        .eq("provider", "manual")
+        .maybeSingle();
+      const { error } = existing.data?.id
+        ? await db.from("subscriptions").update(row).eq("id", existing.data.id)
+        : await db.from("subscriptions").insert(row);
       if (error) throw new Error(error.message);
     } else {
-      const { error } = await supabaseAdmin
+      const { error } = await db
         .from("subscriptions")
-        .update({ status: "canceled" })
+        .update({ status: "canceled", current_period_end: new Date().toISOString() })
         .eq("user_id", data.userId)
-        .in("status", ["active", "trialing"]);
+        .in("status", ["active", "trialing", "past_due"]);
       if (error) throw new Error(error.message);
     }
     return { ok: true };
   });
+
 
 /* ------------------------------------------------------------------ */
 /* Symptoms                                                            */
