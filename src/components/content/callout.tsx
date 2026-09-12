@@ -44,8 +44,8 @@ export function Callout({
   title,
   children,
 }: {
-  variant?: CalloutVariant;
-  title?: string;
+  variant?: CalloutVariant | undefined;
+  title?: string | undefined;
   children: React.ReactNode;
 }) {
   const config = VARIANTS[variant];

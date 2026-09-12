@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
 
-type AppLinkProps = {
+export type AppLinkProps = {
   to: string;
-  className?: string;
+  className?: string | undefined;
   children: React.ReactNode;
-  onClick?: () => void;
-  title?: string;
+  onClick?: (() => void) | undefined;
+  title?: string | undefined;
 };
 
 /**

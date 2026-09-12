@@ -10,11 +10,15 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AccountRouteImport } from './routes/account'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AiTutorRouteImport } from './routes/ai-tutor'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ExpertsRouteImport } from './routes/experts'
 import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as StartHereRouteImport } from './routes/start-here'
 import { Route as CSlugRouteImport } from './routes/c.$slug'
 import { Route as ComponentsIndexRouteImport } from './routes/components.index'
 import { Route as ComponentsSlugRouteImport } from './routes/components.$slug'
@@ -34,9 +38,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AiTutorRoute = AiTutorRouteImport.update({
   id: '/ai-tutor',
   path: '/ai-tutor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExpertsRoute = ExpertsRouteImport.update({
@@ -57,6 +76,11 @@ const PricingRoute = PricingRouteImport.update({
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StartHereRoute = StartHereRouteImport.update({
+  id: '/start-here',
+  path: '/start-here',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CSlugRoute = CSlugRouteImport.update({
@@ -127,11 +151,15 @@ const TroubleshootingSlugRoute = TroubleshootingSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/admin': typeof AdminRoute
   '/ai-tutor': typeof AiTutorRoute
+  '/auth': typeof AuthRoute
   '/experts': typeof ExpertsRoute
   '/practice': typeof PracticeRoute
   '/pricing': typeof PricingRoute
   '/search': typeof SearchRoute
+  '/start-here': typeof StartHereRoute
   '/c/$slug': typeof CSlugRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
@@ -148,11 +176,15 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/admin': typeof AdminRoute
   '/ai-tutor': typeof AiTutorRoute
+  '/auth': typeof AuthRoute
   '/experts': typeof ExpertsRoute
   '/practice': typeof PracticeRoute
   '/pricing': typeof PricingRoute
   '/search': typeof SearchRoute
+  '/start-here': typeof StartHereRoute
   '/c/$slug': typeof CSlugRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
@@ -170,11 +202,15 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/admin': typeof AdminRoute
   '/ai-tutor': typeof AiTutorRoute
+  '/auth': typeof AuthRoute
   '/experts': typeof ExpertsRoute
   '/practice': typeof PracticeRoute
   '/pricing': typeof PricingRoute
   '/search': typeof SearchRoute
+  '/start-here': typeof StartHereRoute
   '/c/$slug': typeof CSlugRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
@@ -193,11 +229,15 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account'
+    | '/admin'
     | '/ai-tutor'
+    | '/auth'
     | '/experts'
     | '/practice'
     | '/pricing'
     | '/search'
+    | '/start-here'
     | '/c/$slug'
     | '/components/$slug'
     | '/concepts/$slug'
@@ -214,11 +254,15 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account'
+    | '/admin'
     | '/ai-tutor'
+    | '/auth'
     | '/experts'
     | '/practice'
     | '/pricing'
     | '/search'
+    | '/start-here'
     | '/c/$slug'
     | '/components/$slug'
     | '/concepts/$slug'
@@ -235,11 +279,15 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/account'
+    | '/admin'
     | '/ai-tutor'
+    | '/auth'
     | '/experts'
     | '/practice'
     | '/pricing'
     | '/search'
+    | '/start-here'
     | '/c/$slug'
     | '/components/$slug'
     | '/concepts/$slug'
@@ -257,11 +305,15 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRoute: typeof AccountRoute
+  AdminRoute: typeof AdminRoute
   AiTutorRoute: typeof AiTutorRoute
+  AuthRoute: typeof AuthRoute
   ExpertsRoute: typeof ExpertsRoute
   PracticeRoute: typeof PracticeRoute
   PricingRoute: typeof PricingRoute
   SearchRoute: typeof SearchRoute
+  StartHereRoute: typeof StartHereRoute
   CSlugRoute: typeof CSlugRoute
   ComponentsSlugRoute: typeof ComponentsSlugRoute
   ConceptsSlugRoute: typeof ConceptsSlugRoute
@@ -286,11 +338,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ai-tutor': {
       id: '/ai-tutor'
       path: '/ai-tutor'
       fullPath: '/ai-tutor'
       preLoaderRoute: typeof AiTutorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/experts': {
@@ -319,6 +392,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/start-here': {
+      id: '/start-here'
+      path: '/start-here'
+      fullPath: '/start-here'
+      preLoaderRoute: typeof StartHereRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/c/$slug': {
@@ -417,11 +497,15 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRoute: AccountRoute,
+  AdminRoute: AdminRoute,
   AiTutorRoute: AiTutorRoute,
+  AuthRoute: AuthRoute,
   ExpertsRoute: ExpertsRoute,
   PracticeRoute: PracticeRoute,
   PricingRoute: PricingRoute,
   SearchRoute: SearchRoute,
+  StartHereRoute: StartHereRoute,
   CSlugRoute: CSlugRoute,
   ComponentsSlugRoute: ComponentsSlugRoute,
   ConceptsSlugRoute: ConceptsSlugRoute,

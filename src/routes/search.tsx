@@ -33,7 +33,7 @@ function Page() {
 
   const results = useMemo(() => {
     if (!query.trim()) return data.slice(0, 60);
-    return fuzzyFilter(data, query, (item) => `${item.title} ${item.summary ?? ""} ${item.tags?.join(" ") ?? ""}`).slice(0, 80);
+    return fuzzyFilter(query, data, (item) => [item.title, item.summary ?? "", item.tags?.join(" ") ?? ""], 80);
   }, [data, query]);
 
   return (

@@ -205,7 +205,7 @@ const DIAGRAMS: Record<string, () => React.ReactElement> = {
   ),
 };
 
-export function Diagram({ diagramKey, caption }: { diagramKey: string; caption?: string }) {
+export function Diagram({ diagramKey, caption }: { diagramKey: string; caption?: string | undefined }) {
   const render = DIAGRAMS[diagramKey];
   if (!render) return null;
   return (

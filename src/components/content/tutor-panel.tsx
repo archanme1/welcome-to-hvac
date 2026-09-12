@@ -22,9 +22,9 @@ export function TutorPanel({
   topicSummary,
   heading,
 }: {
-  topicTitle?: string;
-  topicSummary?: string;
-  heading?: string;
+  topicTitle?: string | undefined;
+  topicSummary?: string | undefined;
+  heading?: string | undefined;
 }) {
   const { user, isPro } = useAuth();
   const [messages, setMessages] = useState<TutorMessage[]>([]);
