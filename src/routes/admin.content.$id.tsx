@@ -25,8 +25,10 @@ import {
   adminContentQuery,
   adminDeleteContent,
   adminSaveContent,
+  adminSaveTopicLevels,
+  adminTopicLevelsQuery,
 } from "@/lib/admin.functions";
-import type { AdminRelationship } from "@/lib/admin.functions";
+import type { AdminRelationship, AdminTopicLevel } from "@/lib/admin.functions";
 import {
   CONTENT_TYPE_LABEL,
   CONTENT_TYPE_PATH,
