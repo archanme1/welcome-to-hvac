@@ -373,6 +373,27 @@ function Editor() {
                 />
               </div>
             </div>
+            <div>
+              <Label className="text-xs">Next topic in reading order</Label>
+              <Select
+                value={draft.next_content_id}
+                onValueChange={(v) => setDraft({ ...draft, next_content_id: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No next topic</SelectItem>
+                  {(allTopics ?? [])
+                    .filter((t) => t.id !== id)
+                    .map((t) => (
+                      <SelectItem key={t.id} value={t.id}>
+                        {t.title} · {CONTENT_TYPE_LABEL[t.content_type]}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="space-y-3">
