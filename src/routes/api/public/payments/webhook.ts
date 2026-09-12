@@ -3,10 +3,12 @@ import { createClient } from "@supabase/supabase-js";
 
 import { type StripeEnv, verifyWebhook } from "@/lib/stripe.server";
 
-let _supabase: ReturnType<typeof createClient> | null = null;
-function getSupabase() {
+// Typed loosely on purpose: the service-role client writes rows the generated
+// database types do not model with the columns this webhook fills in.
+let _supabase: any = null;
+function getSupabase(): any {
   if (!_supabase) {
-    _supabase = createClient<any>(
+    _supabase = createClient(
       process.env["SUPABASE_URL"]!,
       process.env["SUPABASE_SERVICE_ROLE_KEY"]!,
     );
