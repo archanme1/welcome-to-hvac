@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Section } from "./hvac-types";
 
 export type TutorMessage = { role: "user" | "assistant"; content: string };
 
@@ -11,6 +12,7 @@ Teaching rules:
 - Start simple, then go deeper. Define terms before using them.
 - Explain WHY, not just what. Diagnostic reasoning matters more than a parts list.
 - Never give a single-cause answer to a symptom that has many possible causes. Walk through the possibilities and what would distinguish them.
+- When the reader asks to be quizzed or given a scenario, ask ONE question at a time and wait for their answer before continuing.
 
 Safety rules (non-negotiable):
 - Never present bypassing, jumpering or defeating a safety control as a repair. You may explain what a control does and why a technician might isolate it during a controlled, momentary diagnostic test under manufacturer procedures — always with the control restored afterwards.
@@ -22,10 +24,63 @@ Code rule:
 
 Keep answers focused and readable. Use short paragraphs and lists. No markdown headings above level 3.`;
 
+/** Condense structured body JSON into plain text the model can ground on. */
+function bodyToText(body: Section[], maxChars: number): string {
+  const parts: string[] = [];
+  for (const section of body) {
+    parts.push(`## ${section.title}`);
+    for (const block of section.blocks) {
+      switch (block.type) {
+        case "heading":
+        case "subheading":
+          parts.push(`### ${block.text}`);
+          break;
+        case "paragraph":
+        case "symptom":
+          parts.push(block.text);
+          break;
+        case "list":
+        case "steps":
+          for (const item of block.items) parts.push(`- ${item}`);
+          break;
+        case "table":
+          parts.push(`${block.headers.join(" | ")}`);
+          for (const row of block.rows) parts.push(row.join(" | "));
+          break;
+        case "definition":
+          parts.push(`${block.term}: ${block.text}`);
+          break;
+        case "formula":
+          parts.push(`${block.expression}${block.text ? ` — ${block.text}` : ""}`);
+          break;
+        case "callout":
+          parts.push(`[${block.variant.toUpperCase()}] ${block.title ? `${block.title}: ` : ""}${block.text}`);
+          break;
+        case "checks":
+          for (const c of block.items) parts.push(`- Check: ${c.check} → ${c.meaning}`);
+          break;
+        case "diagram":
+          parts.push(`[Diagram: ${block.diagram}]`);
+          break;
+        case "image":
+          parts.push(`[Image: ${block.alt}]`);
+          break;
+      }
+    }
+  }
+  const full = parts.join("\n");
+  return full.length > maxChars ? `${full.slice(0, maxChars)}\n[...topic continues]` : full;
+}
+
 export const askTutor = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(
-    (data: { topicTitle?: string | undefined; topicSummary?: string | undefined; messages: TutorMessage[] }) => data,
+    (data: {
+      contentId?: string | undefined;
+      topicTitle?: string | undefined;
+      topicSummary?: string | undefined;
+      messages: TutorMessage[];
+    }) => data,
   )
   .handler(async ({ data, context }) => {
     const { data: pro } = await context.supabase.rpc("is_pro", { _user_id: context.userId });
@@ -38,9 +93,44 @@ export const askTutor = createServerFn({ method: "POST" })
       return { error: "The AI Tutor is not configured yet.", reply: null as string | null };
     }
 
-    const topicContext = data.topicTitle
-      ? `Current Welcome to HVAC topic: ${data.topicTitle}.\n${data.topicSummary ?? ""}`
-      : "The reader is browsing the Welcome to HVAC knowledge base with no specific topic open.";
+    // Ground the tutor in the actual knowledge base, fetched server-side.
+    let topicContext =
+      "The reader is browsing the Welcome to HVAC knowledge base with no specific topic open.";
+    if (data.contentId) {
+      const { data: topic } = await context.supabase
+        .from("content")
+        .select("title, summary, body, safety_note, code_notice, difficulty, content_type")
+        .eq("id", data.contentId)
+        .eq("status", "published")
+        .maybeSingle();
+      if (topic) {
+        const { data: related } = await context.supabase
+          .from("content_relationships")
+          .select("related_content_id, content!content_relationships_related_content_id_fkey(title, status)")
+          .eq("content_id", data.contentId)
+          .limit(12);
+        const relatedTitles = (related ?? [])
+          .map((r) => (r.content as { title: string; status: string } | null))
+          .filter((c) => c && c.status === "published")
+          .map((c) => c!.title);
+
+        topicContext = [
+          `Current Welcome to HVAC topic: ${topic.title} (${topic.content_type}, ${topic.difficulty} level).`,
+          topic.summary ?? "",
+          topic.safety_note ? `Safety note on this topic: ${topic.safety_note}` : "",
+          topic.code_notice ? `Code notice on this topic: ${topic.code_notice}` : "",
+          relatedTitles.length
+            ? `Related topics in the knowledge base: ${relatedTitles.join(", ")}.`
+            : "",
+          "Topic content to ground your answer:",
+          bodyToText((topic.body ?? []) as Section[], 6000),
+        ]
+          .filter(Boolean)
+          .join("\n");
+      }
+    } else if (data.topicTitle) {
+      topicContext = `Current Welcome to HVAC topic: ${data.topicTitle}.\n${data.topicSummary ?? ""}`;
+    }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
