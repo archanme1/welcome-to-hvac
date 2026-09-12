@@ -34,7 +34,7 @@ export const adminOverview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertStaff(context as Ctx);
-    const db = context.supabase;
+    const db = context.supabase as any;
     const count = async (table: string, filter?: (q: any) => any) => {
       let q = db.from(table).select("id", { count: "exact", head: true });
       if (filter) q = filter(q);
@@ -107,7 +107,7 @@ export const adminListContent = createServerFn({ method: "GET" })
   )
   .handler(async ({ data, context }) => {
     await assertStaff(context as Ctx);
-    let q = context.supabase
+    let q: any = (context.supabase as any)
       .from("content")
       .select("id, title, slug, content_type, status, difficulty, category_id, updated_at")
       .order("updated_at", { ascending: false })
@@ -195,7 +195,7 @@ export const adminSaveContent = createServerFn({ method: "POST" })
   .inputValidator((data: ContentInput) => data)
   .handler(async ({ data, context }) => {
     await assertStaff(context as Ctx);
-    const db = context.supabase;
+    const db = context.supabase as any;
     const { id, relationships, ...fields } = data;
 
     const searchText = [
@@ -258,7 +258,7 @@ export const adminDeleteContent = createServerFn({ method: "POST" })
   .inputValidator((data: { id: string }) => data)
   .handler(async ({ data, context }) => {
     await assertAdmin(context as Ctx);
-    const db = context.supabase;
+    const db = context.supabase as any;
     await db.from("content_relationships").delete().eq("content_id", data.id);
     await db.from("content_relationships").delete().eq("related_content_id", data.id);
     const { error } = await db.from("content").delete().eq("id", data.id);
@@ -340,7 +340,7 @@ export const adminListPractice = createServerFn({ method: "GET" })
   .inputValidator((data: { contentId: string }) => data)
   .handler(async ({ data, context }) => {
     await assertStaff(context as Ctx);
-    const db = context.supabase;
+    const db = context.supabase as any;
     const [questions, quizzes, scenarios] = await Promise.all([
       db
         .from("practice_questions")
@@ -383,7 +383,7 @@ export const adminSaveQuestion = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertStaff(context as Ctx);
     const { id, ...fields } = data;
-    const db = context.supabase;
+    const db = context.supabase as any;
     if (id) {
       const { error } = await db.from("practice_questions").update(fields).eq("id", id);
       if (error) throw new Error(error.message);
@@ -413,7 +413,7 @@ export const adminSaveQuiz = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertStaff(context as Ctx);
     const { id, ...fields } = data;
-    const db = context.supabase;
+    const db = context.supabase as any;
     if (id) {
       const { error } = await db.from("quizzes").update(fields).eq("id", id);
       if (error) throw new Error(error.message);
@@ -443,7 +443,7 @@ export const adminSaveScenario = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertStaff(context as Ctx);
     const { id, ...fields } = data;
-    const db = context.supabase;
+    const db = context.supabase as any;
     if (id) {
       const { error } = await db.from("scenarios").update(fields).eq("id", id);
       if (error) throw new Error(error.message);
