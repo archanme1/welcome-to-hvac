@@ -11,22 +11,29 @@ import { TutorPanel } from "./tutor-panel";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
 import { recordProgress } from "@/lib/practice.functions";
-import type { TopicPayload } from "@/lib/hvac.functions";
+import { recordTopicView, type TopicPayload } from "@/lib/hvac.functions";
 import {
   CONTENT_TYPE_LABEL,
   CONTENT_TYPE_PATH,
   CONTENT_TYPE_PLURAL,
   DIFFICULTY_LABEL,
+  SYMPTOM_ROLE_LABEL,
+  topicHref,
 } from "@/lib/hvac-types";
 
 export function TopicPage({ payload }: { payload: TopicPayload }) {
-  const { topic, category, related, practice } = payload;
+  const { topic, category, related, practice, symptoms, levels, nextTopic, diagnostic } = payload;
   const { user } = useAuth();
 
   useEffect(() => {
     if (!user) return;
     void recordProgress({ data: { contentId: topic.id, event: "viewed" } });
   }, [user, topic.id]);
+
+  // Anonymous view counter, used only for "most read" ordering.
+  useEffect(() => {
+    void recordTopicView({ data: { contentId: topic.id } }).catch(() => {});
+  }, [topic.id]);
 
   const sections = useMemo(() => topic.body.filter((s) => s.blocks?.length), [topic.body]);
 
@@ -44,6 +51,8 @@ export function TopicPage({ payload }: { payload: TopicPayload }) {
 
   const toc = [
     ...sections.map((s) => ({ id: s.id, title: s.title })),
+    ...(levels.length ? [{ id: "by-level", title: "By Experience Level" }] : []),
+    ...(symptoms.length ? [{ id: "symptoms", title: "Symptoms" }] : []),
     ...(Object.values(related).some((v) => v.length)
       ? [{ id: "related-topics", title: "Related Topics" }]
       : []),
@@ -110,11 +119,87 @@ export function TopicPage({ payload }: { payload: TopicPayload }) {
           </Callout>
         ) : null}
 
+        {levels.length ? (
+          <section id="by-level" className="scroll-mt-24">
+            <h2 className="mt-12 border-b pb-2 text-xl font-semibold tracking-tight sm:text-2xl">
+              By Experience Level
+            </h2>
+            <div className="mt-5 space-y-4">
+              {levels.map((level) => (
+                <div key={level.level} className="rounded-lg border bg-card p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {DIFFICULTY_LABEL[level.level]}
+                  </p>
+                  {level.summary ? (
+                    <p className="mt-2 text-sm leading-6">{level.summary}</p>
+                  ) : null}
+                  {level.body?.map((section) => (
+                    <SectionRenderer key={section.id} section={section} />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {symptoms.length ? (
+          <section id="symptoms" className="scroll-mt-24">
+            <h2 className="mt-12 border-b pb-2 text-xl font-semibold tracking-tight sm:text-2xl">
+              Symptoms
+            </h2>
+            <ul className="mt-5 grid gap-2 sm:grid-cols-2">
+              {symptoms.map((symptom) => (
+                <li key={symptom.id}>
+                  <AppLink
+                    to={`/symptoms/${symptom.slug}`}
+                    className="block rounded-lg border bg-card p-3 transition-colors hover:bg-accent/50"
+                  >
+                    <p className="text-sm font-medium">{symptom.title}</p>
+                    <p className="mt-0.5 text-[11px] uppercase tracking-wide text-muted-foreground">
+                      {SYMPTOM_ROLE_LABEL[symptom.role] ?? symptom.role}
+                    </p>
+                  </AppLink>
+                </li>
+              ))}
+            </ul>
+            {diagnostic ? (
+              <AppLink
+                to={`/diagnostics/${diagnostic.slug}`}
+                className="mt-3 block rounded-lg border bg-card p-4 transition-colors hover:bg-accent/50"
+              >
+                <p className="text-sm font-semibold">Step-by-step: {diagnostic.title}</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Work through the checks in order rather than guessing.
+                </p>
+              </AppLink>
+            ) : null}
+          </section>
+        ) : null}
+
         <RelatedTopics related={related} />
 
         <PracticeSection contentId={topic.id} title={topic.title} counts={practice} />
 
         <TutorPanel contentId={topic.id} topicTitle={topic.title} />
+
+        {nextTopic ? (
+          <AppLink
+            to={topicHref(nextTopic.content_type, nextTopic.slug)}
+            className="mt-12 flex items-center justify-between gap-4 rounded-lg border bg-card p-4 transition-colors hover:bg-accent/50"
+          >
+            <span className="min-w-0">
+              <span className="text-xs uppercase tracking-wide text-muted-foreground">
+                Next topic
+              </span>
+              <span className="mt-0.5 block truncate text-sm font-semibold">
+                {nextTopic.title}
+              </span>
+            </span>
+            <span aria-hidden className="text-muted-foreground">
+              →
+            </span>
+          </AppLink>
+        ) : null}
 
         <footer className="mt-12 border-t pt-6 text-xs text-muted-foreground">
           <p>
