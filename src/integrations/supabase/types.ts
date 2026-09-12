@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_events: {
+        Row: {
+          content_id: string | null
+          created_at: string
+          event: string
+          id: string
+          metadata: Json
+          query: string | null
+          result_count: number | null
+          user_id: string | null
+        }
+        Insert: {
+          content_id?: string | null
+          created_at?: string
+          event: string
+          id?: string
+          metadata?: Json
+          query?: string | null
+          result_count?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          content_id?: string | null
+          created_at?: string
+          event?: string
+          id?: string
+          metadata?: Json
+          query?: string | null
+          result_count?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_events_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "content"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           content_type: Database["public"]["Enums"]["content_type"] | null
@@ -75,8 +116,11 @@ export type Database = {
           difficulty: Database["public"]["Enums"]["difficulty_level"]
           featured_image: string | null
           id: string
+          next_content_id: string | null
+          reading_minutes: number | null
           safety_note: string | null
           search_text: string | null
+          search_vector: unknown
           slug: string
           sort_order: number
           source_name: string | null
@@ -88,6 +132,7 @@ export type Database = {
           tags: string[]
           title: string
           updated_at: string
+          view_count: number
         }
         Insert: {
           body?: Json
@@ -99,8 +144,11 @@ export type Database = {
           difficulty?: Database["public"]["Enums"]["difficulty_level"]
           featured_image?: string | null
           id?: string
+          next_content_id?: string | null
+          reading_minutes?: number | null
           safety_note?: string | null
           search_text?: string | null
+          search_vector?: unknown
           slug: string
           sort_order?: number
           source_name?: string | null
@@ -112,6 +160,7 @@ export type Database = {
           tags?: string[]
           title: string
           updated_at?: string
+          view_count?: number
         }
         Update: {
           body?: Json
@@ -123,8 +172,11 @@ export type Database = {
           difficulty?: Database["public"]["Enums"]["difficulty_level"]
           featured_image?: string | null
           id?: string
+          next_content_id?: string | null
+          reading_minutes?: number | null
           safety_note?: string | null
           search_text?: string | null
+          search_vector?: unknown
           slug?: string
           sort_order?: number
           source_name?: string | null
@@ -136,6 +188,7 @@ export type Database = {
           tags?: string[]
           title?: string
           updated_at?: string
+          view_count?: number
         }
         Relationships: [
           {
@@ -143,6 +196,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_next_content_id_fkey"
+            columns: ["next_content_id"]
+            isOneToOne: false
+            referencedRelation: "content"
             referencedColumns: ["id"]
           },
         ]
@@ -188,6 +248,246 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      content_symptoms: {
+        Row: {
+          content_id: string
+          created_at: string
+          id: string
+          note: string | null
+          role: string
+          sort_order: number
+          symptom_id: string
+        }
+        Insert: {
+          content_id: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          role?: string
+          sort_order?: number
+          symptom_id: string
+        }
+        Update: {
+          content_id?: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          role?: string
+          sort_order?: number
+          symptom_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_symptoms_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "content"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_symptoms_symptom_id_fkey"
+            columns: ["symptom_id"]
+            isOneToOne: false
+            referencedRelation: "symptoms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      diagnostic_nodes: {
+        Row: {
+          answers: Json
+          created_at: string
+          id: string
+          is_root: boolean
+          key: string
+          observation: string | null
+          possible_causes: Json
+          question: string
+          related_content_id: string | null
+          safety_note: string | null
+          sort_order: number
+          tree_id: string
+          updated_at: string
+        }
+        Insert: {
+          answers?: Json
+          created_at?: string
+          id?: string
+          is_root?: boolean
+          key: string
+          observation?: string | null
+          possible_causes?: Json
+          question: string
+          related_content_id?: string | null
+          safety_note?: string | null
+          sort_order?: number
+          tree_id: string
+          updated_at?: string
+        }
+        Update: {
+          answers?: Json
+          created_at?: string
+          id?: string
+          is_root?: boolean
+          key?: string
+          observation?: string | null
+          possible_causes?: Json
+          question?: string
+          related_content_id?: string | null
+          safety_note?: string | null
+          sort_order?: number
+          tree_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "diagnostic_nodes_related_content_id_fkey"
+            columns: ["related_content_id"]
+            isOneToOne: false
+            referencedRelation: "content"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "diagnostic_nodes_tree_id_fkey"
+            columns: ["tree_id"]
+            isOneToOne: false
+            referencedRelation: "diagnostic_trees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      diagnostic_trees: {
+        Row: {
+          content_id: string | null
+          created_at: string
+          id: string
+          intro: string | null
+          safety_note: string | null
+          slug: string
+          status: Database["public"]["Enums"]["content_status"]
+          symptom_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content_id?: string | null
+          created_at?: string
+          id?: string
+          intro?: string | null
+          safety_note?: string | null
+          slug: string
+          status?: Database["public"]["Enums"]["content_status"]
+          symptom_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content_id?: string | null
+          created_at?: string
+          id?: string
+          intro?: string | null
+          safety_note?: string | null
+          slug?: string
+          status?: Database["public"]["Enums"]["content_status"]
+          symptom_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "diagnostic_trees_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "content"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "diagnostic_trees_symptom_id_fkey"
+            columns: ["symptom_id"]
+            isOneToOne: false
+            referencedRelation: "symptoms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learning_path_items: {
+        Row: {
+          content_id: string
+          created_at: string
+          id: string
+          note: string | null
+          path_id: string
+          sort_order: number
+        }
+        Insert: {
+          content_id: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          path_id: string
+          sort_order?: number
+        }
+        Update: {
+          content_id?: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          path_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_path_items_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "content"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "learning_path_items_path_id_fkey"
+            columns: ["path_id"]
+            isOneToOne: false
+            referencedRelation: "learning_paths"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learning_paths: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_published: boolean
+          level: Database["public"]["Enums"]["difficulty_level"]
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          level?: Database["public"]["Enums"]["difficulty_level"]
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          level?: Database["public"]["Enums"]["difficulty_level"]
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       media: {
         Row: {
@@ -401,6 +701,21 @@ export type Database = {
           },
         ]
       }
+      search_synonyms: {
+        Row: {
+          expansion: string
+          term: string
+        }
+        Insert: {
+          expansion: string
+          term: string
+        }
+        Update: {
+          expansion?: string
+          term?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           cancel_at_period_end: boolean
@@ -451,6 +766,86 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      symptoms: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_published: boolean
+          search_vector: unknown
+          severity: string
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          search_vector?: unknown
+          severity?: string
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          search_vector?: unknown
+          severity?: string
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      topic_levels: {
+        Row: {
+          body: Json
+          content_id: string
+          created_at: string
+          id: string
+          level: Database["public"]["Enums"]["difficulty_level"]
+          summary: string | null
+          updated_at: string
+        }
+        Insert: {
+          body?: Json
+          content_id: string
+          created_at?: string
+          id?: string
+          level: Database["public"]["Enums"]["difficulty_level"]
+          summary?: string | null
+          updated_at?: string
+        }
+        Update: {
+          body?: Json
+          content_id?: string
+          created_at?: string
+          id?: string
+          level?: Database["public"]["Enums"]["difficulty_level"]
+          summary?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topic_levels_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "content"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_progress: {
         Row: {
@@ -532,6 +927,7 @@ export type Database = {
       }
       is_pro: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
+      jsonb_plain_text: { Args: { _body: Json }; Returns: string }
       practice_catalog: {
         Args: never
         Returns: {
@@ -554,7 +950,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "editor" | "user"
-      content_status: "draft" | "published" | "archived"
+      content_status: "draft" | "review" | "published" | "archived"
       content_type:
         | "equipment"
         | "component"
@@ -703,7 +1099,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "editor", "user"],
-      content_status: ["draft", "published", "archived"],
+      content_status: ["draft", "review", "published", "archived"],
       content_type: [
         "equipment",
         "component",
