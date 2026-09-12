@@ -29,6 +29,7 @@ import { Route as ComponentsIndexRouteImport } from './routes/components.index'
 import { Route as ComponentsSlugRouteImport } from './routes/components.$slug'
 import { Route as ConceptsIndexRouteImport } from './routes/concepts.index'
 import { Route as ConceptsSlugRouteImport } from './routes/concepts.$slug'
+import { Route as DiagnosticsSlugRouteImport } from './routes/diagnostics.$slug'
 import { Route as EquipmentIndexRouteImport } from './routes/equipment.index'
 import { Route as EquipmentSlugRouteImport } from './routes/equipment.$slug'
 import { Route as PathsIndexRouteImport } from './routes/paths.index'
@@ -145,6 +146,11 @@ const ConceptsSlugRoute = ConceptsSlugRouteImport.update({
   path: '/concepts/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DiagnosticsSlugRoute = DiagnosticsSlugRouteImport.update({
+  id: '/diagnostics/$slug',
+  path: '/diagnostics/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EquipmentIndexRoute = EquipmentIndexRouteImport.update({
   id: '/equipment/',
   path: '/equipment/',
@@ -240,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/checkout/return': typeof CheckoutReturnRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
+  '/diagnostics/$slug': typeof DiagnosticsSlugRoute
   '/equipment/$slug': typeof EquipmentSlugRoute
   '/paths/$slug': typeof PathsSlugRoute
   '/procedures/$slug': typeof ProceduresSlugRoute
@@ -276,6 +283,7 @@ export interface FileRoutesByTo {
   '/checkout/return': typeof CheckoutReturnRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
+  '/diagnostics/$slug': typeof DiagnosticsSlugRoute
   '/equipment/$slug': typeof EquipmentSlugRoute
   '/paths/$slug': typeof PathsSlugRoute
   '/procedures/$slug': typeof ProceduresSlugRoute
@@ -314,6 +322,7 @@ export interface FileRoutesById {
   '/checkout/return': typeof CheckoutReturnRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
+  '/diagnostics/$slug': typeof DiagnosticsSlugRoute
   '/equipment/$slug': typeof EquipmentSlugRoute
   '/paths/$slug': typeof PathsSlugRoute
   '/procedures/$slug': typeof ProceduresSlugRoute
@@ -353,6 +362,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/components/$slug'
     | '/concepts/$slug'
+    | '/diagnostics/$slug'
     | '/equipment/$slug'
     | '/paths/$slug'
     | '/procedures/$slug'
@@ -389,6 +399,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/components/$slug'
     | '/concepts/$slug'
+    | '/diagnostics/$slug'
     | '/equipment/$slug'
     | '/paths/$slug'
     | '/procedures/$slug'
@@ -426,6 +437,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/components/$slug'
     | '/concepts/$slug'
+    | '/diagnostics/$slug'
     | '/equipment/$slug'
     | '/paths/$slug'
     | '/procedures/$slug'
@@ -461,6 +473,7 @@ export interface RootRouteChildren {
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   ComponentsSlugRoute: typeof ComponentsSlugRoute
   ConceptsSlugRoute: typeof ConceptsSlugRoute
+  DiagnosticsSlugRoute: typeof DiagnosticsSlugRoute
   EquipmentSlugRoute: typeof EquipmentSlugRoute
   PathsSlugRoute: typeof PathsSlugRoute
   ProceduresSlugRoute: typeof ProceduresSlugRoute
@@ -620,6 +633,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConceptsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/diagnostics/$slug': {
+      id: '/diagnostics/$slug'
+      path: '/diagnostics/$slug'
+      fullPath: '/diagnostics/$slug'
+      preLoaderRoute: typeof DiagnosticsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/equipment/': {
       id: '/equipment/'
       path: '/equipment'
@@ -763,6 +783,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutReturnRoute: CheckoutReturnRoute,
   ComponentsSlugRoute: ComponentsSlugRoute,
   ConceptsSlugRoute: ConceptsSlugRoute,
+  DiagnosticsSlugRoute: DiagnosticsSlugRoute,
   EquipmentSlugRoute: EquipmentSlugRoute,
   PathsSlugRoute: PathsSlugRoute,
   ProceduresSlugRoute: ProceduresSlugRoute,
