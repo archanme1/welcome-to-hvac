@@ -38,6 +38,7 @@ import { Route as TroubleshootingIndexRouteImport } from './routes/troubleshooti
 import { Route as TroubleshootingSlugRouteImport } from './routes/troubleshooting.$slug'
 import { Route as AdminContentIndexRouteImport } from './routes/admin.content.index'
 import { Route as AdminContentIdRouteImport } from './routes/admin.content.$id'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -184,6 +185,12 @@ const AdminContentIdRoute = AdminContentIdRouteImport.update({
   path: '/content/$id',
   getParentRoute: () => AdminRoute,
 } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -215,6 +222,7 @@ export interface FileRoutesByFullPath {
   '/troubleshooting/': typeof TroubleshootingIndexRoute
   '/admin/content/$id': typeof AdminContentIdRoute
   '/admin/content/': typeof AdminContentIndexRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -245,6 +253,7 @@ export interface FileRoutesByTo {
   '/troubleshooting': typeof TroubleshootingIndexRoute
   '/admin/content/$id': typeof AdminContentIdRoute
   '/admin/content': typeof AdminContentIndexRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -277,6 +286,7 @@ export interface FileRoutesById {
   '/troubleshooting/': typeof TroubleshootingIndexRoute
   '/admin/content/$id': typeof AdminContentIdRoute
   '/admin/content/': typeof AdminContentIndexRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -310,6 +320,7 @@ export interface FileRouteTypes {
     | '/troubleshooting/'
     | '/admin/content/$id'
     | '/admin/content/'
+    | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -340,6 +351,7 @@ export interface FileRouteTypes {
     | '/troubleshooting'
     | '/admin/content/$id'
     | '/admin/content'
+    | '/api/public/payments/webhook'
   id:
     | '__root__'
     | '/'
@@ -371,6 +383,7 @@ export interface FileRouteTypes {
     | '/troubleshooting/'
     | '/admin/content/$id'
     | '/admin/content/'
+    | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -397,6 +410,7 @@ export interface RootRouteChildren {
   ProceduresIndexRoute: typeof ProceduresIndexRoute
   ToolsIndexRoute: typeof ToolsIndexRoute
   TroubleshootingIndexRoute: typeof TroubleshootingIndexRoute
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -604,6 +618,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminContentIdRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -651,6 +672,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProceduresIndexRoute: ProceduresIndexRoute,
   ToolsIndexRoute: ToolsIndexRoute,
   TroubleshootingIndexRoute: TroubleshootingIndexRoute,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
