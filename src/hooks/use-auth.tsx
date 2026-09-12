@@ -78,9 +78,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  const refreshProfile = async () => {
+    const userId = session?.user?.id;
+    if (!userId) return;
+    const { data } = await supabase
+      .from("profiles")
+      .select("username")
+      .eq("id", userId)
+      .maybeSingle();
+    setUsername(data?.username ?? null);
+  };
+
   const value = useMemo<AuthValue>(
-    () => ({ user: session?.user ?? null, session, loading, isPro, isStaff }),
-    [session, loading, isPro, isStaff],
+    () => ({
+      user: session?.user ?? null,
+      session,
+      loading,
+      isPro,
+      isStaff,
+      username,
+      refreshProfile,
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [session, loading, isPro, isStaff, username],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
