@@ -242,6 +242,7 @@ function Editor() {
           <TabsTrigger value="details">Details</TabsTrigger>
           <TabsTrigger value="body">Body</TabsTrigger>
           <TabsTrigger value="related">Related topics</TabsTrigger>
+          <TabsTrigger value="levels">Levels</TabsTrigger>
           <TabsTrigger value="preview">Preview</TabsTrigger>
         </TabsList>
 
