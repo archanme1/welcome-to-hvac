@@ -18,6 +18,7 @@ import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import hvacLogo from "@/assets/hvac-logo.png.asset.json";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -55,9 +56,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </Sheet>
 
           <Link to="/" className="flex min-w-0 items-center gap-2">
-            <span className="grid h-6 w-6 shrink-0 place-items-center rounded bg-primary text-[11px] font-bold text-primary-foreground">
-              H
-            </span>
+            <img
+              src={hvacLogo.url}
+              alt="Welcome to HVAC logo"
+              className="h-7 w-7 shrink-0 rounded-md"
+            />
             <span className="truncate text-sm font-semibold tracking-tight sm:text-base">
               Welcome to HVAC
             </span>
