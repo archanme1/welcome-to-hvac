@@ -335,7 +335,43 @@ export const adminDeleteCategory = createServerFn({ method: "POST" })
 /* Practice                                                            */
 /* ------------------------------------------------------------------ */
 
+export type AdminQuestionRow = {
+  id: string;
+  content_id: string | null;
+  question_type: string;
+  prompt: string;
+  options: { id: string; text: string }[] | null;
+  correct_answer: unknown;
+  explanation: string | null;
+  difficulty: Difficulty;
+  status: ContentStatus;
+  sort_order: number;
+};
+
+export type AdminQuizRow = {
+  id: string;
+  content_id: string | null;
+  title: string;
+  description: string | null;
+  question_ids: string[] | null;
+  status: ContentStatus;
+};
+
+export type AdminScenarioRow = {
+  id: string;
+  content_id: string | null;
+  kind: string;
+  title: string;
+  setup: string | null;
+  symptoms: unknown;
+  steps: unknown;
+  safety_note: string | null;
+  difficulty: Difficulty;
+  status: ContentStatus;
+};
+
 export const adminListPractice = createServerFn({ method: "GET" })
+
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { contentId: string }) => data)
   .handler(async ({ data, context }) => {
