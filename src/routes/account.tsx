@@ -10,7 +10,11 @@ import { useAuth } from "@/hooks/use-auth";
 import { isUsernameAvailable, normalizeUsername, validateUsername } from "@/lib/username";
 import { supabase } from "@/integrations/supabase/client";
 import { progressQuery } from "@/lib/practice.functions";
-import { createPortalSession } from "@/lib/payments.functions";
+import {
+  billingSummaryQuery,
+  createPortalSession,
+  syncMySubscription,
+} from "@/lib/payments.functions";
 import { getStripeEnvironment, paymentsConfigured } from "@/lib/stripe";
 
 export const Route = createFileRoute("/account")({
@@ -30,11 +34,14 @@ export const Route = createFileRoute("/account")({
 });
 
 function Page() {
-  const { user, loading, isPro, isStaff, username, refreshProfile } = useAuth();
+  const { user, loading, isPro, isStaff, username, refreshProfile, refreshEntitlements } =
+    useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: progress } = useQuery(progressQuery(!!user));
+  const { data: billing } = useQuery(billingSummaryQuery(!!user));
   const [portalLoading, setPortalLoading] = useState(false);
+  const [syncing, setSyncing] = useState(false);
 
   const openPortal = async () => {
     if (!paymentsConfigured()) {
@@ -54,6 +61,26 @@ function Page() {
       setPortalLoading(false);
     }
   };
+
+  const recheck = async () => {
+    setSyncing(true);
+    try {
+      if (paymentsConfigured()) {
+        const result = await syncMySubscription({
+          data: { environment: getStripeEnvironment() },
+        });
+        if (result.error) throw new Error(result.error);
+      }
+      const pro = await refreshEntitlements();
+      await queryClient.invalidateQueries();
+      toast.success(pro ? "HVAC Pro is active." : "No active membership found.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not check your membership.");
+    } finally {
+      setSyncing(false);
+    }
+  };
+
 
   useEffect(() => {
     if (!loading && !user) void navigate({ to: "/auth", search: { next: "/account" } });
@@ -82,6 +109,38 @@ function Page() {
         <p className="mt-1 text-sm text-muted-foreground">
           {isPro ? "HVAC Pro — practice, scenarios and the AI Tutor are unlocked." : "Free — documentation and diagrams."}
         </p>
+        {billing && isPro ? (
+          <dl className="mt-4 space-y-1 text-sm">
+            {billing.planInterval ? (
+              <Row
+                label="Billing"
+                value={billing.planInterval === "annual" ? "$50 per year" : "$5 per month"}
+              />
+            ) : null}
+            {billing.status === "trialing" && billing.currentPeriodEnd ? (
+              <Row label="Free trial ends" value={formatDate(billing.currentPeriodEnd)} />
+            ) : null}
+            {billing.status === "past_due" ? (
+              <Row
+                label="Payment"
+                value="Last payment failed — we're retrying your card. Access continues for now."
+              />
+            ) : null}
+            {billing.currentPeriodEnd && billing.status !== "trialing" ? (
+              <Row
+                label={
+                  billing.cancelAtPeriodEnd || billing.status === "canceled"
+                    ? "Access ends"
+                    : "Renews"
+                }
+                value={formatDate(billing.currentPeriodEnd)}
+              />
+            ) : null}
+            {billing.provider === "manual" ? (
+              <Row label="Source" value="Granted by an administrator" />
+            ) : null}
+          </dl>
+        ) : null}
         {!isPro ? (
           <Button asChild size="sm" className="mt-4">
             <Link to="/pricing">Upgrade to HVAC Pro</Link>
@@ -99,16 +158,20 @@ function Page() {
       ) : null}
 
       <div className="mt-8 flex flex-wrap gap-2">
-        {isPro ? (
+        {isPro && billing?.managed ? (
           <Button variant="outline" size="sm" disabled={portalLoading} onClick={() => void openPortal()}>
             {portalLoading ? "Opening…" : "Manage billing"}
           </Button>
         ) : null}
+        <Button variant="outline" size="sm" disabled={syncing} onClick={() => void recheck()}>
+          {syncing ? "Checking…" : "Re-check membership"}
+        </Button>
         {isStaff ? (
           <Button asChild variant="outline" size="sm">
             <Link to="/admin">Admin</Link>
           </Button>
         ) : null}
+
         <Button variant="outline" size="sm" onClick={() => void signOut()}>
           Sign out
         </Button>
@@ -176,6 +239,23 @@ function UsernameCard({ onSaved }: { onSaved: () => void }) {
       </Button>
     </div>
   );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex flex-wrap justify-between gap-2">
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="font-medium">{value}</dd>
+    </div>
+  );
+}
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 
 function Stat({ label, value }: { label: string; value: number | string }) {

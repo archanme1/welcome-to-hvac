@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
+import { syncMySubscription } from "@/lib/payments.functions";
+import { getStripeEnvironment, paymentsConfigured } from "@/lib/stripe";
 
 export const Route = createFileRoute("/checkout/return")({
   validateSearch: (search: Record<string, unknown>): { session_id?: string } =>
@@ -20,12 +22,39 @@ export const Route = createFileRoute("/checkout/return")({
 
 function Page() {
   const { session_id: sessionId } = Route.useSearch();
-  const { isPro } = useAuth();
+  const { isPro, refreshEntitlements } = useAuth();
   const queryClient = useQueryClient();
+  const [checking, setChecking] = useState(!!sessionId);
 
   useEffect(() => {
-    void queryClient.invalidateQueries();
-  }, [queryClient]);
+    if (!sessionId) return;
+    let cancelled = false;
+
+    const confirm = async () => {
+      // The provider normally tells us within a second or two. Poll briefly,
+      // then ask the provider directly if the notification never arrived.
+      for (let attempt = 0; attempt < 6 && !cancelled; attempt += 1) {
+        if (await refreshEntitlements()) break;
+        if (attempt === 3 && paymentsConfigured()) {
+          try {
+            await syncMySubscription({ data: { environment: getStripeEnvironment() } });
+          } catch {
+            /* fall through to the next poll */
+          }
+        }
+        await new Promise((r) => setTimeout(r, 1500));
+      }
+      if (cancelled) return;
+      await refreshEntitlements();
+      void queryClient.invalidateQueries();
+      setChecking(false);
+    };
+
+    void confirm();
+    return () => {
+      cancelled = true;
+    };
+  }, [sessionId, refreshEntitlements, queryClient]);
 
   return (
     <div className="mx-auto w-full max-w-xl px-4 py-16 text-center sm:px-6">
@@ -33,11 +62,13 @@ function Page() {
         {sessionId ? "Thank you — you're all set" : "Nothing to confirm"}
       </h1>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
-        {sessionId
-          ? isPro
+        {!sessionId
+          ? "We could not find a completed checkout for this visit."
+          : isPro
             ? "HVAC Pro is active. Practice, scenarios and the AI Tutor are unlocked."
-            : "Your payment went through. It can take a few seconds for HVAC Pro to switch on — refresh this page if it still looks locked."
-          : "We could not find a completed checkout for this visit."}
+            : checking
+              ? "Confirming your payment…"
+              : "Your payment went through. HVAC Pro can take a moment to switch on — open your account page and choose Re-check membership if it still looks locked."}
       </p>
       <div className="mt-8 flex justify-center gap-3">
         <Button asChild>

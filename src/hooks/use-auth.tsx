@@ -11,6 +11,7 @@ type AuthValue = {
   isStaff: boolean;
   username: string | null;
   refreshProfile: () => Promise<void>;
+  refreshEntitlements: () => Promise<boolean>;
 };
 
 const AuthContext = createContext<AuthValue>({
@@ -21,6 +22,7 @@ const AuthContext = createContext<AuthValue>({
   isStaff: false,
   username: null,
   refreshProfile: async () => {},
+  refreshEntitlements: async () => false,
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -42,21 +44,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         return;
       }
-      const [roles, subs, profile] = await Promise.all([
+      const [roles, pro, profile] = await Promise.all([
         supabase.from("user_roles").select("role").eq("user_id", userId),
-        supabase.from("subscriptions").select("status, current_period_end").eq("user_id", userId),
+        supabase.rpc("is_pro", { _user_id: userId }),
         supabase.from("profiles").select("username").eq("id", userId).maybeSingle(),
       ]);
       if (!active) return;
       setUsername(profile.data?.username ?? null);
       const staff = (roles.data ?? []).some((r) => r.role === "admin" || r.role === "editor");
-      const pro = (subs.data ?? []).some(
-        (s) =>
-          (s.status === "active" || s.status === "trialing") &&
-          (!s.current_period_end || new Date(s.current_period_end) > new Date()),
-      );
       setIsStaff(staff);
-      setIsPro(pro || staff);
+      setIsPro(!!pro.data || staff);
     };
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, nextSession) => {
@@ -78,6 +75,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  /** Re-reads membership from the database. Returns the fresh Pro state. */
+  const refreshEntitlements = async (): Promise<boolean> => {
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData.user?.id;
+    if (!userId) return false;
+    const { data } = await supabase.rpc("is_pro", { _user_id: userId });
+    const pro = !!data;
+    setIsPro(pro);
+    return pro;
+  };
+
+
   const refreshProfile = async () => {
     const userId = session?.user?.id;
     if (!userId) return;
@@ -98,6 +107,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isStaff,
       username,
       refreshProfile,
+      refreshEntitlements,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [session, loading, isPro, isStaff, username],
