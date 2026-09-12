@@ -119,11 +119,87 @@ export function TopicPage({ payload }: { payload: TopicPayload }) {
           </Callout>
         ) : null}
 
+        {levels.length ? (
+          <section id="by-level" className="scroll-mt-24">
+            <h2 className="mt-12 border-b pb-2 text-xl font-semibold tracking-tight sm:text-2xl">
+              By Experience Level
+            </h2>
+            <div className="mt-5 space-y-4">
+              {levels.map((level) => (
+                <div key={level.level} className="rounded-lg border bg-card p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {DIFFICULTY_LABEL[level.level]}
+                  </p>
+                  {level.summary ? (
+                    <p className="mt-2 text-sm leading-6">{level.summary}</p>
+                  ) : null}
+                  {level.body?.map((section) => (
+                    <SectionRenderer key={section.id} section={section} />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {symptoms.length ? (
+          <section id="symptoms" className="scroll-mt-24">
+            <h2 className="mt-12 border-b pb-2 text-xl font-semibold tracking-tight sm:text-2xl">
+              Symptoms
+            </h2>
+            <ul className="mt-5 grid gap-2 sm:grid-cols-2">
+              {symptoms.map((symptom) => (
+                <li key={symptom.id}>
+                  <AppLink
+                    to={`/symptoms/${symptom.slug}`}
+                    className="block rounded-lg border bg-card p-3 transition-colors hover:bg-accent/50"
+                  >
+                    <p className="text-sm font-medium">{symptom.title}</p>
+                    <p className="mt-0.5 text-[11px] uppercase tracking-wide text-muted-foreground">
+                      {SYMPTOM_ROLE_LABEL[symptom.role] ?? symptom.role}
+                    </p>
+                  </AppLink>
+                </li>
+              ))}
+            </ul>
+            {diagnostic ? (
+              <AppLink
+                to={`/diagnostics/${diagnostic.slug}`}
+                className="mt-3 block rounded-lg border bg-card p-4 transition-colors hover:bg-accent/50"
+              >
+                <p className="text-sm font-semibold">Step-by-step: {diagnostic.title}</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Work through the checks in order rather than guessing.
+                </p>
+              </AppLink>
+            ) : null}
+          </section>
+        ) : null}
+
         <RelatedTopics related={related} />
 
         <PracticeSection contentId={topic.id} title={topic.title} counts={practice} />
 
         <TutorPanel contentId={topic.id} topicTitle={topic.title} />
+
+        {nextTopic ? (
+          <AppLink
+            to={topicHref(nextTopic.content_type, nextTopic.slug)}
+            className="mt-12 flex items-center justify-between gap-4 rounded-lg border bg-card p-4 transition-colors hover:bg-accent/50"
+          >
+            <span className="min-w-0">
+              <span className="text-xs uppercase tracking-wide text-muted-foreground">
+                Next topic
+              </span>
+              <span className="mt-0.5 block truncate text-sm font-semibold">
+                {nextTopic.title}
+              </span>
+            </span>
+            <span aria-hidden className="text-muted-foreground">
+              →
+            </span>
+          </AppLink>
+        ) : null}
 
         <footer className="mt-12 border-t pt-6 text-xs text-muted-foreground">
           <p>
