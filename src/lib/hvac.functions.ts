@@ -179,3 +179,49 @@ export const searchIndexQuery = queryOptions({
   queryFn: () => getSearchIndex(),
   staleTime: 10 * 60 * 1000,
 });
+
+/** A category landing page: the category, its child categories, and its topics. */
+export const getCategory = createServerFn({ method: "GET" })
+  .inputValidator((data: { slug: string }) => data)
+  .handler(async ({ data }) => {
+    const { publicDb } = await import("./hvac.server");
+    const db = publicDb();
+
+    const { data: category } = await db
+      .from("categories")
+      .select("*")
+      .eq("slug", data.slug)
+      .maybeSingle();
+
+    if (!category) return null;
+
+    const { data: children } = await db
+      .from("categories")
+      .select("*")
+      .eq("parent_id", category.id)
+      .order("sort_order")
+      .order("title");
+
+    const ids = [category.id, ...(children ?? []).map((c) => c.id)];
+    const { data: topics } = await db
+      .from("content")
+      .select(SUMMARY_COLUMNS)
+      .in("category_id", ids)
+      .eq("status", "published")
+      .order("sort_order")
+      .order("title")
+      .limit(2000);
+
+    return {
+      category: category as CategoryRecord,
+      children: (children ?? []) as CategoryRecord[],
+      topics: (topics ?? []) as (ContentSummary & { category_id: string | null })[],
+    };
+  });
+
+export const categoryQuery = (slug: string) =>
+  queryOptions({
+    queryKey: ["hvac", "category", slug],
+    queryFn: () => getCategory({ data: { slug } }),
+    staleTime: 5 * 60 * 1000,
+  });
