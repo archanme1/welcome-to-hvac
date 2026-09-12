@@ -34,6 +34,17 @@ export function TutorPanel({
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Start a fresh conversation when the reader moves to a different topic.
+  useEffect(() => {
+    setMessages([]);
+    setError(null);
+  }, [contentId]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
+  }, [messages, busy]);
 
   const unlocked = !!user && isPro;
   const title = heading ?? (topicTitle ? `Ask AI about ${topicTitle}` : "Ask the HVAC AI Tutor");
