@@ -114,7 +114,7 @@ export function TopicPage({ payload }: { payload: TopicPayload }) {
 
         <PracticeSection contentId={topic.id} title={topic.title} counts={practice} />
 
-        <TutorPanel topicTitle={topic.title} topicSummary={topic.summary ?? undefined} />
+        <TutorPanel contentId={topic.id} topicTitle={topic.title} />
 
         <footer className="mt-12 border-t pt-6 text-xs text-muted-foreground">
           <p>

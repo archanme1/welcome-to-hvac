@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Lock, Send, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,14 +14,17 @@ const QUICK_PROMPTS = [
   "Quiz me",
   "Give me a troubleshooting scenario",
   "Explain this like an apprentice",
+  "Compare two concepts",
   "Help me diagnose this scenario",
 ];
 
 export function TutorPanel({
+  contentId,
   topicTitle,
   topicSummary,
   heading,
 }: {
+  contentId?: string | undefined;
   topicTitle?: string | undefined;
   topicSummary?: string | undefined;
   heading?: string | undefined;
@@ -31,6 +34,17 @@ export function TutorPanel({
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Start a fresh conversation when the reader moves to a different topic.
+  useEffect(() => {
+    setMessages([]);
+    setError(null);
+  }, [contentId]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
+  }, [messages, busy]);
 
   const unlocked = !!user && isPro;
   const title = heading ?? (topicTitle ? `Ask AI about ${topicTitle}` : "Ask the HVAC AI Tutor");
@@ -44,7 +58,7 @@ export function TutorPanel({
     setBusy(true);
     setError(null);
 
-    const result = await askTutor({ data: { topicTitle, topicSummary, messages: next } });
+    const result = await askTutor({ data: { contentId, topicTitle, topicSummary, messages: next } });
     setBusy(false);
     if (result.error || !result.reply) {
       setError(result.error ?? "No answer returned.");
@@ -87,7 +101,7 @@ export function TutorPanel({
             <p className="text-sm font-medium">{title}</p>
           </div>
 
-          <div className="max-h-[28rem] space-y-4 overflow-y-auto px-4 py-4">
+          <div ref={scrollRef} className="max-h-[28rem] space-y-4 overflow-y-auto px-4 py-4">
             {messages.length === 0 ? (
               <p className="text-sm text-muted-foreground">
                 Ask a question, or start with one of the prompts below.
