@@ -11,22 +11,29 @@ import { TutorPanel } from "./tutor-panel";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
 import { recordProgress } from "@/lib/practice.functions";
-import type { TopicPayload } from "@/lib/hvac.functions";
+import { recordTopicView, type TopicPayload } from "@/lib/hvac.functions";
 import {
   CONTENT_TYPE_LABEL,
   CONTENT_TYPE_PATH,
   CONTENT_TYPE_PLURAL,
   DIFFICULTY_LABEL,
+  SYMPTOM_ROLE_LABEL,
+  topicHref,
 } from "@/lib/hvac-types";
 
 export function TopicPage({ payload }: { payload: TopicPayload }) {
-  const { topic, category, related, practice } = payload;
+  const { topic, category, related, practice, symptoms, levels, nextTopic, diagnostic } = payload;
   const { user } = useAuth();
 
   useEffect(() => {
     if (!user) return;
     void recordProgress({ data: { contentId: topic.id, event: "viewed" } });
   }, [user, topic.id]);
+
+  // Anonymous view counter, used only for "most read" ordering.
+  useEffect(() => {
+    void recordTopicView({ data: { contentId: topic.id } }).catch(() => {});
+  }, [topic.id]);
 
   const sections = useMemo(() => topic.body.filter((s) => s.blocks?.length), [topic.body]);
 
