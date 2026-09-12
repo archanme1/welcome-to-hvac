@@ -14,14 +14,17 @@ const QUICK_PROMPTS = [
   "Quiz me",
   "Give me a troubleshooting scenario",
   "Explain this like an apprentice",
+  "Compare two concepts",
   "Help me diagnose this scenario",
 ];
 
 export function TutorPanel({
+  contentId,
   topicTitle,
   topicSummary,
   heading,
 }: {
+  contentId?: string | undefined;
   topicTitle?: string | undefined;
   topicSummary?: string | undefined;
   heading?: string | undefined;
@@ -44,7 +47,7 @@ export function TutorPanel({
     setBusy(true);
     setError(null);
 
-    const result = await askTutor({ data: { topicTitle, topicSummary, messages: next } });
+    const result = await askTutor({ data: { contentId, topicTitle, topicSummary, messages: next } });
     setBusy(false);
     if (result.error || !result.reply) {
       setError(result.error ?? "No answer returned.");
