@@ -1,11 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { progressQuery } from "@/lib/practice.functions";
+import { createPortalSession } from "@/lib/payments.functions";
+import { getStripeEnvironment, paymentsConfigured } from "@/lib/stripe";
 
 export const Route = createFileRoute("/account")({
   head: () => ({
@@ -28,6 +31,26 @@ function Page() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: progress } = useQuery(progressQuery(!!user));
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  const openPortal = async () => {
+    if (!paymentsConfigured()) {
+      toast.error("Billing is not available yet.");
+      return;
+    }
+    setPortalLoading(true);
+    try {
+      const result = await createPortalSession({
+        data: { returnUrl: window.location.href, environment: getStripeEnvironment() },
+      });
+      if ("error" in result) throw new Error(result.error);
+      window.open(result.url, "_blank", "noopener");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not open billing.");
+    } finally {
+      setPortalLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!loading && !user) void navigate({ to: "/auth", search: { next: "/account" } });
@@ -69,6 +92,11 @@ function Page() {
       ) : null}
 
       <div className="mt-8 flex flex-wrap gap-2">
+        {isPro ? (
+          <Button variant="outline" size="sm" disabled={portalLoading} onClick={() => void openPortal()}>
+            {portalLoading ? "Opening…" : "Manage billing"}
+          </Button>
+        ) : null}
         {isStaff ? (
           <Button asChild variant="outline" size="sm">
             <Link to="/admin">Admin</Link>
