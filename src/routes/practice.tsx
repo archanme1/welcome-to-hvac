@@ -87,12 +87,12 @@ function Page() {
       <ul className="mt-3 divide-y rounded-lg border">
         {topics.map((topic) => {
           const row = byId.get(topic.id)!;
+          const scenarios = row.troubleshooting + row.equipment;
           const bits = [
-            row.questions ? `${row.questions} questions` : null,
+            row.questions ? `${row.questions} question${row.questions === 1 ? "" : "s"}` : null,
             row.quizzes ? "quiz" : null,
-            row.troubleshooting + row.equipment
-              ? `${row.troubleshooting + row.equipment} scenarios`
-              : null,
+            scenarios ? `${scenarios} scenario${scenarios === 1 ? "" : "s"}` : null,
+
           ].filter(Boolean);
           return (
             <li key={topic.id}>
