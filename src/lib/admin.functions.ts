@@ -44,16 +44,29 @@ export const adminOverview = createServerFn({ method: "GET" })
       return n ?? 0;
     };
 
-    const [published, drafts, archived, categories, questions, quizzes, scenarios] =
-      await Promise.all([
-        count("content", (q) => q.eq("status", "published")),
-        count("content", (q) => q.eq("status", "draft")),
-        count("content", (q) => q.eq("status", "archived")),
-        count("categories"),
-        count("practice_questions"),
-        count("quizzes"),
-        count("scenarios"),
-      ]);
+    const [
+      published,
+      drafts,
+      archived,
+      categories,
+      questions,
+      quizzes,
+      scenarios,
+      symptoms,
+      paths,
+      trees,
+    ] = await Promise.all([
+      count("content", (q) => q.eq("status", "published")),
+      count("content", (q) => q.eq("status", "draft")),
+      count("content", (q) => q.eq("status", "archived")),
+      count("categories"),
+      count("practice_questions"),
+      count("quizzes"),
+      count("scenarios"),
+      count("symptoms"),
+      count("learning_paths"),
+      count("diagnostic_trees"),
+    ]);
 
     const { data: recent } = await db
       .from("content")
