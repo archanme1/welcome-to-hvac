@@ -24,6 +24,7 @@ import {
   adminSaveQuiz,
   adminSaveScenario,
 } from "@/lib/admin.functions";
+import type { Json } from "@/lib/admin.functions";
 import type { ContentStatus, Difficulty } from "@/lib/hvac-types";
 
 export const Route = createFileRoute("/admin/practice")({ component: Practice });
@@ -67,11 +68,11 @@ const emptyQuestion: QuestionDraft = {
   sort_order: 0,
 };
 
-function parseAnswer(raw: string): unknown {
+function parseAnswer(raw: string): Json {
   const trimmed = raw.trim();
   if (!trimmed) return null;
   try {
-    return JSON.parse(trimmed);
+    return JSON.parse(trimmed) as Json;
   } catch {
     return trimmed;
   }
@@ -166,7 +167,7 @@ function Practice() {
                           id: q.id,
                           question_type: q.question_type,
                           prompt: q.prompt,
-                          options: (q.options ?? []) as { id: string; text: string }[],
+                          options: (q.options ?? []) as unknown as { id: string; text: string }[],
                           correct_answer: JSON.stringify(q.correct_answer ?? ""),
                           explanation: q.explanation ?? "",
                           difficulty: q.difficulty,
@@ -448,7 +449,7 @@ function Practice() {
                           kind: s.kind,
                           title: s.title,
                           setup: s.setup ?? "",
-                          symptoms: ((s.symptoms ?? []) as string[]).join("\n"),
+                          symptoms: ((s.symptoms ?? []) as unknown as string[]).join("\n"),
                           steps: JSON.stringify(s.steps ?? [], null, 2),
                           safety_note: s.safety_note ?? "",
                           difficulty: s.difficulty,
@@ -531,9 +532,9 @@ function Practice() {
                 size="sm"
                 onClick={() =>
                   guard(async () => {
-                    let steps: unknown[];
+                    let steps: Json[];
                     try {
-                      steps = JSON.parse(scenario.steps);
+                      steps = JSON.parse(scenario.steps) as Json[];
                     } catch {
                       throw new Error("The steps field must be valid JSON.");
                     }

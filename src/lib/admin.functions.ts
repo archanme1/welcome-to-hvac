@@ -11,6 +11,8 @@ import type {
   Section,
 } from "./hvac-types";
 
+export type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
+
 type Ctx = { supabase: any; userId: string };
 
 async function assertStaff(context: Ctx) {
@@ -341,7 +343,7 @@ export type AdminQuestionRow = {
   question_type: string;
   prompt: string;
   options: { id: string; text: string }[] | null;
-  correct_answer: unknown;
+  correct_answer: Json;
   explanation: string | null;
   difficulty: Difficulty;
   status: ContentStatus;
@@ -363,8 +365,8 @@ export type AdminScenarioRow = {
   kind: string;
   title: string;
   setup: string | null;
-  symptoms: unknown;
-  steps: unknown;
+  symptoms: Json;
+  steps: Json;
   safety_note: string | null;
   difficulty: Difficulty;
   status: ContentStatus;
@@ -410,7 +412,7 @@ export const adminSaveQuestion = createServerFn({ method: "POST" })
       question_type: string;
       prompt: string;
       options: { id: string; text: string }[];
-      correct_answer: unknown;
+      correct_answer: Json;
       explanation: string;
       difficulty: Difficulty;
       status: ContentStatus;
@@ -471,7 +473,7 @@ export const adminSaveScenario = createServerFn({ method: "POST" })
       title: string;
       setup: string;
       symptoms: string[];
-      steps: unknown[];
+      steps: Json[];
       safety_note: string | null;
       difficulty: Difficulty;
       status: ContentStatus;
