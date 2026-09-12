@@ -30,6 +30,18 @@ export function TopicPage({ payload }: { payload: TopicPayload }) {
 
   const sections = useMemo(() => topic.body.filter((s) => s.blocks?.length), [topic.body]);
 
+  // The header diagram is only shown when the body does not already render it.
+  const bodyHasDiagram = useMemo(
+    () =>
+      sections.some((s) =>
+        s.blocks.some((b) => b.type === "diagram" && b.diagram === topic.diagram_key),
+      ),
+    [sections, topic.diagram_key],
+  );
+
+  const showCategoryCrumb =
+    !!category && category.title !== CONTENT_TYPE_PLURAL[topic.content_type];
+
   const toc = [
     ...sections.map((s) => ({ id: s.id, title: s.title })),
     ...(Object.values(related).some((v) => v.length)
@@ -48,7 +60,7 @@ export function TopicPage({ payload }: { payload: TopicPayload }) {
           <AppLink to={CONTENT_TYPE_PATH[topic.content_type]} className="hover:text-foreground">
             {CONTENT_TYPE_PLURAL[topic.content_type]}
           </AppLink>
-          {category ? (
+          {showCategoryCrumb && category ? (
             <>
               <span>/</span>
               <AppLink to={`/c/${category.slug}`} className="hover:text-foreground">
@@ -82,7 +94,7 @@ export function TopicPage({ payload }: { payload: TopicPayload }) {
           </Callout>
         ) : null}
 
-        {hasDiagram(topic.diagram_key) ? (
+        {hasDiagram(topic.diagram_key) && !bodyHasDiagram ? (
           <div className="mt-8">
             <Diagram diagramKey={topic.diagram_key!} />
           </div>
