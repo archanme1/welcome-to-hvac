@@ -520,6 +520,16 @@ export type Database = {
       }
       is_pro: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
+      practice_catalog: {
+        Args: never
+        Returns: {
+          content_id: string
+          equipment: number
+          questions: number
+          quizzes: number
+          troubleshooting: number
+        }[]
+      }
       practice_counts: {
         Args: { _content_id: string }
         Returns: {

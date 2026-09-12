@@ -225,3 +225,24 @@ export const categoryQuery = (slug: string) =>
     queryFn: () => getCategory({ data: { slug } }),
     staleTime: 5 * 60 * 1000,
   });
+
+export type PracticeCatalogRow = {
+  content_id: string;
+  questions: number;
+  quizzes: number;
+  troubleshooting: number;
+  equipment: number;
+};
+
+/** Counts of published practice material per topic. Public: counts only, no answers. */
+export const getPracticeCatalog = createServerFn({ method: "GET" }).handler(async () => {
+  const { publicDb } = await import("./hvac.server");
+  const { data } = await publicDb().rpc("practice_catalog");
+  return (data ?? []) as PracticeCatalogRow[];
+});
+
+export const practiceCatalogQuery = queryOptions({
+  queryKey: ["hvac", "practice-catalog"],
+  queryFn: () => getPracticeCatalog(),
+  staleTime: 5 * 60 * 1000,
+});
