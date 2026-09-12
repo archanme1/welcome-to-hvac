@@ -39,7 +39,8 @@ import {
 export const Route = createFileRoute("/admin/content/$id")({ component: Editor });
 
 const DIFFICULTIES: Difficulty[] = ["beginner", "apprentice", "technician", "advanced"];
-const STATUSES: ContentStatus[] = ["draft", "published", "archived"];
+const STATUSES: ContentStatus[] = ["draft", "review", "published", "archived"];
+const LEVELS: Difficulty[] = ["beginner", "apprentice", "technician", "advanced"];
 const RELATIONSHIP_TYPES = ["related", "component-of", "related-concept", "uses-tool", "troubleshoots"];
 
 type Draft = {
