@@ -139,6 +139,8 @@ function Editor() {
       source_name: (topic as { source_name?: string | null }).source_name ?? "",
       source_url: (topic as { source_url?: string | null }).source_url ?? "",
       source_reference: (topic as { source_reference?: string | null }).source_reference ?? "",
+      next_content_id:
+        (topic as { next_content_id?: string | null }).next_content_id ?? "none",
     });
   }, [data]);
 
