@@ -69,6 +69,11 @@ function Page() {
       ) : null}
 
       <div className="mt-8 flex flex-wrap gap-2">
+        {isPro ? (
+          <Button variant="outline" size="sm" disabled={portalLoading} onClick={() => void openPortal()}>
+            {portalLoading ? "Opening…" : "Manage billing"}
+          </Button>
+        ) : null}
         {isStaff ? (
           <Button asChild variant="outline" size="sm">
             <Link to="/admin">Admin</Link>

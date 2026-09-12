@@ -11,7 +11,7 @@ export function PaymentTestModeBanner() {
   }
   if (clientToken.startsWith("pk_test_")) {
     return (
-      <div className="rounded-md border border-warning/40 bg-warning/10 px-3 py-2 text-sm">
+      <div className="rounded-md border bg-muted/50 px-3 py-2 text-sm">
         Payments are in test mode — no money changes hands. Use card 4242 4242 4242 4242 with any
         future expiry and any CVC.
       </div>
