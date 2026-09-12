@@ -105,6 +105,38 @@ function Page() {
         <p className="mt-1 text-sm text-muted-foreground">
           {isPro ? "HVAC Pro — practice, scenarios and the AI Tutor are unlocked." : "Free — documentation and diagrams."}
         </p>
+        {billing && isPro ? (
+          <dl className="mt-4 space-y-1 text-sm">
+            {billing.planInterval ? (
+              <Row
+                label="Billing"
+                value={billing.planInterval === "annual" ? "$50 per year" : "$5 per month"}
+              />
+            ) : null}
+            {billing.status === "trialing" && billing.currentPeriodEnd ? (
+              <Row label="Free trial ends" value={formatDate(billing.currentPeriodEnd)} />
+            ) : null}
+            {billing.status === "past_due" ? (
+              <Row
+                label="Payment"
+                value="Last payment failed — we're retrying your card. Access continues for now."
+              />
+            ) : null}
+            {billing.currentPeriodEnd && billing.status !== "trialing" ? (
+              <Row
+                label={
+                  billing.cancelAtPeriodEnd || billing.status === "canceled"
+                    ? "Access ends"
+                    : "Renews"
+                }
+                value={formatDate(billing.currentPeriodEnd)}
+              />
+            ) : null}
+            {billing.provider === "manual" ? (
+              <Row label="Source" value="Granted by an administrator" />
+            ) : null}
+          </dl>
+        ) : null}
         {!isPro ? (
           <Button asChild size="sm" className="mt-4">
             <Link to="/pricing">Upgrade to HVAC Pro</Link>
@@ -122,16 +154,20 @@ function Page() {
       ) : null}
 
       <div className="mt-8 flex flex-wrap gap-2">
-        {isPro ? (
+        {isPro && billing?.managed ? (
           <Button variant="outline" size="sm" disabled={portalLoading} onClick={() => void openPortal()}>
             {portalLoading ? "Opening…" : "Manage billing"}
           </Button>
         ) : null}
+        <Button variant="outline" size="sm" disabled={syncing} onClick={() => void recheck()}>
+          {syncing ? "Checking…" : "Re-check membership"}
+        </Button>
         {isStaff ? (
           <Button asChild variant="outline" size="sm">
             <Link to="/admin">Admin</Link>
           </Button>
         ) : null}
+
         <Button variant="outline" size="sm" onClick={() => void signOut()}>
           Sign out
         </Button>
