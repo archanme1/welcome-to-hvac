@@ -25,7 +25,7 @@ Keep answers focused and readable. Use short paragraphs and lists. No markdown h
 export const askTutor = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(
-    (data: { topicTitle?: string; topicSummary?: string; messages: TutorMessage[] }) => data,
+    (data: { topicTitle?: string | undefined; topicSummary?: string | undefined; messages: TutorMessage[] }) => data,
   )
   .handler(async ({ data, context }) => {
     const { data: pro } = await context.supabase.rpc("is_pro", { _user_id: context.userId });

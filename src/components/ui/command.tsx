@@ -27,7 +27,7 @@ const CommandDialog = ({
   children,
   shouldFilter,
   ...props
-}: DialogProps & { shouldFilter?: boolean }) => {
+}: DialogProps & { shouldFilter?: boolean | undefined }) => {
   return (
     <Dialog {...props}>
       <DialogContent className="overflow-hidden p-0">

@@ -9,7 +9,7 @@ export type PracticeQuestion = {
   question_type: string;
   prompt: string;
   options: { id: string; text: string }[];
-  correct_answer: unknown;
+  correct_answer: string | string[] | null;
   explanation: string;
   difficulty: Difficulty;
 };
@@ -76,10 +76,10 @@ export const recordProgress = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(
     (data: {
-      contentId?: string;
-      questionId?: string;
+      contentId?: string | undefined;
+      questionId?: string | undefined;
       event: string;
-      isCorrect?: boolean;
+      isCorrect?: boolean | undefined;
     }) => data,
   )
   .handler(async ({ data, context }) => {
