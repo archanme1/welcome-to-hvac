@@ -10,6 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AiTutorRouteImport } from './routes/ai-tutor'
+import { Route as ExpertsRouteImport } from './routes/experts'
+import { Route as CSlugRouteImport } from './routes/c.$slug'
 import { Route as ComponentsIndexRouteImport } from './routes/components.index'
 import { Route as ComponentsSlugRouteImport } from './routes/components.$slug'
 import { Route as ConceptsIndexRouteImport } from './routes/concepts.index'
@@ -26,6 +29,21 @@ import { Route as TroubleshootingSlugRouteImport } from './routes/troubleshootin
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiTutorRoute = AiTutorRouteImport.update({
+  id: '/ai-tutor',
+  path: '/ai-tutor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpertsRoute = ExpertsRouteImport.update({
+  id: '/experts',
+  path: '/experts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CSlugRoute = CSlugRouteImport.update({
+  id: '/c/$slug',
+  path: '/c/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ComponentsIndexRoute = ComponentsIndexRouteImport.update({
@@ -91,6 +109,9 @@ const TroubleshootingSlugRoute = TroubleshootingSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ai-tutor': typeof AiTutorRoute
+  '/experts': typeof ExpertsRoute
+  '/c/$slug': typeof CSlugRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
   '/equipment/$slug': typeof EquipmentSlugRoute
@@ -106,6 +127,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ai-tutor': typeof AiTutorRoute
+  '/experts': typeof ExpertsRoute
+  '/c/$slug': typeof CSlugRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
   '/equipment/$slug': typeof EquipmentSlugRoute
@@ -122,6 +146,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ai-tutor': typeof AiTutorRoute
+  '/experts': typeof ExpertsRoute
+  '/c/$slug': typeof CSlugRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
   '/equipment/$slug': typeof EquipmentSlugRoute
@@ -139,6 +166,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/ai-tutor'
+    | '/experts'
+    | '/c/$slug'
     | '/components/$slug'
     | '/concepts/$slug'
     | '/equipment/$slug'
@@ -154,6 +184,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/ai-tutor'
+    | '/experts'
+    | '/c/$slug'
     | '/components/$slug'
     | '/concepts/$slug'
     | '/equipment/$slug'
@@ -169,6 +202,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/ai-tutor'
+    | '/experts'
+    | '/c/$slug'
     | '/components/$slug'
     | '/concepts/$slug'
     | '/equipment/$slug'
@@ -185,6 +221,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AiTutorRoute: typeof AiTutorRoute
+  ExpertsRoute: typeof ExpertsRoute
+  CSlugRoute: typeof CSlugRoute
   ComponentsSlugRoute: typeof ComponentsSlugRoute
   ConceptsSlugRoute: typeof ConceptsSlugRoute
   EquipmentSlugRoute: typeof EquipmentSlugRoute
@@ -206,6 +245,27 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-tutor': {
+      id: '/ai-tutor'
+      path: '/ai-tutor'
+      fullPath: '/ai-tutor'
+      preLoaderRoute: typeof AiTutorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/experts': {
+      id: '/experts'
+      path: '/experts'
+      fullPath: '/experts'
+      preLoaderRoute: typeof ExpertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/c/$slug': {
+      id: '/c/$slug'
+      path: '/c/$slug'
+      fullPath: '/c/$slug'
+      preLoaderRoute: typeof CSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/components/': {
@@ -297,6 +357,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AiTutorRoute: AiTutorRoute,
+  ExpertsRoute: ExpertsRoute,
+  CSlugRoute: CSlugRoute,
   ComponentsSlugRoute: ComponentsSlugRoute,
   ConceptsSlugRoute: ConceptsSlugRoute,
   EquipmentSlugRoute: EquipmentSlugRoute,
