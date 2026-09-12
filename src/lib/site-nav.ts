@@ -17,9 +17,10 @@ export const SITE_NAV: NavSection[] = [
   { title: "Start Here", href: "/start-here" },
   {
     title: "HVAC Fundamentals",
-    href: "/hvac-fundamentals",
+    href: "/c/hvac-fundamentals",
     categorySlug: "hvac-fundamentals",
   },
+
   { title: "Equipment", href: "/equipment", categorySlug: "equipment" },
   { title: "Components", href: "/components", categorySlug: "components" },
   { title: "Installation", href: "/c/installation", categorySlug: "installation" },
