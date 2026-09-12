@@ -117,6 +117,67 @@ function Page() {
   );
 }
 
+function UsernameCard({ onSaved }: { onSaved: () => void }) {
+  const [value, setValue] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const save = async () => {
+    const name = normalizeUsername(value);
+    const problem = validateUsername(name);
+    if (problem) {
+      toast.error(problem);
+      return;
+    }
+    setBusy(true);
+    const available = await isUsernameAvailable(name);
+    if (available === false) {
+      setBusy(false);
+      toast.error("That username is already taken.");
+      return;
+    }
+    const { data: userData } = await supabase.auth.getUser();
+    const id = userData.user?.id;
+    if (!id) {
+      setBusy(false);
+      return;
+    }
+    const { error } = await supabase.from("profiles").update({ username: name }).eq("id", id);
+    setBusy(false);
+    if (error) {
+      toast.error(
+        error.code === "23505" ? "That username is already taken." : "Could not save your username.",
+      );
+      return;
+    }
+    toast.success("Username saved.");
+    onSaved();
+  };
+
+  return (
+    <div className="mt-6 rounded-lg border bg-card p-5">
+      <p className="text-sm font-semibold">Choose your username</p>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Your username becomes your visible identity across Welcome to HVAC. It can only be set once.
+      </p>
+      <div className="mt-4 space-y-1.5">
+        <Label htmlFor="account-username">Username</Label>
+        <Input
+          id="account-username"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          autoComplete="username"
+        />
+        <p className="text-xs text-muted-foreground">
+          3–24 characters. Letters, numbers, hyphens and underscores.
+        </p>
+      </div>
+      <Button size="sm" className="mt-4" disabled={busy} onClick={() => void save()}>
+        {busy ? "Saving…" : "Save username"}
+      </Button>
+    </div>
+  );
+}
+
 function Stat({ label, value }: { label: string; value: number | string }) {
   return (
     <div className="rounded-lg border bg-card p-4">
