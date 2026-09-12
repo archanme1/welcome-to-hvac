@@ -13,9 +13,8 @@ import { lovable } from "@/integrations/lovable/index";
 const DESC = "Sign in to Welcome to HVAC to track progress and unlock HVAC Pro.";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    next: typeof search["next"] === "string" ? (search["next"] as string) : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): { next?: string } =>
+    typeof search["next"] === "string" ? { next: search["next"] } : {},
   head: () => ({
     meta: [
       { title: "Sign in — Welcome to HVAC" },
@@ -52,7 +51,10 @@ function Page() {
     setBusy(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     void navigate({ to: destination as string });
   };
 
@@ -64,7 +66,10 @@ function Page() {
       options: { emailRedirectTo: `${window.location.origin}${destination}` },
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     toast.success("Account created. Check your email if confirmation is required.");
   };
 
@@ -72,7 +77,10 @@ function Page() {
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: `${window.location.origin}/auth${next ? `?next=${encodeURIComponent(destination)}` : ""}`,
     });
-    if (result.error) return toast.error("Google sign-in failed. Please try again.");
+    if (result.error) {
+      toast.error("Google sign-in failed. Please try again.");
+      return;
+    }
     if (result.redirected) return;
     void navigate({ to: destination as string });
   };

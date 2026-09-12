@@ -11,7 +11,7 @@ import { topicHref } from "@/lib/hvac-types";
 
 type Child = { title: string; href: string };
 
-export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
+export function SidebarNav({ onNavigate }: { onNavigate?: (() => void) | undefined }) {
   const { data } = useQuery(navigationQuery);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
@@ -69,10 +69,10 @@ function SidebarSection({
 }: {
   title: string;
   href: string;
-  badge?: string;
+  badge?: string | undefined;
   children: Child[];
   pathname: string;
-  onNavigate?: () => void;
+  onNavigate?: (() => void) | undefined;
 }) {
   const sectionActive = pathname === href || pathname.startsWith(href + "/");
   const childActive = children.some((c) => pathname === c.href);
