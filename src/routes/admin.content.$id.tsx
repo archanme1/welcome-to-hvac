@@ -552,6 +552,39 @@ function Editor() {
           </Button>
         </TabsContent>
 
+        <TabsContent value="levels" className="mt-4 space-y-6">
+          <p className="text-sm text-muted-foreground">
+            Optional alternative explanations of this topic for each learner level. A level with no
+            summary and no blocks is not saved and never shown on the public page.
+          </p>
+          {LEVELS.map((level) => {
+            const entry = levels.find((l) => l.level === level) ?? {
+              level,
+              summary: "",
+              body: [] as Section[],
+            };
+            const update = (patch: Partial<AdminTopicLevel>) =>
+              setLevels((prev) => {
+                const next = prev.filter((l) => l.level !== level);
+                return [...next, { ...entry, ...patch }];
+              });
+            return (
+              <div key={level} className="space-y-3 rounded-lg border border-border p-4">
+                <h3 className="text-sm font-semibold capitalize">{level}</h3>
+                <div>
+                  <Label className="text-xs">Summary for this level</Label>
+                  <Textarea
+                    rows={2}
+                    value={entry.summary ?? ""}
+                    onChange={(e) => update({ summary: e.target.value })}
+                  />
+                </div>
+                <BlockEditor value={entry.body} onChange={(body) => update({ body })} />
+              </div>
+            );
+          })}
+        </TabsContent>
+
         <TabsContent value="preview" className="mt-4">
           <article className="prose-hvac max-w-3xl">
             <h1 className="text-2xl font-bold tracking-tight">{draft.title || "Untitled topic"}</h1>
