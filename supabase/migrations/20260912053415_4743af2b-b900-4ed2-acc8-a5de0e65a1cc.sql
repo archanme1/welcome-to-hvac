@@ -1,0 +1,10 @@
+REVOKE EXECUTE ON FUNCTION public.set_updated_at() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.has_role(UUID, public.app_role) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.is_staff(UUID) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.is_pro(UUID) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.practice_counts(UUID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.has_role(UUID, public.app_role) TO anon, authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.is_staff(UUID) TO anon, authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.is_pro(UUID) TO anon, authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.practice_counts(UUID) TO anon, authenticated, service_role;
