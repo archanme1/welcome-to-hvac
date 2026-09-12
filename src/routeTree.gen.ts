@@ -10,33 +10,271 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AiTutorRouteImport } from './routes/ai-tutor'
+import { Route as ExpertsRouteImport } from './routes/experts'
+import { Route as PracticeRouteImport } from './routes/practice'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as SearchRouteImport } from './routes/search'
+import { Route as CSlugRouteImport } from './routes/c.$slug'
+import { Route as ComponentsIndexRouteImport } from './routes/components.index'
+import { Route as ComponentsSlugRouteImport } from './routes/components.$slug'
+import { Route as ConceptsIndexRouteImport } from './routes/concepts.index'
+import { Route as ConceptsSlugRouteImport } from './routes/concepts.$slug'
+import { Route as EquipmentIndexRouteImport } from './routes/equipment.index'
+import { Route as EquipmentSlugRouteImport } from './routes/equipment.$slug'
+import { Route as ProceduresIndexRouteImport } from './routes/procedures.index'
+import { Route as ProceduresSlugRouteImport } from './routes/procedures.$slug'
+import { Route as ToolsIndexRouteImport } from './routes/tools.index'
+import { Route as ToolsSlugRouteImport } from './routes/tools.$slug'
+import { Route as TroubleshootingIndexRouteImport } from './routes/troubleshooting.index'
+import { Route as TroubleshootingSlugRouteImport } from './routes/troubleshooting.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AiTutorRoute = AiTutorRouteImport.update({
+  id: '/ai-tutor',
+  path: '/ai-tutor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpertsRoute = ExpertsRouteImport.update({
+  id: '/experts',
+  path: '/experts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PracticeRoute = PracticeRouteImport.update({
+  id: '/practice',
+  path: '/practice',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CSlugRoute = CSlugRouteImport.update({
+  id: '/c/$slug',
+  path: '/c/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComponentsIndexRoute = ComponentsIndexRouteImport.update({
+  id: '/components/',
+  path: '/components/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComponentsSlugRoute = ComponentsSlugRouteImport.update({
+  id: '/components/$slug',
+  path: '/components/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConceptsIndexRoute = ConceptsIndexRouteImport.update({
+  id: '/concepts/',
+  path: '/concepts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConceptsSlugRoute = ConceptsSlugRouteImport.update({
+  id: '/concepts/$slug',
+  path: '/concepts/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EquipmentIndexRoute = EquipmentIndexRouteImport.update({
+  id: '/equipment/',
+  path: '/equipment/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EquipmentSlugRoute = EquipmentSlugRouteImport.update({
+  id: '/equipment/$slug',
+  path: '/equipment/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProceduresIndexRoute = ProceduresIndexRouteImport.update({
+  id: '/procedures/',
+  path: '/procedures/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProceduresSlugRoute = ProceduresSlugRouteImport.update({
+  id: '/procedures/$slug',
+  path: '/procedures/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ToolsIndexRoute = ToolsIndexRouteImport.update({
+  id: '/tools/',
+  path: '/tools/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ToolsSlugRoute = ToolsSlugRouteImport.update({
+  id: '/tools/$slug',
+  path: '/tools/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TroubleshootingIndexRoute = TroubleshootingIndexRouteImport.update({
+  id: '/troubleshooting/',
+  path: '/troubleshooting/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TroubleshootingSlugRoute = TroubleshootingSlugRouteImport.update({
+  id: '/troubleshooting/$slug',
+  path: '/troubleshooting/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ai-tutor': typeof AiTutorRoute
+  '/experts': typeof ExpertsRoute
+  '/practice': typeof PracticeRoute
+  '/pricing': typeof PricingRoute
+  '/search': typeof SearchRoute
+  '/c/$slug': typeof CSlugRoute
+  '/components/$slug': typeof ComponentsSlugRoute
+  '/concepts/$slug': typeof ConceptsSlugRoute
+  '/equipment/$slug': typeof EquipmentSlugRoute
+  '/procedures/$slug': typeof ProceduresSlugRoute
+  '/tools/$slug': typeof ToolsSlugRoute
+  '/troubleshooting/$slug': typeof TroubleshootingSlugRoute
+  '/components/': typeof ComponentsIndexRoute
+  '/concepts/': typeof ConceptsIndexRoute
+  '/equipment/': typeof EquipmentIndexRoute
+  '/procedures/': typeof ProceduresIndexRoute
+  '/tools/': typeof ToolsIndexRoute
+  '/troubleshooting/': typeof TroubleshootingIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ai-tutor': typeof AiTutorRoute
+  '/experts': typeof ExpertsRoute
+  '/practice': typeof PracticeRoute
+  '/pricing': typeof PricingRoute
+  '/search': typeof SearchRoute
+  '/c/$slug': typeof CSlugRoute
+  '/components/$slug': typeof ComponentsSlugRoute
+  '/concepts/$slug': typeof ConceptsSlugRoute
+  '/equipment/$slug': typeof EquipmentSlugRoute
+  '/procedures/$slug': typeof ProceduresSlugRoute
+  '/tools/$slug': typeof ToolsSlugRoute
+  '/troubleshooting/$slug': typeof TroubleshootingSlugRoute
+  '/components': typeof ComponentsIndexRoute
+  '/concepts': typeof ConceptsIndexRoute
+  '/equipment': typeof EquipmentIndexRoute
+  '/procedures': typeof ProceduresIndexRoute
+  '/tools': typeof ToolsIndexRoute
+  '/troubleshooting': typeof TroubleshootingIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ai-tutor': typeof AiTutorRoute
+  '/experts': typeof ExpertsRoute
+  '/practice': typeof PracticeRoute
+  '/pricing': typeof PricingRoute
+  '/search': typeof SearchRoute
+  '/c/$slug': typeof CSlugRoute
+  '/components/$slug': typeof ComponentsSlugRoute
+  '/concepts/$slug': typeof ConceptsSlugRoute
+  '/equipment/$slug': typeof EquipmentSlugRoute
+  '/procedures/$slug': typeof ProceduresSlugRoute
+  '/tools/$slug': typeof ToolsSlugRoute
+  '/troubleshooting/$slug': typeof TroubleshootingSlugRoute
+  '/components/': typeof ComponentsIndexRoute
+  '/concepts/': typeof ConceptsIndexRoute
+  '/equipment/': typeof EquipmentIndexRoute
+  '/procedures/': typeof ProceduresIndexRoute
+  '/tools/': typeof ToolsIndexRoute
+  '/troubleshooting/': typeof TroubleshootingIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/ai-tutor'
+    | '/experts'
+    | '/practice'
+    | '/pricing'
+    | '/search'
+    | '/c/$slug'
+    | '/components/$slug'
+    | '/concepts/$slug'
+    | '/equipment/$slug'
+    | '/procedures/$slug'
+    | '/tools/$slug'
+    | '/troubleshooting/$slug'
+    | '/components/'
+    | '/concepts/'
+    | '/equipment/'
+    | '/procedures/'
+    | '/tools/'
+    | '/troubleshooting/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/ai-tutor'
+    | '/experts'
+    | '/practice'
+    | '/pricing'
+    | '/search'
+    | '/c/$slug'
+    | '/components/$slug'
+    | '/concepts/$slug'
+    | '/equipment/$slug'
+    | '/procedures/$slug'
+    | '/tools/$slug'
+    | '/troubleshooting/$slug'
+    | '/components'
+    | '/concepts'
+    | '/equipment'
+    | '/procedures'
+    | '/tools'
+    | '/troubleshooting'
+  id:
+    | '__root__'
+    | '/'
+    | '/ai-tutor'
+    | '/experts'
+    | '/practice'
+    | '/pricing'
+    | '/search'
+    | '/c/$slug'
+    | '/components/$slug'
+    | '/concepts/$slug'
+    | '/equipment/$slug'
+    | '/procedures/$slug'
+    | '/tools/$slug'
+    | '/troubleshooting/$slug'
+    | '/components/'
+    | '/concepts/'
+    | '/equipment/'
+    | '/procedures/'
+    | '/tools/'
+    | '/troubleshooting/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AiTutorRoute: typeof AiTutorRoute
+  ExpertsRoute: typeof ExpertsRoute
+  PracticeRoute: typeof PracticeRoute
+  PricingRoute: typeof PricingRoute
+  SearchRoute: typeof SearchRoute
+  CSlugRoute: typeof CSlugRoute
+  ComponentsSlugRoute: typeof ComponentsSlugRoute
+  ConceptsSlugRoute: typeof ConceptsSlugRoute
+  EquipmentSlugRoute: typeof EquipmentSlugRoute
+  ProceduresSlugRoute: typeof ProceduresSlugRoute
+  ToolsSlugRoute: typeof ToolsSlugRoute
+  TroubleshootingSlugRoute: typeof TroubleshootingSlugRoute
+  ComponentsIndexRoute: typeof ComponentsIndexRoute
+  ConceptsIndexRoute: typeof ConceptsIndexRoute
+  EquipmentIndexRoute: typeof EquipmentIndexRoute
+  ProceduresIndexRoute: typeof ProceduresIndexRoute
+  ToolsIndexRoute: typeof ToolsIndexRoute
+  TroubleshootingIndexRoute: typeof TroubleshootingIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +286,155 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ai-tutor': {
+      id: '/ai-tutor'
+      path: '/ai-tutor'
+      fullPath: '/ai-tutor'
+      preLoaderRoute: typeof AiTutorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/experts': {
+      id: '/experts'
+      path: '/experts'
+      fullPath: '/experts'
+      preLoaderRoute: typeof ExpertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/practice': {
+      id: '/practice'
+      path: '/practice'
+      fullPath: '/practice'
+      preLoaderRoute: typeof PracticeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/c/$slug': {
+      id: '/c/$slug'
+      path: '/c/$slug'
+      fullPath: '/c/$slug'
+      preLoaderRoute: typeof CSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/components/': {
+      id: '/components/'
+      path: '/components'
+      fullPath: '/components/'
+      preLoaderRoute: typeof ComponentsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/components/$slug': {
+      id: '/components/$slug'
+      path: '/components/$slug'
+      fullPath: '/components/$slug'
+      preLoaderRoute: typeof ComponentsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/concepts/': {
+      id: '/concepts/'
+      path: '/concepts'
+      fullPath: '/concepts/'
+      preLoaderRoute: typeof ConceptsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/concepts/$slug': {
+      id: '/concepts/$slug'
+      path: '/concepts/$slug'
+      fullPath: '/concepts/$slug'
+      preLoaderRoute: typeof ConceptsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/equipment/': {
+      id: '/equipment/'
+      path: '/equipment'
+      fullPath: '/equipment/'
+      preLoaderRoute: typeof EquipmentIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/equipment/$slug': {
+      id: '/equipment/$slug'
+      path: '/equipment/$slug'
+      fullPath: '/equipment/$slug'
+      preLoaderRoute: typeof EquipmentSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/procedures/': {
+      id: '/procedures/'
+      path: '/procedures'
+      fullPath: '/procedures/'
+      preLoaderRoute: typeof ProceduresIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/procedures/$slug': {
+      id: '/procedures/$slug'
+      path: '/procedures/$slug'
+      fullPath: '/procedures/$slug'
+      preLoaderRoute: typeof ProceduresSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tools/': {
+      id: '/tools/'
+      path: '/tools'
+      fullPath: '/tools/'
+      preLoaderRoute: typeof ToolsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tools/$slug': {
+      id: '/tools/$slug'
+      path: '/tools/$slug'
+      fullPath: '/tools/$slug'
+      preLoaderRoute: typeof ToolsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/troubleshooting/': {
+      id: '/troubleshooting/'
+      path: '/troubleshooting'
+      fullPath: '/troubleshooting/'
+      preLoaderRoute: typeof TroubleshootingIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/troubleshooting/$slug': {
+      id: '/troubleshooting/$slug'
+      path: '/troubleshooting/$slug'
+      fullPath: '/troubleshooting/$slug'
+      preLoaderRoute: typeof TroubleshootingSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AiTutorRoute: AiTutorRoute,
+  ExpertsRoute: ExpertsRoute,
+  PracticeRoute: PracticeRoute,
+  PricingRoute: PricingRoute,
+  SearchRoute: SearchRoute,
+  CSlugRoute: CSlugRoute,
+  ComponentsSlugRoute: ComponentsSlugRoute,
+  ConceptsSlugRoute: ConceptsSlugRoute,
+  EquipmentSlugRoute: EquipmentSlugRoute,
+  ProceduresSlugRoute: ProceduresSlugRoute,
+  ToolsSlugRoute: ToolsSlugRoute,
+  TroubleshootingSlugRoute: TroubleshootingSlugRoute,
+  ComponentsIndexRoute: ComponentsIndexRoute,
+  ConceptsIndexRoute: ConceptsIndexRoute,
+  EquipmentIndexRoute: EquipmentIndexRoute,
+  ProceduresIndexRoute: ProceduresIndexRoute,
+  ToolsIndexRoute: ToolsIndexRoute,
+  TroubleshootingIndexRoute: TroubleshootingIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
