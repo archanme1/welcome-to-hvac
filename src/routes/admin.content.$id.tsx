@@ -86,6 +86,7 @@ const emptyDraft: Draft = {
   source_name: "",
   source_url: "",
   source_reference: "",
+  next_content_id: "none",
 };
 
 function slugify(text: string) {
