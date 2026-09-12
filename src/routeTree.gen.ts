@@ -17,6 +17,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ExpertsRouteImport } from './routes/experts'
 import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as StartHereRouteImport } from './routes/start-here'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
@@ -87,6 +88,11 @@ const PracticeRoute = PracticeRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SearchRoute = SearchRouteImport.update({
@@ -255,6 +261,7 @@ export interface FileRoutesByFullPath {
   '/experts': typeof ExpertsRoute
   '/practice': typeof PracticeRoute
   '/pricing': typeof PricingRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/start-here': typeof StartHereRoute
   '/admin/categories': typeof AdminCategoriesRoute
@@ -295,6 +302,7 @@ export interface FileRoutesByTo {
   '/experts': typeof ExpertsRoute
   '/practice': typeof PracticeRoute
   '/pricing': typeof PricingRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/start-here': typeof StartHereRoute
   '/admin/categories': typeof AdminCategoriesRoute
@@ -337,6 +345,7 @@ export interface FileRoutesById {
   '/experts': typeof ExpertsRoute
   '/practice': typeof PracticeRoute
   '/pricing': typeof PricingRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/start-here': typeof StartHereRoute
   '/admin/categories': typeof AdminCategoriesRoute
@@ -380,6 +389,7 @@ export interface FileRouteTypes {
     | '/experts'
     | '/practice'
     | '/pricing'
+    | '/reset-password'
     | '/search'
     | '/start-here'
     | '/admin/categories'
@@ -420,6 +430,7 @@ export interface FileRouteTypes {
     | '/experts'
     | '/practice'
     | '/pricing'
+    | '/reset-password'
     | '/search'
     | '/start-here'
     | '/admin/categories'
@@ -461,6 +472,7 @@ export interface FileRouteTypes {
     | '/experts'
     | '/practice'
     | '/pricing'
+    | '/reset-password'
     | '/search'
     | '/start-here'
     | '/admin/categories'
@@ -503,6 +515,7 @@ export interface RootRouteChildren {
   ExpertsRoute: typeof ExpertsRoute
   PracticeRoute: typeof PracticeRoute
   PricingRoute: typeof PricingRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SearchRoute: typeof SearchRoute
   StartHereRoute: typeof StartHereRoute
   CSlugRoute: typeof CSlugRoute
@@ -583,6 +596,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/search': {
@@ -840,6 +860,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExpertsRoute: ExpertsRoute,
   PracticeRoute: PracticeRoute,
   PricingRoute: PricingRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SearchRoute: SearchRoute,
   StartHereRoute: StartHereRoute,
   CSlugRoute: CSlugRoute,

@@ -9,6 +9,8 @@ type AuthValue = {
   loading: boolean;
   isPro: boolean;
   isStaff: boolean;
+  username: string | null;
+  refreshProfile: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthValue>({
@@ -17,6 +19,8 @@ const AuthContext = createContext<AuthValue>({
   loading: true,
   isPro: false,
   isStaff: false,
+  username: null,
+  refreshProfile: async () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -24,6 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isPro, setIsPro] = useState(false);
   const [isStaff, setIsStaff] = useState(false);
+  const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
