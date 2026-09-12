@@ -10,7 +10,11 @@ import { useAuth } from "@/hooks/use-auth";
 import { isUsernameAvailable, normalizeUsername, validateUsername } from "@/lib/username";
 import { supabase } from "@/integrations/supabase/client";
 import { progressQuery } from "@/lib/practice.functions";
-import { createPortalSession } from "@/lib/payments.functions";
+import {
+  billingSummaryQuery,
+  createPortalSession,
+  syncMySubscription,
+} from "@/lib/payments.functions";
 import { getStripeEnvironment, paymentsConfigured } from "@/lib/stripe";
 
 export const Route = createFileRoute("/account")({
@@ -235,6 +239,23 @@ function UsernameCard({ onSaved }: { onSaved: () => void }) {
       </Button>
     </div>
   );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex flex-wrap justify-between gap-2">
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="font-medium">{value}</dd>
+    </div>
+  );
+}
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 
 function Stat({ label, value }: { label: string; value: number | string }) {
