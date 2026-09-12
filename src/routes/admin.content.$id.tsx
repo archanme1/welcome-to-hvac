@@ -175,12 +175,15 @@ function Editor() {
           source_name: draft.source_name || null,
           source_url: draft.source_url || null,
           source_reference: draft.source_reference || null,
+          next_content_id: draft.next_content_id === "none" ? null : draft.next_content_id,
           relationships: draft.relationships,
         },
       });
+      await adminSaveTopicLevels({ data: { contentId: result.id, levels } });
       if (status) setDraft((d) => ({ ...d, status }));
       toast.success("Saved.");
       await qc.invalidateQueries({ queryKey: ["admin"] });
+      await qc.invalidateQueries({ queryKey: ["hvac"] });
       if (isNew) void navigate({ to: "/admin/content/$id", params: { id: result.id } });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not save this topic.");
