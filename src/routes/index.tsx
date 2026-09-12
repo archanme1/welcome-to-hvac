@@ -65,7 +65,9 @@ function Home() {
             <Link to="/start-here">Start here</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link to="/search">Search the reference</Link>
+            <Link to="/search" search={{ q: "", kind: "all", page: 1 }}>
+              Search the reference
+            </Link>
           </Button>
           <Button asChild variant="ghost">
             <Link to="/pricing">HVAC Pro — $5/mo</Link>
