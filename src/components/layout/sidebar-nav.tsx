@@ -81,8 +81,9 @@ function SidebarSection({
   return (
     <div>
       <div className="flex items-center">
-        <Link
+        <AppLink
           to={href}
+
           onClick={onNavigate}
           className={cn(
             "flex-1 rounded-md px-2 py-1.5 font-medium transition-colors",
@@ -114,8 +115,9 @@ function SidebarSection({
         <ul className="ml-3 mt-0.5 space-y-0.5 border-l pl-3">
           {children.map((child) => (
             <li key={child.href}>
-              <Link
+              <AppLink
                 to={child.href}
+
                 onClick={onNavigate}
                 className={cn(
                   "block rounded-md px-2 py-1 text-[0.8125rem] transition-colors",
