@@ -21,6 +21,7 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as StartHereRouteImport } from './routes/start-here'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
+import { Route as AdminPracticeRouteImport } from './routes/admin.practice'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as CSlugRouteImport } from './routes/c.$slug'
 import { Route as ComponentsIndexRouteImport } from './routes/components.index'
@@ -96,6 +97,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
   id: '/categories',
   path: '/categories',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPracticeRoute = AdminPracticeRouteImport.update({
+  id: '/practice',
+  path: '/practice',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
@@ -191,6 +197,7 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/start-here': typeof StartHereRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/practice': typeof AdminPracticeRoute
   '/admin/users': typeof AdminUsersRoute
   '/c/$slug': typeof CSlugRoute
   '/components/$slug': typeof ComponentsSlugRoute
@@ -220,6 +227,7 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/start-here': typeof StartHereRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/practice': typeof AdminPracticeRoute
   '/admin/users': typeof AdminUsersRoute
   '/c/$slug': typeof CSlugRoute
   '/components/$slug': typeof ComponentsSlugRoute
@@ -251,6 +259,7 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/start-here': typeof StartHereRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/practice': typeof AdminPracticeRoute
   '/admin/users': typeof AdminUsersRoute
   '/c/$slug': typeof CSlugRoute
   '/components/$slug': typeof ComponentsSlugRoute
@@ -283,6 +292,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/start-here'
     | '/admin/categories'
+    | '/admin/practice'
     | '/admin/users'
     | '/c/$slug'
     | '/components/$slug'
@@ -312,6 +322,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/start-here'
     | '/admin/categories'
+    | '/admin/practice'
     | '/admin/users'
     | '/c/$slug'
     | '/components/$slug'
@@ -342,6 +353,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/start-here'
     | '/admin/categories'
+    | '/admin/practice'
     | '/admin/users'
     | '/c/$slug'
     | '/components/$slug'
@@ -473,6 +485,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCategoriesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/practice': {
+      id: '/admin/practice'
+      path: '/practice'
+      fullPath: '/admin/practice'
+      preLoaderRoute: typeof AdminPracticeRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/users': {
       id: '/admin/users'
       path: '/users'
@@ -590,6 +609,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminCategoriesRoute: typeof AdminCategoriesRoute
+  AdminPracticeRoute: typeof AdminPracticeRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminContentIdRoute: typeof AdminContentIdRoute
@@ -598,6 +618,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminCategoriesRoute: AdminCategoriesRoute,
+  AdminPracticeRoute: AdminPracticeRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminContentIdRoute: AdminContentIdRoute,
