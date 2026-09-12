@@ -31,8 +31,12 @@ import { Route as ConceptsIndexRouteImport } from './routes/concepts.index'
 import { Route as ConceptsSlugRouteImport } from './routes/concepts.$slug'
 import { Route as EquipmentIndexRouteImport } from './routes/equipment.index'
 import { Route as EquipmentSlugRouteImport } from './routes/equipment.$slug'
+import { Route as PathsIndexRouteImport } from './routes/paths.index'
+import { Route as PathsSlugRouteImport } from './routes/paths.$slug'
 import { Route as ProceduresIndexRouteImport } from './routes/procedures.index'
 import { Route as ProceduresSlugRouteImport } from './routes/procedures.$slug'
+import { Route as SymptomsIndexRouteImport } from './routes/symptoms.index'
+import { Route as SymptomsSlugRouteImport } from './routes/symptoms.$slug'
 import { Route as ToolsIndexRouteImport } from './routes/tools.index'
 import { Route as ToolsSlugRouteImport } from './routes/tools.$slug'
 import { Route as TroubleshootingIndexRouteImport } from './routes/troubleshooting.index'
@@ -151,6 +155,16 @@ const EquipmentSlugRoute = EquipmentSlugRouteImport.update({
   path: '/equipment/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PathsIndexRoute = PathsIndexRouteImport.update({
+  id: '/paths/',
+  path: '/paths/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PathsSlugRoute = PathsSlugRouteImport.update({
+  id: '/paths/$slug',
+  path: '/paths/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProceduresIndexRoute = ProceduresIndexRouteImport.update({
   id: '/procedures/',
   path: '/procedures/',
@@ -159,6 +173,16 @@ const ProceduresIndexRoute = ProceduresIndexRouteImport.update({
 const ProceduresSlugRoute = ProceduresSlugRouteImport.update({
   id: '/procedures/$slug',
   path: '/procedures/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SymptomsIndexRoute = SymptomsIndexRouteImport.update({
+  id: '/symptoms/',
+  path: '/symptoms/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SymptomsSlugRoute = SymptomsSlugRouteImport.update({
+  id: '/symptoms/$slug',
+  path: '/symptoms/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ToolsIndexRoute = ToolsIndexRouteImport.update({
@@ -217,14 +241,18 @@ export interface FileRoutesByFullPath {
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
   '/equipment/$slug': typeof EquipmentSlugRoute
+  '/paths/$slug': typeof PathsSlugRoute
   '/procedures/$slug': typeof ProceduresSlugRoute
+  '/symptoms/$slug': typeof SymptomsSlugRoute
   '/tools/$slug': typeof ToolsSlugRoute
   '/troubleshooting/$slug': typeof TroubleshootingSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/components/': typeof ComponentsIndexRoute
   '/concepts/': typeof ConceptsIndexRoute
   '/equipment/': typeof EquipmentIndexRoute
+  '/paths/': typeof PathsIndexRoute
   '/procedures/': typeof ProceduresIndexRoute
+  '/symptoms/': typeof SymptomsIndexRoute
   '/tools/': typeof ToolsIndexRoute
   '/troubleshooting/': typeof TroubleshootingIndexRoute
   '/admin/content/$id': typeof AdminContentIdRoute
@@ -249,14 +277,18 @@ export interface FileRoutesByTo {
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
   '/equipment/$slug': typeof EquipmentSlugRoute
+  '/paths/$slug': typeof PathsSlugRoute
   '/procedures/$slug': typeof ProceduresSlugRoute
+  '/symptoms/$slug': typeof SymptomsSlugRoute
   '/tools/$slug': typeof ToolsSlugRoute
   '/troubleshooting/$slug': typeof TroubleshootingSlugRoute
   '/admin': typeof AdminIndexRoute
   '/components': typeof ComponentsIndexRoute
   '/concepts': typeof ConceptsIndexRoute
   '/equipment': typeof EquipmentIndexRoute
+  '/paths': typeof PathsIndexRoute
   '/procedures': typeof ProceduresIndexRoute
+  '/symptoms': typeof SymptomsIndexRoute
   '/tools': typeof ToolsIndexRoute
   '/troubleshooting': typeof TroubleshootingIndexRoute
   '/admin/content/$id': typeof AdminContentIdRoute
@@ -283,14 +315,18 @@ export interface FileRoutesById {
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
   '/equipment/$slug': typeof EquipmentSlugRoute
+  '/paths/$slug': typeof PathsSlugRoute
   '/procedures/$slug': typeof ProceduresSlugRoute
+  '/symptoms/$slug': typeof SymptomsSlugRoute
   '/tools/$slug': typeof ToolsSlugRoute
   '/troubleshooting/$slug': typeof TroubleshootingSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/components/': typeof ComponentsIndexRoute
   '/concepts/': typeof ConceptsIndexRoute
   '/equipment/': typeof EquipmentIndexRoute
+  '/paths/': typeof PathsIndexRoute
   '/procedures/': typeof ProceduresIndexRoute
+  '/symptoms/': typeof SymptomsIndexRoute
   '/tools/': typeof ToolsIndexRoute
   '/troubleshooting/': typeof TroubleshootingIndexRoute
   '/admin/content/$id': typeof AdminContentIdRoute
@@ -318,14 +354,18 @@ export interface FileRouteTypes {
     | '/components/$slug'
     | '/concepts/$slug'
     | '/equipment/$slug'
+    | '/paths/$slug'
     | '/procedures/$slug'
+    | '/symptoms/$slug'
     | '/tools/$slug'
     | '/troubleshooting/$slug'
     | '/admin/'
     | '/components/'
     | '/concepts/'
     | '/equipment/'
+    | '/paths/'
     | '/procedures/'
+    | '/symptoms/'
     | '/tools/'
     | '/troubleshooting/'
     | '/admin/content/$id'
@@ -350,14 +390,18 @@ export interface FileRouteTypes {
     | '/components/$slug'
     | '/concepts/$slug'
     | '/equipment/$slug'
+    | '/paths/$slug'
     | '/procedures/$slug'
+    | '/symptoms/$slug'
     | '/tools/$slug'
     | '/troubleshooting/$slug'
     | '/admin'
     | '/components'
     | '/concepts'
     | '/equipment'
+    | '/paths'
     | '/procedures'
+    | '/symptoms'
     | '/tools'
     | '/troubleshooting'
     | '/admin/content/$id'
@@ -383,14 +427,18 @@ export interface FileRouteTypes {
     | '/components/$slug'
     | '/concepts/$slug'
     | '/equipment/$slug'
+    | '/paths/$slug'
     | '/procedures/$slug'
+    | '/symptoms/$slug'
     | '/tools/$slug'
     | '/troubleshooting/$slug'
     | '/admin/'
     | '/components/'
     | '/concepts/'
     | '/equipment/'
+    | '/paths/'
     | '/procedures/'
+    | '/symptoms/'
     | '/tools/'
     | '/troubleshooting/'
     | '/admin/content/$id'
@@ -414,13 +462,17 @@ export interface RootRouteChildren {
   ComponentsSlugRoute: typeof ComponentsSlugRoute
   ConceptsSlugRoute: typeof ConceptsSlugRoute
   EquipmentSlugRoute: typeof EquipmentSlugRoute
+  PathsSlugRoute: typeof PathsSlugRoute
   ProceduresSlugRoute: typeof ProceduresSlugRoute
+  SymptomsSlugRoute: typeof SymptomsSlugRoute
   ToolsSlugRoute: typeof ToolsSlugRoute
   TroubleshootingSlugRoute: typeof TroubleshootingSlugRoute
   ComponentsIndexRoute: typeof ComponentsIndexRoute
   ConceptsIndexRoute: typeof ConceptsIndexRoute
   EquipmentIndexRoute: typeof EquipmentIndexRoute
+  PathsIndexRoute: typeof PathsIndexRoute
   ProceduresIndexRoute: typeof ProceduresIndexRoute
+  SymptomsIndexRoute: typeof SymptomsIndexRoute
   ToolsIndexRoute: typeof ToolsIndexRoute
   TroubleshootingIndexRoute: typeof TroubleshootingIndexRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -582,6 +634,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EquipmentSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/paths/': {
+      id: '/paths/'
+      path: '/paths'
+      fullPath: '/paths/'
+      preLoaderRoute: typeof PathsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/paths/$slug': {
+      id: '/paths/$slug'
+      path: '/paths/$slug'
+      fullPath: '/paths/$slug'
+      preLoaderRoute: typeof PathsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/procedures/': {
       id: '/procedures/'
       path: '/procedures'
@@ -594,6 +660,20 @@ declare module '@tanstack/react-router' {
       path: '/procedures/$slug'
       fullPath: '/procedures/$slug'
       preLoaderRoute: typeof ProceduresSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/symptoms/': {
+      id: '/symptoms/'
+      path: '/symptoms'
+      fullPath: '/symptoms/'
+      preLoaderRoute: typeof SymptomsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/symptoms/$slug': {
+      id: '/symptoms/$slug'
+      path: '/symptoms/$slug'
+      fullPath: '/symptoms/$slug'
+      preLoaderRoute: typeof SymptomsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tools/': {
@@ -684,13 +764,17 @@ const rootRouteChildren: RootRouteChildren = {
   ComponentsSlugRoute: ComponentsSlugRoute,
   ConceptsSlugRoute: ConceptsSlugRoute,
   EquipmentSlugRoute: EquipmentSlugRoute,
+  PathsSlugRoute: PathsSlugRoute,
   ProceduresSlugRoute: ProceduresSlugRoute,
+  SymptomsSlugRoute: SymptomsSlugRoute,
   ToolsSlugRoute: ToolsSlugRoute,
   TroubleshootingSlugRoute: TroubleshootingSlugRoute,
   ComponentsIndexRoute: ComponentsIndexRoute,
   ConceptsIndexRoute: ConceptsIndexRoute,
   EquipmentIndexRoute: EquipmentIndexRoute,
+  PathsIndexRoute: PathsIndexRoute,
   ProceduresIndexRoute: ProceduresIndexRoute,
+  SymptomsIndexRoute: SymptomsIndexRoute,
   ToolsIndexRoute: ToolsIndexRoute,
   TroubleshootingIndexRoute: TroubleshootingIndexRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
