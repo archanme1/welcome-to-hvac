@@ -70,23 +70,44 @@ function Page() {
         </div>
       ) : null}
 
-      <h2 className="mt-10 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+      <div className="mt-8 flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted-foreground">
+        <span>{totals.questions} questions</span>
+        <span>{totals.quizzes} quizzes</span>
+        <span>{totals.scenarios} scenarios</span>
+        <span>{topics.length} topics</span>
+      </div>
+
+      <h2 className="mt-8 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
         Practice by topic
       </h2>
       <ul className="mt-3 divide-y rounded-lg border">
-        {topics.map((topic) => (
-          <li key={topic.id}>
-            <AppLink
-              to={`${topicHref(topic.content_type, topic.slug)}#practice`}
-              className="flex items-center justify-between gap-3 px-4 py-3 transition-colors hover:bg-accent/50"
-            >
-              <span className="text-sm font-medium">{topic.title}</span>
-              <span className="text-xs text-muted-foreground">
-                {CONTENT_TYPE_LABEL[topic.content_type]}
-              </span>
-            </AppLink>
-          </li>
-        ))}
+        {topics.map((topic) => {
+          const row = byId.get(topic.id)!;
+          const bits = [
+            row.questions ? `${row.questions} questions` : null,
+            row.quizzes ? "quiz" : null,
+            row.troubleshooting + row.equipment
+              ? `${row.troubleshooting + row.equipment} scenarios`
+              : null,
+          ].filter(Boolean);
+          return (
+            <li key={topic.id}>
+              <AppLink
+                to={`${topicHref(topic.content_type, topic.slug)}#practice`}
+                className="flex items-center justify-between gap-3 px-4 py-3 transition-colors hover:bg-accent/50"
+              >
+                <span className="min-w-0">
+                  <span className="block truncate text-sm font-medium">{topic.title}</span>
+                  <span className="mt-0.5 block text-xs text-muted-foreground">
+                    {CONTENT_TYPE_LABEL[topic.content_type]} · {bits.join(" · ")}
+                  </span>
+                </span>
+                {!isPro ? <Lock className="h-3.5 w-3.5 shrink-0 text-muted-foreground" /> : null}
+              </AppLink>
+            </li>
+          );
+        })}
+
         {topics.length === 0 ? (
           <li className="px-4 py-6 text-sm text-muted-foreground">
             No practice topics published yet.
