@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as AiTutorRouteImport } from './routes/ai-tutor'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ExpertsRouteImport } from './routes/experts'
 import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as PricingRouteImport } from './routes/pricing'
@@ -34,9 +36,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AiTutorRoute = AiTutorRouteImport.update({
   id: '/ai-tutor',
   path: '/ai-tutor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExpertsRoute = ExpertsRouteImport.update({
@@ -127,7 +139,9 @@ const TroubleshootingSlugRoute = TroubleshootingSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/ai-tutor': typeof AiTutorRoute
+  '/auth': typeof AuthRoute
   '/experts': typeof ExpertsRoute
   '/practice': typeof PracticeRoute
   '/pricing': typeof PricingRoute
@@ -148,7 +162,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/ai-tutor': typeof AiTutorRoute
+  '/auth': typeof AuthRoute
   '/experts': typeof ExpertsRoute
   '/practice': typeof PracticeRoute
   '/pricing': typeof PricingRoute
@@ -170,7 +186,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/ai-tutor': typeof AiTutorRoute
+  '/auth': typeof AuthRoute
   '/experts': typeof ExpertsRoute
   '/practice': typeof PracticeRoute
   '/pricing': typeof PricingRoute
@@ -193,7 +211,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account'
     | '/ai-tutor'
+    | '/auth'
     | '/experts'
     | '/practice'
     | '/pricing'
@@ -214,7 +234,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account'
     | '/ai-tutor'
+    | '/auth'
     | '/experts'
     | '/practice'
     | '/pricing'
@@ -235,7 +257,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/account'
     | '/ai-tutor'
+    | '/auth'
     | '/experts'
     | '/practice'
     | '/pricing'
@@ -257,7 +281,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRoute: typeof AccountRoute
   AiTutorRoute: typeof AiTutorRoute
+  AuthRoute: typeof AuthRoute
   ExpertsRoute: typeof ExpertsRoute
   PracticeRoute: typeof PracticeRoute
   PricingRoute: typeof PricingRoute
@@ -286,11 +312,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ai-tutor': {
       id: '/ai-tutor'
       path: '/ai-tutor'
       fullPath: '/ai-tutor'
       preLoaderRoute: typeof AiTutorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/experts': {
@@ -417,7 +457,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRoute: AccountRoute,
   AiTutorRoute: AiTutorRoute,
+  AuthRoute: AuthRoute,
   ExpertsRoute: ExpertsRoute,
   PracticeRoute: PracticeRoute,
   PricingRoute: PricingRoute,
