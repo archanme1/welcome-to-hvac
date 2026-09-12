@@ -351,10 +351,11 @@ export const adminListPractice = createServerFn({ method: "GET" })
       db.from("scenarios").select("*").eq("content_id", data.contentId).order("created_at"),
     ]);
     return {
-      questions: questions.data ?? [],
-      quizzes: quizzes.data ?? [],
-      scenarios: scenarios.data ?? [],
+      questions: (questions.data ?? []) as AdminQuestionRow[],
+      quizzes: (quizzes.data ?? []) as AdminQuizRow[],
+      scenarios: (scenarios.data ?? []) as AdminScenarioRow[],
     };
+
   });
 
 export const adminPracticeQuery = (contentId: string, enabled: boolean) =>
