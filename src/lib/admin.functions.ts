@@ -82,6 +82,9 @@ export const adminOverview = createServerFn({ method: "GET" })
       questions,
       quizzes,
       scenarios,
+      symptoms,
+      paths,
+      trees,
       recent: (recent ?? []) as {
         id: string;
         title: string;
