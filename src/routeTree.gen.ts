@@ -19,6 +19,10 @@ import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as StartHereRouteImport } from './routes/start-here'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
+import { Route as AdminContentRouteImport } from './routes/admin.content'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as CSlugRouteImport } from './routes/c.$slug'
 import { Route as ComponentsIndexRouteImport } from './routes/components.index'
 import { Route as ComponentsSlugRouteImport } from './routes/components.$slug'
@@ -82,6 +86,26 @@ const StartHereRoute = StartHereRouteImport.update({
   id: '/start-here',
   path: '/start-here',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContentRoute = AdminContentRouteImport.update({
+  id: '/content',
+  path: '/content',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
 } as any)
 const CSlugRoute = CSlugRouteImport.update({
   id: '/c/$slug',
@@ -152,7 +176,7 @@ const TroubleshootingSlugRoute = TroubleshootingSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/ai-tutor': typeof AiTutorRoute
   '/auth': typeof AuthRoute
   '/experts': typeof ExpertsRoute
@@ -160,6 +184,9 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/search': typeof SearchRoute
   '/start-here': typeof StartHereRoute
+  '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/content': typeof AdminContentRoute
+  '/admin/users': typeof AdminUsersRoute
   '/c/$slug': typeof CSlugRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
@@ -167,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/procedures/$slug': typeof ProceduresSlugRoute
   '/tools/$slug': typeof ToolsSlugRoute
   '/troubleshooting/$slug': typeof TroubleshootingSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/components/': typeof ComponentsIndexRoute
   '/concepts/': typeof ConceptsIndexRoute
   '/equipment/': typeof EquipmentIndexRoute
@@ -177,7 +205,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
-  '/admin': typeof AdminRoute
   '/ai-tutor': typeof AiTutorRoute
   '/auth': typeof AuthRoute
   '/experts': typeof ExpertsRoute
@@ -185,6 +212,9 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/search': typeof SearchRoute
   '/start-here': typeof StartHereRoute
+  '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/content': typeof AdminContentRoute
+  '/admin/users': typeof AdminUsersRoute
   '/c/$slug': typeof CSlugRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
@@ -192,6 +222,7 @@ export interface FileRoutesByTo {
   '/procedures/$slug': typeof ProceduresSlugRoute
   '/tools/$slug': typeof ToolsSlugRoute
   '/troubleshooting/$slug': typeof TroubleshootingSlugRoute
+  '/admin': typeof AdminIndexRoute
   '/components': typeof ComponentsIndexRoute
   '/concepts': typeof ConceptsIndexRoute
   '/equipment': typeof EquipmentIndexRoute
@@ -203,7 +234,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/ai-tutor': typeof AiTutorRoute
   '/auth': typeof AuthRoute
   '/experts': typeof ExpertsRoute
@@ -211,6 +242,9 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/search': typeof SearchRoute
   '/start-here': typeof StartHereRoute
+  '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/content': typeof AdminContentRoute
+  '/admin/users': typeof AdminUsersRoute
   '/c/$slug': typeof CSlugRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
@@ -218,6 +252,7 @@ export interface FileRoutesById {
   '/procedures/$slug': typeof ProceduresSlugRoute
   '/tools/$slug': typeof ToolsSlugRoute
   '/troubleshooting/$slug': typeof TroubleshootingSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/components/': typeof ComponentsIndexRoute
   '/concepts/': typeof ConceptsIndexRoute
   '/equipment/': typeof EquipmentIndexRoute
@@ -238,6 +273,9 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/search'
     | '/start-here'
+    | '/admin/categories'
+    | '/admin/content'
+    | '/admin/users'
     | '/c/$slug'
     | '/components/$slug'
     | '/concepts/$slug'
@@ -245,6 +283,7 @@ export interface FileRouteTypes {
     | '/procedures/$slug'
     | '/tools/$slug'
     | '/troubleshooting/$slug'
+    | '/admin/'
     | '/components/'
     | '/concepts/'
     | '/equipment/'
@@ -255,7 +294,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/account'
-    | '/admin'
     | '/ai-tutor'
     | '/auth'
     | '/experts'
@@ -263,6 +301,9 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/search'
     | '/start-here'
+    | '/admin/categories'
+    | '/admin/content'
+    | '/admin/users'
     | '/c/$slug'
     | '/components/$slug'
     | '/concepts/$slug'
@@ -270,6 +311,7 @@ export interface FileRouteTypes {
     | '/procedures/$slug'
     | '/tools/$slug'
     | '/troubleshooting/$slug'
+    | '/admin'
     | '/components'
     | '/concepts'
     | '/equipment'
@@ -288,6 +330,9 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/search'
     | '/start-here'
+    | '/admin/categories'
+    | '/admin/content'
+    | '/admin/users'
     | '/c/$slug'
     | '/components/$slug'
     | '/concepts/$slug'
@@ -295,6 +340,7 @@ export interface FileRouteTypes {
     | '/procedures/$slug'
     | '/tools/$slug'
     | '/troubleshooting/$slug'
+    | '/admin/'
     | '/components/'
     | '/concepts/'
     | '/equipment/'
@@ -306,7 +352,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountRoute: typeof AccountRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   AiTutorRoute: typeof AiTutorRoute
   AuthRoute: typeof AuthRoute
   ExpertsRoute: typeof ExpertsRoute
@@ -400,6 +446,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/start-here'
       preLoaderRoute: typeof StartHereRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/categories': {
+      id: '/admin/categories'
+      path: '/categories'
+      fullPath: '/admin/categories'
+      preLoaderRoute: typeof AdminCategoriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/content': {
+      id: '/admin/content'
+      path: '/content'
+      fullPath: '/admin/content'
+      preLoaderRoute: typeof AdminContentRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/c/$slug': {
       id: '/c/$slug'
@@ -495,10 +569,26 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminRouteChildren {
+  AdminCategoriesRoute: typeof AdminCategoriesRoute
+  AdminContentRoute: typeof AdminContentRoute
+  AdminUsersRoute: typeof AdminUsersRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminCategoriesRoute: AdminCategoriesRoute,
+  AdminContentRoute: AdminContentRoute,
+  AdminUsersRoute: AdminUsersRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountRoute: AccountRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   AiTutorRoute: AiTutorRoute,
   AuthRoute: AuthRoute,
   ExpertsRoute: ExpertsRoute,

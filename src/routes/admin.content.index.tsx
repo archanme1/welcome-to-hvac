@@ -21,7 +21,7 @@ import {
 import { CONTENT_TYPE_LABEL, CONTENT_TYPE_PATH } from "@/lib/hvac-types";
 import type { ContentStatus } from "@/lib/hvac-types";
 
-export const Route = createFileRoute("/admin/content")({ component: ContentList });
+export const Route = createFileRoute("/admin/content/")({ component: ContentList });
 
 const TYPES = ["all", "equipment", "component", "concept", "procedure", "troubleshooting", "tool"];
 const STATUSES = ["all", "published", "draft", "archived"];
