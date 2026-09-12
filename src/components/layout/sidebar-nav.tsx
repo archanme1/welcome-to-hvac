@@ -6,52 +6,51 @@ import { useMemo, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { SITE_NAV } from "@/lib/site-nav";
-import { navigationQuery } from "@/lib/hvac.functions";
+import { categoryTopicsQuery, navTreeQuery, type NavTreeNode } from "@/lib/hvac.functions";
 import { topicHref } from "@/lib/hvac-types";
 
 type Child = { title: string; href: string };
 
 export function SidebarNav({ onNavigate }: { onNavigate?: (() => void) | undefined }) {
-  const { data } = useQuery(navigationQuery);
+  // Compact tree: categories and counts only, never the whole library.
+  const { data } = useQuery(navTreeQuery);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  const childrenBySection = useMemo(() => {
-    const map: Record<string, Child[]> = {};
-    if (!data) return map;
-    const byParent = new Map<string, typeof data.categories>();
-    for (const cat of data.categories) {
-      if (!cat.parent_id) continue;
-      const list = byParent.get(cat.parent_id) ?? [];
-      list.push(cat);
-      byParent.set(cat.parent_id, list);
+  const sections = useMemo(() => {
+    const nodes = (data ?? []) as NavTreeNode[];
+    const byParent = new Map<string, NavTreeNode[]>();
+    for (const node of nodes) {
+      if (!node.parent_id) continue;
+      const list = byParent.get(node.parent_id) ?? [];
+      list.push(node);
+      byParent.set(node.parent_id, list);
     }
-    for (const section of SITE_NAV) {
-      if (!section.categorySlug) continue;
-      const parent = data.categories.find((c) => c.slug === section.categorySlug);
-      if (!parent) continue;
-      const subs = byParent.get(parent.id) ?? [];
-      if (subs.length) {
-        map[section.title] = subs.map((s) => ({ title: s.title, href: `/c/${s.slug}` }));
-      } else {
-        map[section.title] = data.topics
-          .filter((t) => t.category_id === parent.id)
-          .slice(0, 60)
-          .map((t) => ({ title: t.title, href: topicHref(t.content_type, t.slug) }));
-      }
-    }
-    return map;
+
+    return SITE_NAV.map((section) => {
+      const parent = section.categorySlug
+        ? nodes.find((n) => n.slug === section.categorySlug)
+        : undefined;
+      const subs = parent ? (byParent.get(parent.id) ?? []) : [];
+      return {
+        section,
+        children: subs.map((s) => ({ title: s.title, href: `/c/${s.slug}` })),
+        // When a category has no sub-categories, load its topics on demand.
+        lazyCategoryId: parent && subs.length === 0 && parent.topic_count > 0 ? parent.id : null,
+      };
+    });
   }, [data]);
 
   return (
     <nav className="flex flex-col gap-0.5 pb-16 text-sm">
-      {SITE_NAV.map((section) => (
+      {sections.map(({ section, children, lazyCategoryId }) => (
         <SidebarSection
           key={section.title}
           title={section.title}
           href={section.href}
           badge={section.badge}
           pathname={pathname}
-          children={childrenBySection[section.title] ?? []}
+          children={children}
+          lazyCategoryId={lazyCategoryId}
           onNavigate={onNavigate}
         />
       ))}
@@ -64,6 +63,7 @@ function SidebarSection({
   href,
   badge,
   children,
+  lazyCategoryId,
   pathname,
   onNavigate,
 }: {
@@ -71,12 +71,25 @@ function SidebarSection({
   href: string;
   badge?: string | undefined;
   children: Child[];
+  lazyCategoryId?: string | null;
   pathname: string;
   onNavigate?: (() => void) | undefined;
 }) {
   const sectionActive = pathname === href || pathname.startsWith(href + "/");
   const childActive = children.some((c) => pathname === c.href);
   const [open, setOpen] = useState(sectionActive || childActive);
+
+  const { data: lazyTopics } = useQuery({
+    ...categoryTopicsQuery(lazyCategoryId ?? ""),
+    enabled: Boolean(lazyCategoryId) && open,
+  });
+
+  const items: Child[] = children.length
+    ? children
+    : (lazyTopics ?? []).map((t) => ({
+        title: t.title,
+        href: topicHref(t.content_type, t.slug),
+      }));
 
   return (
     <div>
@@ -99,7 +112,7 @@ function SidebarSection({
             </span>
           ) : null}
         </AppLink>
-        {children.length > 0 ? (
+        {children.length > 0 || lazyCategoryId ? (
           <button
             type="button"
             aria-label={open ? `Collapse ${title}` : `Expand ${title}`}
@@ -111,9 +124,9 @@ function SidebarSection({
         ) : null}
       </div>
 
-      {open && children.length > 0 ? (
+      {open && items.length > 0 ? (
         <ul className="ml-3 mt-0.5 space-y-0.5 border-l pl-3">
-          {children.map((child) => (
+          {items.map((child) => (
             <li key={child.href}>
               <AppLink
                 to={child.href}

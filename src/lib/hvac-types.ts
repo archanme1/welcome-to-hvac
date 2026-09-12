@@ -119,5 +119,90 @@ export function topicHref(type: ContentType, slug: string) {
   return `${CONTENT_TYPE_PATH[type]}/${slug}`;
 }
 
+/* ---------------------------------------------------------------------- *
+ * Structured entities (symptoms, levels, learning paths, diagnostics)
+ * ---------------------------------------------------------------------- */
+
+export type SymptomRecord = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  category: string | null;
+  severity: string | null;
+};
+
+/** A symptom as it appears on a topic page, with the role it plays there. */
+export type TopicSymptom = SymptomRecord & { role: string };
+
+export const SYMPTOM_ROLE_LABEL: Record<string, string> = {
+  diagnoses: "Diagnosed here",
+  cause: "Possible cause",
+  affects: "Affected equipment",
+  explains: "Background",
+  procedure: "Related procedure",
+  related: "Related",
+};
+
+export type TopicLevel = {
+  level: Difficulty;
+  summary: string | null;
+  body: Section[];
+};
+
+export type LearningPathRecord = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  level: Difficulty;
+  sort_order: number;
+};
+
+export type DiagnosticAnswer = {
+  label: string;
+  next?: string | null;
+  result?: string | null;
+};
+
+export type DiagnosticNode = {
+  id: string;
+  key: string;
+  is_root: boolean;
+  question: string;
+  observation: string | null;
+  safety_note: string | null;
+  possible_causes: string[];
+  answers: DiagnosticAnswer[];
+  related: { slug: string; title: string; content_type: ContentType } | null;
+};
+
+export type DiagnosticTreeRecord = {
+  id: string;
+  slug: string;
+  title: string;
+  intro: string | null;
+  safety_note: string | null;
+};
+
+export type SearchKind = "topic" | "symptom";
+
+export type SearchResult = {
+  kind: SearchKind;
+  id: string;
+  slug: string;
+  title: string;
+  summary: string | null;
+  content_type: ContentType | null;
+  difficulty: Difficulty | null;
+  rank: number;
+};
+
+export function searchResultHref(result: SearchResult) {
+  return result.kind === "symptom"
+    ? `/symptoms/${result.slug}`
+    : topicHref(result.content_type ?? "concept", result.slug);
+}
+
 export const LOCAL_CODE_NOTICE =
   "HVAC installation, venting, combustion air, ventilation air, gas piping, clearances, termination locations, electrical requirements, permits, and equipment requirements vary by jurisdiction and equipment. Always verify the applicable local codes, adopted code edition, regulations, permits, and manufacturer installation instructions before installation or service.";

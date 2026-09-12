@@ -10,9 +10,13 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { searchIndexQuery } from "@/lib/hvac.functions";
-import { CONTENT_TYPE_PLURAL, topicHref, type ContentType } from "@/lib/hvac-types";
-import { fuzzyFilter } from "@/lib/fuzzy";
+import { searchSuggestQuery } from "@/lib/hvac.functions";
+import {
+  CONTENT_TYPE_PLURAL,
+  searchResultHref,
+  type ContentType,
+  type SearchResult,
+} from "@/lib/hvac-types";
 
 const TYPE_ORDER: ContentType[] = [
   "equipment",
@@ -32,25 +36,32 @@ export function SearchDialog({
 }) {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
-  const { data } = useQuery({ ...searchIndexQuery, enabled: open });
+  const [debounced, setDebounced] = useState("");
 
   useEffect(() => {
-    if (!open) setQuery("");
+    if (!open) {
+      setQuery("");
+      setDebounced("");
+    }
   }, [open]);
 
+  // The index lives in the database, so only send a request once typing pauses.
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(query.trim()), 180);
+    return () => clearTimeout(t);
+  }, [query]);
+
+  const { data, isFetching } = useQuery({ ...searchSuggestQuery(debounced), enabled: open });
+
   const grouped = useMemo(() => {
-    const items = data ?? [];
-    const matches = fuzzyFilter(
-      query,
-      items,
-      (item) => [item.title, item.summary ?? "", item.tags.join(" ")],
-      60,
-    );
-    return TYPE_ORDER.map((type) => ({
-      type,
-      items: matches.filter((m) => m.content_type === type),
+    const items = (data ?? []) as SearchResult[];
+    const symptoms = items.filter((i) => i.kind === "symptom");
+    const topics = TYPE_ORDER.map((type) => ({
+      heading: CONTENT_TYPE_PLURAL[type],
+      items: items.filter((i) => i.kind === "topic" && i.content_type === type),
     })).filter((g) => g.items.length > 0);
-  }, [data, query]);
+    return symptoms.length ? [{ heading: "Symptoms", items: symptoms }, ...topics] : topics;
+  }, [data]);
 
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange} shouldFilter={false}>
@@ -60,16 +71,16 @@ export function SearchDialog({
         onValueChange={setQuery}
       />
       <CommandList className="max-h-[60vh]">
-        <CommandEmpty>No topics found.</CommandEmpty>
+        <CommandEmpty>{isFetching ? "Searching..." : "No topics found."}</CommandEmpty>
         {grouped.map((group) => (
-          <CommandGroup key={group.type} heading={CONTENT_TYPE_PLURAL[group.type]}>
+          <CommandGroup key={group.heading} heading={group.heading}>
             {group.items.map((item) => (
               <CommandItem
-                key={item.id}
-                value={item.id}
+                key={`${item.kind}-${item.id}`}
+                value={`${item.kind}-${item.id}`}
                 onSelect={() => {
                   onOpenChange(false);
-                  void navigate({ to: topicHref(item.content_type, item.slug) });
+                  void navigate({ to: searchResultHref(item) });
                 }}
                 className="flex flex-col items-start gap-0.5 py-2"
               >
@@ -81,6 +92,19 @@ export function SearchDialog({
             ))}
           </CommandGroup>
         ))}
+        {debounced ? (
+          <CommandGroup heading="More">
+            <CommandItem
+              value="see-all-results"
+              onSelect={() => {
+                onOpenChange(false);
+                void navigate({ to: "/search", search: { q: debounced, kind: "all", page: 1 } });
+              }}
+            >
+              See all results for &ldquo;{debounced}&rdquo;
+            </CommandItem>
+          </CommandGroup>
+        ) : null}
       </CommandList>
     </CommandDialog>
   );
