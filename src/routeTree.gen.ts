@@ -24,6 +24,7 @@ import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminPracticeRouteImport } from './routes/admin.practice'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as CSlugRouteImport } from './routes/c.$slug'
+import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as ComponentsIndexRouteImport } from './routes/components.index'
 import { Route as ComponentsSlugRouteImport } from './routes/components.$slug'
 import { Route as ConceptsIndexRouteImport } from './routes/concepts.index'
@@ -113,6 +114,11 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
 const CSlugRoute = CSlugRouteImport.update({
   id: '/c/$slug',
   path: '/c/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
+  id: '/checkout/return',
+  path: '/checkout/return',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ComponentsIndexRoute = ComponentsIndexRouteImport.update({
@@ -207,6 +213,7 @@ export interface FileRoutesByFullPath {
   '/admin/practice': typeof AdminPracticeRoute
   '/admin/users': typeof AdminUsersRoute
   '/c/$slug': typeof CSlugRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
   '/equipment/$slug': typeof EquipmentSlugRoute
@@ -238,6 +245,7 @@ export interface FileRoutesByTo {
   '/admin/practice': typeof AdminPracticeRoute
   '/admin/users': typeof AdminUsersRoute
   '/c/$slug': typeof CSlugRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
   '/equipment/$slug': typeof EquipmentSlugRoute
@@ -271,6 +279,7 @@ export interface FileRoutesById {
   '/admin/practice': typeof AdminPracticeRoute
   '/admin/users': typeof AdminUsersRoute
   '/c/$slug': typeof CSlugRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
   '/equipment/$slug': typeof EquipmentSlugRoute
@@ -305,6 +314,7 @@ export interface FileRouteTypes {
     | '/admin/practice'
     | '/admin/users'
     | '/c/$slug'
+    | '/checkout/return'
     | '/components/$slug'
     | '/concepts/$slug'
     | '/equipment/$slug'
@@ -336,6 +346,7 @@ export interface FileRouteTypes {
     | '/admin/practice'
     | '/admin/users'
     | '/c/$slug'
+    | '/checkout/return'
     | '/components/$slug'
     | '/concepts/$slug'
     | '/equipment/$slug'
@@ -368,6 +379,7 @@ export interface FileRouteTypes {
     | '/admin/practice'
     | '/admin/users'
     | '/c/$slug'
+    | '/checkout/return'
     | '/components/$slug'
     | '/concepts/$slug'
     | '/equipment/$slug'
@@ -398,6 +410,7 @@ export interface RootRouteChildren {
   SearchRoute: typeof SearchRoute
   StartHereRoute: typeof StartHereRoute
   CSlugRoute: typeof CSlugRoute
+  CheckoutReturnRoute: typeof CheckoutReturnRoute
   ComponentsSlugRoute: typeof ComponentsSlugRoute
   ConceptsSlugRoute: typeof ConceptsSlugRoute
   EquipmentSlugRoute: typeof EquipmentSlugRoute
@@ -518,6 +531,13 @@ declare module '@tanstack/react-router' {
       path: '/c/$slug'
       fullPath: '/c/$slug'
       preLoaderRoute: typeof CSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout/return': {
+      id: '/checkout/return'
+      path: '/checkout/return'
+      fullPath: '/checkout/return'
+      preLoaderRoute: typeof CheckoutReturnRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/components/': {
@@ -660,6 +680,7 @@ const rootRouteChildren: RootRouteChildren = {
   SearchRoute: SearchRoute,
   StartHereRoute: StartHereRoute,
   CSlugRoute: CSlugRoute,
+  CheckoutReturnRoute: CheckoutReturnRoute,
   ComponentsSlugRoute: ComponentsSlugRoute,
   ConceptsSlugRoute: ConceptsSlugRoute,
   EquipmentSlugRoute: EquipmentSlugRoute,
