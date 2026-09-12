@@ -1,4 +1,5 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { useRouterState } from "@tanstack/react-router";
+import { AppLink } from "@/components/app-link";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -96,7 +97,7 @@ function SidebarSection({
               {badge}
             </span>
           ) : null}
-        </Link>
+        </AppLink>
         {children.length > 0 ? (
           <button
             type="button"
@@ -124,7 +125,7 @@ function SidebarSection({
                 )}
               >
                 {child.title}
-              </Link>
+              </AppLink>
             </li>
           ))}
         </ul>

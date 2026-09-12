@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { AppLink } from "@/components/app-link";
 
 /**
  * Lightweight inline SVG diagrams. Each node can link to the topic that
@@ -62,9 +62,9 @@ function DiagramNode({ node }: { node: NodeSpec }) {
 
   if (node.href) {
     return (
-      <Link to={node.href} className={`${base} ${toneClass} hover:bg-accent`}>
+      <AppLink to={node.href} className={`${base} ${toneClass} hover:bg-accent`}>
         {node.label}
-      </Link>
+      </AppLink>
     );
   }
   return <div className={`${base} ${toneClass}`}>{node.label}</div>;
