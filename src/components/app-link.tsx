@@ -5,6 +5,7 @@ export type AppLinkProps = {
   className?: string | undefined;
   children: React.ReactNode;
   onClick?: (() => void) | undefined;
+  onMouseEnter?: (() => void) | undefined;
   title?: string | undefined;
 };
 
