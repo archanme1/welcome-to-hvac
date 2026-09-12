@@ -928,6 +928,18 @@ export type Database = {
       is_pro: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
       jsonb_plain_text: { Args: { _body: Json }; Returns: string }
+      nav_tree: {
+        Args: never
+        Returns: {
+          content_type: string
+          id: string
+          parent_id: string
+          slug: string
+          sort_order: number
+          title: string
+          topic_count: number
+        }[]
+      }
       practice_catalog: {
         Args: never
         Returns: {
@@ -947,6 +959,22 @@ export type Database = {
           troubleshooting: number
         }[]
       }
+      record_topic_view: { Args: { _content_id: string }; Returns: undefined }
+      search_all: {
+        Args: { _kind?: string; _limit?: number; _offset?: number; _q: string }
+        Returns: {
+          content_type: string
+          difficulty: string
+          id: string
+          kind: string
+          rank: number
+          slug: string
+          summary: string
+          title: string
+        }[]
+      }
+      search_count: { Args: { _kind?: string; _q: string }; Returns: number }
+      search_tokens: { Args: { _q: string }; Returns: string[] }
     }
     Enums: {
       app_role: "admin" | "editor" | "user"
