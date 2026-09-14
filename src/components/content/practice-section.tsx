@@ -418,6 +418,19 @@ function QuizRunner({
   );
 }
 
+function DetailList({ label, items }: { label: string; items: string[] }) {
+  return (
+    <div className="mt-3">
+      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
+      <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-foreground/85">
+        {items.map((item, i) => (
+          <li key={i}>{item}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function ScenarioCard({ scenario, contentId }: { scenario: Scenario; contentId: string }) {
   const [step, setStep] = useState(0);
   const [chosen, setChosen] = useState<number | null>(null);
