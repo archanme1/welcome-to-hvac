@@ -95,6 +95,11 @@ function Practice() {
     setup: "",
     symptoms: "",
     steps: "[]",
+    complaint: "",
+    readings: "",
+    error_codes: "",
+    possible_causes: "",
+    resolution: "",
     safety_note: "",
     difficulty: "technician" as Difficulty,
   });
