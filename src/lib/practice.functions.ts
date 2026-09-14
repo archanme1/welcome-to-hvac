@@ -20,6 +20,15 @@ export type ScenarioStep = {
   observation?: string;
 };
 
+/** Field detail shown on troubleshooting scenarios. All parts optional. */
+export type ScenarioDetails = {
+  complaint?: string;
+  readings?: string[];
+  error_codes?: string[];
+  possible_causes?: string[];
+  resolution?: string;
+};
+
 export type Scenario = {
   id: string;
   kind: string;
@@ -27,6 +36,7 @@ export type Scenario = {
   setup: string;
   symptoms: string[];
   steps: ScenarioStep[];
+  details: ScenarioDetails | null;
   safety_note: string | null;
   difficulty: Difficulty;
 };
@@ -51,7 +61,7 @@ export const getPractice = createServerFn({ method: "GET" })
         .eq("status", "published"),
       db
         .from("scenarios")
-        .select("id, kind, title, setup, symptoms, steps, safety_note, difficulty")
+        .select("id, kind, title, setup, symptoms, steps, details, safety_note, difficulty")
         .eq("content_id", data.contentId)
         .eq("status", "published"),
     ]);
