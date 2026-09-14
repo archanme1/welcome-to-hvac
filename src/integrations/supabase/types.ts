@@ -29,6 +29,33 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_tutor_usage: {
+        Row: {
+          count: number
+          created_at: string
+          day: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          count?: number
+          created_at?: string
+          day?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          count?: number
+          created_at?: string
+          day?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       analytics_events: {
         Row: {
           content_id: string | null
@@ -69,6 +96,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
       }
       categories: {
         Row: {
@@ -670,6 +715,7 @@ export type Database = {
         Row: {
           content_id: string | null
           created_at: string
+          details: Json
           difficulty: Database["public"]["Enums"]["difficulty_level"]
           id: string
           kind: string
@@ -684,6 +730,7 @@ export type Database = {
         Insert: {
           content_id?: string | null
           created_at?: string
+          details?: Json
           difficulty?: Database["public"]["Enums"]["difficulty_level"]
           id?: string
           kind?: string
@@ -698,6 +745,7 @@ export type Database = {
         Update: {
           content_id?: string | null
           created_at?: string
+          details?: Json
           difficulty?: Database["public"]["Enums"]["difficulty_level"]
           id?: string
           kind?: string
@@ -936,6 +984,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      ai_tutor_consume: {
+        Args: { _user_id: string }
+        Returns: {
+          allowed: boolean
+          daily_limit: number
+          used: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

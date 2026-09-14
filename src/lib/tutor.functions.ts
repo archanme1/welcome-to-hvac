@@ -88,6 +88,22 @@ export const askTutor = createServerFn({ method: "POST" })
       return { error: "HVAC Pro subscription required.", reply: null as string | null };
     }
 
+    // Daily usage limit, configured by an administrator. Enforced server-side.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: allowance, error: allowanceError } = await (supabaseAdmin as any).rpc(
+      "ai_tutor_consume",
+      { _user_id: context.userId },
+    );
+    const quota = Array.isArray(allowance) ? allowance[0] : allowance;
+    if (!allowanceError && quota && quota.allowed === false) {
+      return {
+        error: `You have reached your daily AI Tutor limit of ${quota.daily_limit} question${
+          quota.daily_limit === 1 ? "" : "s"
+        }. It resets tomorrow.`,
+        reply: null as string | null,
+      };
+    }
+
     const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) {
       return { error: "The AI Tutor is not configured yet.", reply: null as string | null };

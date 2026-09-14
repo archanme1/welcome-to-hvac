@@ -95,6 +95,11 @@ function Practice() {
     setup: "",
     symptoms: "",
     steps: "[]",
+    complaint: "",
+    readings: "",
+    error_codes: "",
+    possible_causes: "",
+    resolution: "",
     safety_note: "",
     difficulty: "technician" as Difficulty,
   });
@@ -451,6 +456,11 @@ function Practice() {
                           setup: s.setup ?? "",
                           symptoms: ((s.symptoms ?? []) as unknown as string[]).join("\n"),
                           steps: JSON.stringify(s.steps ?? [], null, 2),
+                          complaint: detailText(s, "complaint"),
+                          readings: detailLines(s, "readings"),
+                          error_codes: detailLines(s, "error_codes"),
+                          possible_causes: detailLines(s, "possible_causes"),
+                          resolution: detailText(s, "resolution"),
                           safety_note: s.safety_note ?? "",
                           difficulty: s.difficulty,
                         })
@@ -512,6 +522,46 @@ function Practice() {
                 />
               </div>
               <div>
+                <Label className="text-xs">Customer complaint</Label>
+                <Textarea
+                  rows={2}
+                  value={scenario.complaint}
+                  onChange={(e) => setScenario({ ...scenario, complaint: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label className="text-xs">Diagnostic readings (one per line)</Label>
+                <Textarea
+                  rows={3}
+                  value={scenario.readings}
+                  onChange={(e) => setScenario({ ...scenario, readings: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label className="text-xs">Error codes (one per line)</Label>
+                <Textarea
+                  rows={2}
+                  value={scenario.error_codes}
+                  onChange={(e) => setScenario({ ...scenario, error_codes: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label className="text-xs">Possible causes (one per line)</Label>
+                <Textarea
+                  rows={3}
+                  value={scenario.possible_causes}
+                  onChange={(e) => setScenario({ ...scenario, possible_causes: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label className="text-xs">Correct resolution</Label>
+                <Textarea
+                  rows={3}
+                  value={scenario.resolution}
+                  onChange={(e) => setScenario({ ...scenario, resolution: e.target.value })}
+                />
+              </div>
+              <div>
                 <Label className="text-xs">Steps (JSON)</Label>
                 <Textarea
                   rows={8}
@@ -547,6 +597,13 @@ function Practice() {
                         setup: scenario.setup,
                         symptoms: scenario.symptoms.split("\n").map((s) => s.trim()).filter(Boolean),
                         steps,
+                        details: {
+                          complaint: scenario.complaint.trim(),
+                          readings: toLines(scenario.readings),
+                          error_codes: toLines(scenario.error_codes),
+                          possible_causes: toLines(scenario.possible_causes),
+                          resolution: scenario.resolution.trim(),
+                        } as unknown as Json,
                         safety_note: scenario.safety_note || null,
                         difficulty: scenario.difficulty,
                         status: "published",
@@ -559,6 +616,11 @@ function Practice() {
                       setup: "",
                       symptoms: "",
                       steps: "[]",
+                      complaint: "",
+                      readings: "",
+                      error_codes: "",
+                      possible_causes: "",
+                      resolution: "",
                       safety_note: "",
                       difficulty: "technician",
                     });
@@ -573,4 +635,22 @@ function Practice() {
       )}
     </div>
   );
+}
+
+/** Split a textarea into trimmed, non-empty lines. */
+function toLines(value: string): string[] {
+  return value
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+function detailText(row: { details?: unknown }, key: string): string {
+  const value = (row.details as Record<string, unknown> | null | undefined)?.[key];
+  return typeof value === "string" ? value : "";
+}
+
+function detailLines(row: { details?: unknown }, key: string): string {
+  const value = (row.details as Record<string, unknown> | null | undefined)?.[key];
+  return Array.isArray(value) ? value.filter((v) => typeof v === "string").join("\n") : "";
 }

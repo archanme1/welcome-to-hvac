@@ -39,7 +39,9 @@ function Page() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: progress } = useQuery(progressQuery(!!user));
-  const { data: billing } = useQuery(billingSummaryQuery(!!user));
+  const { data: billing } = useQuery(
+    billingSummaryQuery(!!user, paymentsConfigured() ? getStripeEnvironment() : undefined),
+  );
   const [portalLoading, setPortalLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
 
@@ -110,36 +112,79 @@ function Page() {
           {isPro ? "HVAC Pro — practice, scenarios and the AI Tutor are unlocked." : "Free — documentation and diagrams."}
         </p>
         {billing && isPro ? (
-          <dl className="mt-4 space-y-1 text-sm">
-            {billing.planInterval ? (
-              <Row
-                label="Billing"
-                value={billing.planInterval === "annual" ? "$50 per year" : "$5 per month"}
-              />
-            ) : null}
-            {billing.status === "trialing" && billing.currentPeriodEnd ? (
-              <Row label="Free trial ends" value={formatDate(billing.currentPeriodEnd)} />
-            ) : null}
-            {billing.status === "past_due" ? (
-              <Row
-                label="Payment"
-                value="Last payment failed — we're retrying your card. Access continues for now."
-              />
-            ) : null}
-            {billing.currentPeriodEnd && billing.status !== "trialing" ? (
-              <Row
-                label={
-                  billing.cancelAtPeriodEnd || billing.status === "canceled"
-                    ? "Access ends"
-                    : "Renews"
-                }
-                value={formatDate(billing.currentPeriodEnd)}
-              />
-            ) : null}
-            {billing.provider === "manual" ? (
-              <Row label="Source" value="Granted by an administrator" />
-            ) : null}
-          </dl>
+          <table className="mt-4 w-full text-sm">
+            <tbody className="divide-y divide-border">
+              <Row label="Plan" value="HVAC Pro" />
+              {billing.planInterval ? (
+                <>
+                  <Row
+                    label="Price"
+                    value={billing.planInterval === "annual" ? "$50.00" : "$5.00"}
+                  />
+                  <Row
+                    label="Billing period"
+                    value={billing.planInterval === "annual" ? "Yearly" : "Monthly"}
+                  />
+                </>
+              ) : null}
+              <Row label="Status" value={statusLabel(billing.status, billing.cancelAtPeriodEnd)} />
+              {billing.status === "trialing" && billing.currentPeriodEnd ? (
+                <Row label="Free trial ends" value={formatDate(billing.currentPeriodEnd)} />
+              ) : null}
+              {billing.currentPeriodEnd && billing.status !== "trialing" ? (
+                <Row
+                  label={
+                    billing.cancelAtPeriodEnd || billing.status === "canceled"
+                      ? "Access ends"
+                      : "Next renewal"
+                  }
+                  value={formatDate(billing.currentPeriodEnd)}
+                />
+              ) : null}
+              {billing.paymentMethod ? (
+                <Row
+                  label="Payment method"
+                  value={`${capitalize(billing.paymentMethod.brand)} ending ${billing.paymentMethod.last4}`}
+                />
+              ) : null}
+              {billing.provider === "manual" ? (
+                <Row label="Source" value="Granted by an administrator" />
+              ) : null}
+            </tbody>
+          </table>
+        ) : null}
+
+        {billing && isPro && billing.payments.length ? (
+          <div className="mt-6">
+            <p className="text-sm font-semibold">Payment history</p>
+            <div className="mt-2 overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-muted-foreground">
+                    <th className="pb-2 font-medium">Date</th>
+                    <th className="pb-2 font-medium">Description</th>
+                    <th className="pb-2 text-right font-medium">Amount</th>
+                    <th className="pb-2 text-right font-medium">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {billing.payments.map((p) => (
+                    <tr key={p.id}>
+                      <td className="py-2 whitespace-nowrap">{formatDate(p.date)}</td>
+                      <td className="py-2">{p.description}</td>
+                      <td className="py-2 text-right">
+                        {new Intl.NumberFormat(undefined, {
+                          style: "currency",
+                          currency: (p.currency || "usd").toUpperCase(),
+                        }).format(p.amount)}
+                      </td>
+                      <td className="py-2 text-right">{capitalize(p.status)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         ) : null}
         {!isPro ? (
           <Button asChild size="sm" className="mt-4">
@@ -243,11 +288,23 @@ function UsernameCard({ onSaved }: { onSaved: () => void }) {
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-wrap justify-between gap-2">
-      <dt className="text-muted-foreground">{label}</dt>
-      <dd className="font-medium">{value}</dd>
-    </div>
+    <tr>
+      <td className="py-2 pr-4 text-muted-foreground">{label}</td>
+      <td className="py-2 text-right font-medium">{value}</td>
+    </tr>
   );
+}
+
+function capitalize(value: string): string {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+function statusLabel(status: string | null, cancelAtPeriodEnd: boolean): string {
+  if (status === "trialing") return "Free trial";
+  if (status === "past_due") return "Payment retrying";
+  if (status === "canceled") return "Cancelled — access until period end";
+  if (status === "active") return cancelAtPeriodEnd ? "Cancels at period end" : "Active";
+  return "Active";
 }
 
 function formatDate(iso: string): string {

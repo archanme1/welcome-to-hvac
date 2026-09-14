@@ -418,6 +418,19 @@ function QuizRunner({
   );
 }
 
+function DetailList({ label, items }: { label: string; items: string[] }) {
+  return (
+    <div className="mt-3">
+      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
+      <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-foreground/85">
+        {items.map((item, i) => (
+          <li key={i}>{item}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function ScenarioCard({ scenario, contentId }: { scenario: Scenario; contentId: string }) {
   const [step, setStep] = useState(0);
   const [chosen, setChosen] = useState<number | null>(null);
@@ -436,13 +449,25 @@ function ScenarioCard({ scenario, contentId }: { scenario: Scenario; contentId: 
     <div className="rounded-lg border bg-card p-4">
       <p className="text-sm font-semibold">{scenario.title}</p>
       <p className="mt-2 text-sm leading-6 text-foreground/85">{scenario.setup}</p>
-      {scenario.symptoms.length ? (
-        <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-foreground/85">
-          {scenario.symptoms.map((s, i) => (
-            <li key={i}>{s}</li>
-          ))}
-        </ul>
+      {scenario.details?.complaint ? (
+        <p className="mt-3 text-sm leading-6 text-foreground/85">
+          <span className="font-medium">Customer complaint: </span>
+          {scenario.details.complaint}
+        </p>
       ) : null}
+      {scenario.symptoms.length ? (
+        <DetailList label="Symptoms" items={scenario.symptoms} />
+      ) : null}
+      {scenario.details?.readings?.length ? (
+        <DetailList label="Readings" items={scenario.details.readings} />
+      ) : null}
+      {scenario.details?.error_codes?.length ? (
+        <DetailList label="Error codes" items={scenario.details.error_codes} />
+      ) : null}
+      {scenario.details?.possible_causes?.length ? (
+        <DetailList label="Possible causes" items={scenario.details.possible_causes} />
+      ) : null}
+
 
       {scenario.safety_note ? (
         <p className="mt-4 rounded-md border border-safety-border bg-safety px-3 py-2 text-xs leading-5 text-safety-foreground">
@@ -459,6 +484,12 @@ function ScenarioCard({ scenario, contentId }: { scenario: Scenario; contentId: 
               ? "You reached the fault without a wrong turn."
               : `${missteps} step${missteps === 1 ? "" : "s"} went down the wrong path. Re-read the feedback on those choices.`}
           </p>
+          {scenario.details?.resolution ? (
+            <p className="mt-3 text-sm leading-6 text-foreground/85">
+              <span className="font-medium">Resolution: </span>
+              {scenario.details.resolution}
+            </p>
+          ) : null}
           <Button
             size="sm"
             variant="outline"

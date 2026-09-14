@@ -225,26 +225,41 @@ export const syncMySubscription = createServerFn({ method: "POST" })
     }
   });
 
+export type BillingPayment = {
+  id: string;
+  date: string;
+  description: string;
+  amount: number;
+  currency: string;
+  status: string;
+};
+
 type BillingSummary = {
   pro: boolean;
   status: string | null;
   planInterval: string | null;
+  currentPeriodStart: string | null;
   currentPeriodEnd: string | null;
   cancelAtPeriodEnd: boolean;
   provider: string | null;
   managed: boolean;
+  paymentMethod: { brand: string; last4: string } | null;
+  payments: BillingPayment[];
 };
 
-/** Everything the account page needs to describe the member's plan. */
-export const getBillingSummary = createServerFn({ method: "GET" })
+/** Everything the account page needs to describe the member's plan and payments. */
+export const getBillingSummary = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }): Promise<BillingSummary> => {
+  .inputValidator((data: { environment?: StripeEnv | undefined }) => data ?? {})
+  .handler(async ({ data, context }): Promise<BillingSummary> => {
     const { supabase, userId } = context;
     const [{ data: pro }, { data: rows }] = await Promise.all([
       supabase.rpc("is_pro", { _user_id: userId }),
       supabase
         .from("subscriptions")
-        .select("status, plan_interval, current_period_end, cancel_at_period_end, provider")
+        .select(
+          "status, plan_interval, current_period_start, current_period_end, cancel_at_period_end, provider, provider_customer_id",
+        )
         .eq("user_id", userId)
         .order("created_at", { ascending: false })
         .limit(1),
@@ -253,27 +268,67 @@ export const getBillingSummary = createServerFn({ method: "GET" })
       | {
           status: string;
           plan_interval: string;
+          current_period_start: string | null;
           current_period_end: string | null;
           cancel_at_period_end: boolean;
           provider: string | null;
+          provider_customer_id: string | null;
         }
       | undefined;
 
-    return {
+    const summary: BillingSummary = {
       pro: !!pro,
       status: sub?.status ?? null,
       planInterval: sub?.plan_interval ?? null,
+      currentPeriodStart: sub?.current_period_start ?? null,
       currentPeriodEnd: sub?.current_period_end ?? null,
       cancelAtPeriodEnd: sub?.cancel_at_period_end ?? false,
       provider: sub?.provider ?? null,
       managed: sub?.provider === "stripe",
+      paymentMethod: null,
+      payments: [],
     };
+
+    // Payment history for members paying by card.
+    if (summary.managed && sub?.provider_customer_id && data.environment) {
+      try {
+        const stripe = createStripeClient(data.environment);
+        const charges = await stripe.charges.list({
+          customer: sub.provider_customer_id,
+          limit: 24,
+        });
+        for (const charge of charges.data) {
+          const currency = charge.currency ?? "usd";
+          const refunded = (charge.amount_refunded ?? 0) > 0;
+          summary.payments.push({
+            id: charge.id,
+            date: new Date(charge.created * 1000).toISOString(),
+            description:
+              charge.description ??
+              (summary.planInterval === "annual"
+                ? "HVAC Pro — annual"
+                : "HVAC Pro — monthly"),
+            amount: (charge.amount ?? 0) / 100,
+            currency,
+            status: refunded ? "refunded" : (charge.status ?? "unknown"),
+          });
+          const card = (charge.payment_method_details as any)?.card;
+          if (!summary.paymentMethod && card?.last4) {
+            summary.paymentMethod = { brand: card.brand ?? "card", last4: card.last4 };
+          }
+        }
+      } catch {
+        // Payment history is a nicety; plan details still render without it.
+      }
+    }
+
+    return summary;
   });
 
-export const billingSummaryQuery = (enabled: boolean) =>
+export const billingSummaryQuery = (enabled: boolean, environment?: StripeEnv) =>
   queryOptions({
-    queryKey: ["billing", "summary"],
-    queryFn: () => getBillingSummary(),
+    queryKey: ["billing", "summary", environment ?? "none"],
+    queryFn: () => getBillingSummary({ data: { environment } }),
     enabled,
   });
 

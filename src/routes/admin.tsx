@@ -26,6 +26,8 @@ const TABS = [
   { to: "/admin/paths", label: "Paths" },
   { to: "/admin/diagnostics", label: "Diagnostics" },
   { to: "/admin/users", label: "Users" },
+  { to: "/admin/finance", label: "Finance" },
+  { to: "/admin/settings", label: "Settings" },
 ] as const;
 
 function Layout() {

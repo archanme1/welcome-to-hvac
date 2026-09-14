@@ -384,6 +384,7 @@ export type AdminScenarioRow = {
   setup: string | null;
   symptoms: Json;
   steps: Json;
+  details: Json;
   safety_note: string | null;
   difficulty: Difficulty;
   status: ContentStatus;
@@ -491,6 +492,7 @@ export const adminSaveScenario = createServerFn({ method: "POST" })
       setup: string;
       symptoms: string[];
       steps: Json[];
+      details?: Json | undefined;
       safety_note: string | null;
       difficulty: Difficulty;
       status: ContentStatus;
@@ -549,6 +551,12 @@ export type AdminUserRow = {
   last_sign_in_at: string | null;
   roles: string[];
   pro: boolean;
+  username: string | null;
+  status: string | null;
+  plan_interval: string | null;
+  current_period_end: string | null;
+  cancel_at_period_end: boolean;
+  source: string | null;
 };
 
 export const adminListUsers = createServerFn({ method: "GET" })
@@ -557,25 +565,40 @@ export const adminListUsers = createServerFn({ method: "GET" })
     await assertAdmin(context as Ctx);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: list } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
-    const [{ data: roles }, { data: subs }] = await Promise.all([
+    const [{ data: roles }, { data: subs }, { data: profiles }] = await Promise.all([
       supabaseAdmin.from("user_roles").select("user_id, role"),
-      supabaseAdmin.from("subscriptions").select("user_id, status, current_period_end"),
+      supabaseAdmin
+        .from("subscriptions")
+        .select(
+          "user_id, status, plan_interval, current_period_end, cancel_at_period_end, provider, created_at",
+        )
+        .order("created_at", { ascending: false }),
+      supabaseAdmin.from("profiles").select("id, username"),
     ]);
 
     const now = Date.now();
-    return (list?.users ?? []).map((u) => ({
-      id: u.id,
-      email: u.email ?? null,
-      created_at: u.created_at,
-      last_sign_in_at: u.last_sign_in_at ?? null,
-      roles: (roles ?? []).filter((r) => r.user_id === u.id).map((r) => r.role as string),
-      pro: (subs ?? []).some(
-        (s) =>
-          s.user_id === u.id &&
-          (s.status === "active" || s.status === "trialing") &&
-          (!s.current_period_end || new Date(s.current_period_end).getTime() > now),
-      ),
-    })) as AdminUserRow[];
+    return (list?.users ?? []).map((u) => {
+      const mine = (subs ?? []).filter((s) => s.user_id === u.id);
+      const latest = mine[0];
+      return {
+        id: u.id,
+        email: u.email ?? null,
+        created_at: u.created_at,
+        last_sign_in_at: u.last_sign_in_at ?? null,
+        roles: (roles ?? []).filter((r) => r.user_id === u.id).map((r) => r.role as string),
+        pro: mine.some(
+          (s) =>
+            (s.status === "active" || s.status === "trialing") &&
+            (!s.current_period_end || new Date(s.current_period_end).getTime() > now),
+        ),
+        username: (profiles ?? []).find((p) => p.id === u.id)?.username ?? null,
+        status: latest?.status ?? null,
+        plan_interval: latest?.plan_interval ?? null,
+        current_period_end: latest?.current_period_end ?? null,
+        cancel_at_period_end: latest?.cancel_at_period_end ?? false,
+        source: latest?.provider ?? null,
+      };
+    }) as AdminUserRow[];
   });
 
 export const adminUsersQuery = (enabled: boolean) =>
@@ -1098,3 +1121,63 @@ export const adminSaveTopicLevels = createServerFn({ method: "POST" })
     }
     return { ok: true };
   });
+
+/* ------------------------------------------------------------------ */
+/* Site settings                                                       */
+/* ------------------------------------------------------------------ */
+
+export type AppSettings = { aiTutorDailyLimit: number };
+
+/** -1 means unlimited. */
+export const adminGetSettings = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<AppSettings> => {
+    await assertStaff(context as Ctx);
+    const { data } = await (context.supabase as any)
+      .from("app_settings")
+      .select("key, value")
+      .eq("key", "ai_tutor_daily_limit")
+      .maybeSingle();
+    const raw = data?.value;
+    const parsed = typeof raw === "number" ? raw : Number(raw ?? 3);
+    return { aiTutorDailyLimit: Number.isFinite(parsed) ? parsed : 3 };
+  });
+
+export const adminSettingsQuery = (enabled: boolean) =>
+  queryOptions({ queryKey: ["admin", "settings"], queryFn: () => adminGetSettings(), enabled });
+
+export const adminSaveSettings = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { aiTutorDailyLimit: number }) => {
+    const n = Math.trunc(Number(data.aiTutorDailyLimit));
+    if (!Number.isFinite(n) || n < -1 || n > 10000) throw new Error("Enter a number from 0, or choose Unlimited.");
+    return { aiTutorDailyLimit: n };
+  })
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context as Ctx);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await (supabaseAdmin as any)
+      .from("app_settings")
+      .upsert(
+        { key: "ai_tutor_daily_limit", value: data.aiTutorDailyLimit, updated_at: new Date().toISOString() },
+        { onConflict: "key" },
+      );
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/** Today's AI Tutor usage across members, newest first. */
+export const adminTutorUsage = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertStaff(context as Ctx);
+    const { data } = await (context.supabase as any)
+      .from("ai_tutor_usage")
+      .select("user_id, day, count")
+      .order("day", { ascending: false })
+      .limit(100);
+    return (data ?? []) as { user_id: string; day: string; count: number }[];
+  });
+
+export const adminTutorUsageQuery = (enabled: boolean) =>
+  queryOptions({ queryKey: ["admin", "tutor-usage"], queryFn: () => adminTutorUsage(), enabled });
