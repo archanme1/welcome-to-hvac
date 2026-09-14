@@ -636,3 +636,21 @@ function Practice() {
     </div>
   );
 }
+
+/** Split a textarea into trimmed, non-empty lines. */
+function toLines(value: string): string[] {
+  return value
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+function detailText(row: { details?: unknown }, key: string): string {
+  const value = (row.details as Record<string, unknown> | null | undefined)?.[key];
+  return typeof value === "string" ? value : "";
+}
+
+function detailLines(row: { details?: unknown }, key: string): string {
+  const value = (row.details as Record<string, unknown> | null | undefined)?.[key];
+  return Array.isArray(value) ? value.filter((v) => typeof v === "string").join("\n") : "";
+}
