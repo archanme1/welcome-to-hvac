@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -256,9 +257,8 @@ function Page() {
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="password">Password</Label>
-              <Input
+              <PasswordInput
                 id="password"
-                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
@@ -311,9 +311,8 @@ function Page() {
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="signup-password">Password</Label>
-              <Input
+              <PasswordInput
                 id="signup-password"
-                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="new-password"
@@ -321,9 +320,8 @@ function Page() {
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="signup-confirm">Confirm password</Label>
-              <Input
+              <PasswordInput
                 id="signup-confirm"
-                type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 autoComplete="new-password"

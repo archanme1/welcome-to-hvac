@@ -23,8 +23,10 @@ import { Route as StartHereRouteImport } from './routes/start-here'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminDiagnosticsRouteImport } from './routes/admin.diagnostics'
+import { Route as AdminFinanceRouteImport } from './routes/admin.finance'
 import { Route as AdminPathsRouteImport } from './routes/admin.paths'
 import { Route as AdminPracticeRouteImport } from './routes/admin.practice'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminSymptomsRouteImport } from './routes/admin.symptoms'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as CSlugRouteImport } from './routes/c.$slug'
@@ -122,6 +124,11 @@ const AdminDiagnosticsRoute = AdminDiagnosticsRouteImport.update({
   path: '/diagnostics',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminFinanceRoute = AdminFinanceRouteImport.update({
+  id: '/finance',
+  path: '/finance',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPathsRoute = AdminPathsRouteImport.update({
   id: '/paths',
   path: '/paths',
@@ -130,6 +137,11 @@ const AdminPathsRoute = AdminPathsRouteImport.update({
 const AdminPracticeRoute = AdminPracticeRouteImport.update({
   id: '/practice',
   path: '/practice',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminSymptomsRoute = AdminSymptomsRouteImport.update({
@@ -278,8 +290,10 @@ export interface FileRoutesByFullPath {
   '/start-here': typeof StartHereRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/diagnostics': typeof AdminDiagnosticsRoute
+  '/admin/finance': typeof AdminFinanceRoute
   '/admin/paths': typeof AdminPathsRoute
   '/admin/practice': typeof AdminPracticeRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/symptoms': typeof AdminSymptomsRoute
   '/admin/users': typeof AdminUsersRoute
   '/c/$slug': typeof CSlugRoute
@@ -321,8 +335,10 @@ export interface FileRoutesByTo {
   '/start-here': typeof StartHereRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/diagnostics': typeof AdminDiagnosticsRoute
+  '/admin/finance': typeof AdminFinanceRoute
   '/admin/paths': typeof AdminPathsRoute
   '/admin/practice': typeof AdminPracticeRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/symptoms': typeof AdminSymptomsRoute
   '/admin/users': typeof AdminUsersRoute
   '/c/$slug': typeof CSlugRoute
@@ -366,8 +382,10 @@ export interface FileRoutesById {
   '/start-here': typeof StartHereRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/diagnostics': typeof AdminDiagnosticsRoute
+  '/admin/finance': typeof AdminFinanceRoute
   '/admin/paths': typeof AdminPathsRoute
   '/admin/practice': typeof AdminPracticeRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/symptoms': typeof AdminSymptomsRoute
   '/admin/users': typeof AdminUsersRoute
   '/c/$slug': typeof CSlugRoute
@@ -412,8 +430,10 @@ export interface FileRouteTypes {
     | '/start-here'
     | '/admin/categories'
     | '/admin/diagnostics'
+    | '/admin/finance'
     | '/admin/paths'
     | '/admin/practice'
+    | '/admin/settings'
     | '/admin/symptoms'
     | '/admin/users'
     | '/c/$slug'
@@ -455,8 +475,10 @@ export interface FileRouteTypes {
     | '/start-here'
     | '/admin/categories'
     | '/admin/diagnostics'
+    | '/admin/finance'
     | '/admin/paths'
     | '/admin/practice'
+    | '/admin/settings'
     | '/admin/symptoms'
     | '/admin/users'
     | '/c/$slug'
@@ -499,8 +521,10 @@ export interface FileRouteTypes {
     | '/start-here'
     | '/admin/categories'
     | '/admin/diagnostics'
+    | '/admin/finance'
     | '/admin/paths'
     | '/admin/practice'
+    | '/admin/settings'
     | '/admin/symptoms'
     | '/admin/users'
     | '/c/$slug'
@@ -666,6 +690,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDiagnosticsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/finance': {
+      id: '/admin/finance'
+      path: '/finance'
+      fullPath: '/admin/finance'
+      preLoaderRoute: typeof AdminFinanceRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/paths': {
       id: '/admin/paths'
       path: '/paths'
@@ -678,6 +709,13 @@ declare module '@tanstack/react-router' {
       path: '/practice'
       fullPath: '/admin/practice'
       preLoaderRoute: typeof AdminPracticeRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/symptoms': {
@@ -868,8 +906,10 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminCategoriesRoute: typeof AdminCategoriesRoute
   AdminDiagnosticsRoute: typeof AdminDiagnosticsRoute
+  AdminFinanceRoute: typeof AdminFinanceRoute
   AdminPathsRoute: typeof AdminPathsRoute
   AdminPracticeRoute: typeof AdminPracticeRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSymptomsRoute: typeof AdminSymptomsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -880,8 +920,10 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminCategoriesRoute: AdminCategoriesRoute,
   AdminDiagnosticsRoute: AdminDiagnosticsRoute,
+  AdminFinanceRoute: AdminFinanceRoute,
   AdminPathsRoute: AdminPathsRoute,
   AdminPracticeRoute: AdminPracticeRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
   AdminSymptomsRoute: AdminSymptomsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,

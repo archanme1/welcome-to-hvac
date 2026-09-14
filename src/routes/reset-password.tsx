@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 import { supabase } from "@/integrations/supabase/client";
 
 const DESC = "Choose a new password for your Welcome to HVAC account.";
@@ -128,9 +129,8 @@ function Page() {
           <p className="text-sm text-muted-foreground">{DESC}</p>
           <div className="space-y-1.5">
             <Label htmlFor="new-password">New password</Label>
-            <Input
+            <PasswordInput
               id="new-password"
-              type="password"
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -138,9 +138,8 @@ function Page() {
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="confirm-password">Confirm new password</Label>
-            <Input
+            <PasswordInput
               id="confirm-password"
-              type="password"
               autoComplete="new-password"
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
