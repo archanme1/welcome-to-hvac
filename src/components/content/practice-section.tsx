@@ -471,6 +471,12 @@ function ScenarioCard({ scenario, contentId }: { scenario: Scenario; contentId: 
               ? "You reached the fault without a wrong turn."
               : `${missteps} step${missteps === 1 ? "" : "s"} went down the wrong path. Re-read the feedback on those choices.`}
           </p>
+          {scenario.details?.resolution ? (
+            <p className="mt-3 text-sm leading-6 text-foreground/85">
+              <span className="font-medium">Resolution: </span>
+              {scenario.details.resolution}
+            </p>
+          ) : null}
           <Button
             size="sm"
             variant="outline"
