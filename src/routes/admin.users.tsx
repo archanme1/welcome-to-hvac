@@ -37,7 +37,27 @@ function Users() {
       <ul className="divide-y divide-border">
         {(users ?? []).map((u) => (
           <li key={u.id} className="flex flex-wrap items-center gap-2 px-4 py-3 text-sm">
-            <span className="font-medium">{u.email ?? u.id}</span>
+            <div className="min-w-[16rem]">
+              <p className="font-medium">{u.username ?? u.email ?? u.id}</p>
+              {u.username ? (
+                <p className="text-xs text-muted-foreground">{u.email}</p>
+              ) : null}
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                {[
+                  u.status ? `Membership: ${u.status}` : "No membership",
+                  u.plan_interval ? (u.plan_interval === "annual" ? "Yearly" : "Monthly") : null,
+                  u.current_period_end
+                    ? `${u.cancel_at_period_end ? "Ends" : "Renews"} ${new Date(u.current_period_end).toLocaleDateString()}`
+                    : null,
+                  u.source === "manual" ? "Granted by admin" : u.source === "stripe" ? "Card" : null,
+                  u.last_sign_in_at
+                    ? `Last seen ${new Date(u.last_sign_in_at).toLocaleDateString()}`
+                    : null,
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </p>
+            </div>
             <div className="flex gap-1">
               {u.roles.map((r) => (
                 <Badge key={r} variant="secondary">
