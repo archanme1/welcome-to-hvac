@@ -436,13 +436,25 @@ function ScenarioCard({ scenario, contentId }: { scenario: Scenario; contentId: 
     <div className="rounded-lg border bg-card p-4">
       <p className="text-sm font-semibold">{scenario.title}</p>
       <p className="mt-2 text-sm leading-6 text-foreground/85">{scenario.setup}</p>
-      {scenario.symptoms.length ? (
-        <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-foreground/85">
-          {scenario.symptoms.map((s, i) => (
-            <li key={i}>{s}</li>
-          ))}
-        </ul>
+      {scenario.details?.complaint ? (
+        <p className="mt-3 text-sm leading-6 text-foreground/85">
+          <span className="font-medium">Customer complaint: </span>
+          {scenario.details.complaint}
+        </p>
       ) : null}
+      {scenario.symptoms.length ? (
+        <DetailList label="Symptoms" items={scenario.symptoms} />
+      ) : null}
+      {scenario.details?.readings?.length ? (
+        <DetailList label="Readings" items={scenario.details.readings} />
+      ) : null}
+      {scenario.details?.error_codes?.length ? (
+        <DetailList label="Error codes" items={scenario.details.error_codes} />
+      ) : null}
+      {scenario.details?.possible_causes?.length ? (
+        <DetailList label="Possible causes" items={scenario.details.possible_causes} />
+      ) : null}
+
 
       {scenario.safety_note ? (
         <p className="mt-4 rounded-md border border-safety-border bg-safety px-3 py-2 text-xs leading-5 text-safety-foreground">
