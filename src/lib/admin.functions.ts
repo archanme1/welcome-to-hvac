@@ -491,6 +491,7 @@ export const adminSaveScenario = createServerFn({ method: "POST" })
       setup: string;
       symptoms: string[];
       steps: Json[];
+      details?: Json | undefined;
       safety_note: string | null;
       difficulty: Difficulty;
       status: ContentStatus;
