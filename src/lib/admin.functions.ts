@@ -384,6 +384,7 @@ export type AdminScenarioRow = {
   setup: string | null;
   symptoms: Json;
   steps: Json;
+  details: Json;
   safety_note: string | null;
   difficulty: Difficulty;
   status: ContentStatus;
