@@ -456,6 +456,11 @@ function Practice() {
                           setup: s.setup ?? "",
                           symptoms: ((s.symptoms ?? []) as unknown as string[]).join("\n"),
                           steps: JSON.stringify(s.steps ?? [], null, 2),
+                          complaint: detailText(s, "complaint"),
+                          readings: detailLines(s, "readings"),
+                          error_codes: detailLines(s, "error_codes"),
+                          possible_causes: detailLines(s, "possible_causes"),
+                          resolution: detailText(s, "resolution"),
                           safety_note: s.safety_note ?? "",
                           difficulty: s.difficulty,
                         })
@@ -514,6 +519,46 @@ function Practice() {
                   rows={3}
                   value={scenario.symptoms}
                   onChange={(e) => setScenario({ ...scenario, symptoms: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label className="text-xs">Customer complaint</Label>
+                <Textarea
+                  rows={2}
+                  value={scenario.complaint}
+                  onChange={(e) => setScenario({ ...scenario, complaint: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label className="text-xs">Diagnostic readings (one per line)</Label>
+                <Textarea
+                  rows={3}
+                  value={scenario.readings}
+                  onChange={(e) => setScenario({ ...scenario, readings: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label className="text-xs">Error codes (one per line)</Label>
+                <Textarea
+                  rows={2}
+                  value={scenario.error_codes}
+                  onChange={(e) => setScenario({ ...scenario, error_codes: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label className="text-xs">Possible causes (one per line)</Label>
+                <Textarea
+                  rows={3}
+                  value={scenario.possible_causes}
+                  onChange={(e) => setScenario({ ...scenario, possible_causes: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label className="text-xs">Correct resolution</Label>
+                <Textarea
+                  rows={3}
+                  value={scenario.resolution}
+                  onChange={(e) => setScenario({ ...scenario, resolution: e.target.value })}
                 />
               </div>
               <div>
