@@ -104,6 +104,37 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://www.welcometohvac.com/#organization",
+              name: "Welcome to HVAC",
+              url: "https://www.welcometohvac.com",
+              description:
+                "HVAC learning, documentation, diagnostics and practice for students, apprentices and technicians.",
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://www.welcometohvac.com/#website",
+              name: "Welcome to HVAC",
+              url: "https://www.welcometohvac.com",
+              inLanguage: "en",
+              publisher: { "@id": "https://www.welcometohvac.com/#organization" },
+              potentialAction: {
+                "@type": "SearchAction",
+                target: "https://www.welcometohvac.com/search?q={search_term_string}",
+                "query-input": "required name=search_term_string",
+              },
+            },
+          ],
+        }),
+      },
+    ],
   }),
 
   shellComponent: RootShell,

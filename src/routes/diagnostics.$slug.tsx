@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Callout } from "@/components/content/callout";
 import { diagnosticTreeQuery } from "@/lib/hvac.functions";
 import { LOCAL_CODE_NOTICE, topicHref, type DiagnosticNode } from "@/lib/hvac-types";
+import { canonicalUrl, breadcrumbLd, jsonLdScript, clampDescription } from "@/lib/seo";
 
 export const Route = createFileRoute("/diagnostics/$slug")({
   loader: async ({ context, params }) => {
