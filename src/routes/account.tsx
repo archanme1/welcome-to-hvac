@@ -251,6 +251,41 @@ function Page() {
             {portalLoading ? "Opening…" : "Manage billing"}
           </Button>
         ) : null}
+        {isPro && billing?.managed ? (
+          billing.cancelAtPeriodEnd || billing.status === "canceled" ? (
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={cancelBusy}
+              onClick={() => void resumeMembership()}
+            >
+              {cancelBusy ? "Working…" : "Resume membership"}
+            </Button>
+          ) : confirmingCancel ? (
+            <>
+              <Button
+                variant="destructive"
+                size="sm"
+                disabled={cancelBusy}
+                onClick={() => void cancelMembership()}
+              >
+                {cancelBusy ? "Cancelling…" : "Confirm cancellation"}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={cancelBusy}
+                onClick={() => setConfirmingCancel(false)}
+              >
+                Keep membership
+              </Button>
+            </>
+          ) : (
+            <Button variant="outline" size="sm" onClick={() => setConfirmingCancel(true)}>
+              Cancel membership
+            </Button>
+          )
+        ) : null}
         <Button variant="outline" size="sm" disabled={syncing} onClick={() => void recheck()}>
           {syncing ? "Checking…" : "Re-check membership"}
         </Button>
