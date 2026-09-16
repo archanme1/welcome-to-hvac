@@ -1,0 +1,1 @@
+- [ ] Signup/verification emails still sent from no-reply@auth.lovable.cloud instead of notify.welcometohvac.com
