@@ -16,8 +16,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
-import { analyticsQuery, liveVisitorsQuery } from "@/lib/analytics.functions";
-import { adminIsAdminQuery } from "@/lib/admin.functions";
+import { adminIsAdminQuery, analyticsQuery, liveVisitorsQuery } from "@/lib/analytics.functions";
+
 
 export const Route = createFileRoute("/admin/analytics")({ component: Analytics });
 

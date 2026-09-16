@@ -197,3 +197,22 @@ export const analyticsQuery = (enabled: boolean, from: string, to: string) =>
     queryFn: () => adminAnalytics({ data: { from, to } }),
     enabled,
   });
+
+export const adminIsAdmin = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<boolean> => {
+    const ctx = context as Ctx;
+    const { data } = await ctx.supabase.rpc("has_role", {
+      _user_id: ctx.userId,
+      _role: "admin",
+    });
+    return !!data;
+  });
+
+export const adminIsAdminQuery = (enabled: boolean) =>
+  queryOptions({
+    queryKey: ["admin", "is-admin"],
+    queryFn: () => adminIsAdmin(),
+    enabled,
+    staleTime: 60_000,
+  });
