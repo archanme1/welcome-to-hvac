@@ -35,7 +35,9 @@ export const Route = createFileRoute("/pricing")({
       { name: "description", content: DESC },
       { property: "og:title", content: "HVAC Pro Pricing — Welcome to HVAC" },
       { property: "og:description", content: DESC },
+      { property: "og:url", content: "https://www.welcometohvac.com/pricing" },
     ],
+    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/pricing" }],
   }),
   component: Page,
 });

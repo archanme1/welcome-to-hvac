@@ -12,7 +12,9 @@ export const Route = createFileRoute("/equipment/")({
       { name: "description", content: "HVAC equipment reference: furnaces, heat pumps, air conditioners, boilers, water heaters, ventilators and refrigeration systems." },
       { property: "og:title", content: "Equipment — Welcome to HVAC" },
       { property: "og:description", content: "HVAC equipment reference: furnaces, heat pumps, air conditioners, boilers, water heaters, ventilators and refrigeration systems." },
+      { property: "og:url", content: "https://www.welcometohvac.com/equipment" },
     ],
+    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/equipment" }],
   }),
   errorComponent: () => (
     <p className="p-8 text-sm text-muted-foreground">This page didn't load. Please refresh.</p>

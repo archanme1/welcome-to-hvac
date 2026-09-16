@@ -24,7 +24,9 @@ export const Route = createFileRoute("/practice")({
       { name: "description", content: DESC },
       { property: "og:title", content: "Practice & Mastery — Welcome to HVAC" },
       { property: "og:description", content: DESC },
+      { property: "og:url", content: "https://www.welcometohvac.com/practice" },
     ],
+    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/practice" }],
   }),
   errorComponent: () => (
     <p className="p-8 text-sm text-muted-foreground">This page didn't load. Please refresh.</p>

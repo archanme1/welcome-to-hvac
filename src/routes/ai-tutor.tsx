@@ -16,7 +16,9 @@ export const Route = createFileRoute("/ai-tutor")({
       { name: "description", content: DESC },
       { property: "og:title", content: "AI Tutor — Welcome to HVAC" },
       { property: "og:description", content: DESC },
+      { property: "og:url", content: "https://www.welcometohvac.com/ai-tutor" },
     ],
+    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/ai-tutor" }],
   }),
   component: Page,
 });

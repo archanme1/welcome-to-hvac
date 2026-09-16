@@ -12,7 +12,9 @@ export const Route = createFileRoute("/troubleshooting/")({
       { name: "description", content: "Symptom-based HVAC troubleshooting with likely causes, diagnostic checks and what each reading means." },
       { property: "og:title", content: "Troubleshooting — Welcome to HVAC" },
       { property: "og:description", content: "Symptom-based HVAC troubleshooting with likely causes, diagnostic checks and what each reading means." },
+      { property: "og:url", content: "https://www.welcometohvac.com/troubleshooting" },
     ],
+    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/troubleshooting" }],
   }),
   errorComponent: () => (
     <p className="p-8 text-sm text-muted-foreground">This page didn't load. Please refresh.</p>

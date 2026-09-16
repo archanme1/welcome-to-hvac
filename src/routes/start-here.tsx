@@ -45,7 +45,9 @@ export const Route = createFileRoute("/start-here")({
       { name: "description", content: DESC },
       { property: "og:title", content: "Start Here — Welcome to HVAC" },
       { property: "og:description", content: DESC },
+      { property: "og:url", content: "https://www.welcometohvac.com/start-here" },
     ],
+    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/start-here" }],
   }),
   component: Page,
 });
