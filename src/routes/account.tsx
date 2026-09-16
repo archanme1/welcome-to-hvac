@@ -12,7 +12,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { progressQuery } from "@/lib/practice.functions";
 import {
   billingSummaryQuery,
+  cancelMySubscription,
   createPortalSession,
+  resumeMySubscription,
   syncMySubscription,
 } from "@/lib/payments.functions";
 import { getStripeEnvironment, paymentsConfigured } from "@/lib/stripe";
@@ -44,6 +46,47 @@ function Page() {
   );
   const [portalLoading, setPortalLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
+  const [cancelBusy, setCancelBusy] = useState(false);
+  const [confirmingCancel, setConfirmingCancel] = useState(false);
+
+  const cancelMembership = async () => {
+    setCancelBusy(true);
+    try {
+      const result = await cancelMySubscription({
+        data: { environment: getStripeEnvironment() },
+      });
+      if ("error" in result) throw new Error(result.error);
+      await refreshEntitlements();
+      await queryClient.invalidateQueries({ queryKey: ["billing"] });
+      setConfirmingCancel(false);
+      toast.success(
+        result.accessUntil
+          ? `Cancelled. You keep HVAC Pro until ${formatDate(result.accessUntil)}.`
+          : "Your membership has been cancelled.",
+      );
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not cancel your membership.");
+    } finally {
+      setCancelBusy(false);
+    }
+  };
+
+  const resumeMembership = async () => {
+    setCancelBusy(true);
+    try {
+      const result = await resumeMySubscription({
+        data: { environment: getStripeEnvironment() },
+      });
+      if ("error" in result) throw new Error(result.error);
+      await refreshEntitlements();
+      await queryClient.invalidateQueries({ queryKey: ["billing"] });
+      toast.success("Your HVAC Pro membership is active again.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not resume your membership.");
+    } finally {
+      setCancelBusy(false);
+    }
+  };
 
   const openPortal = async () => {
     if (!paymentsConfigured()) {
