@@ -1,1 +1,1 @@
-- [ ] Verify branded signup emails after publishing (sender switched to notify.welcometohvac.com)
+- [ ] Verify a fresh signup or password-reset email uses noreply@notify.welcometohvac.com (managed auth-email handoff is now active)
