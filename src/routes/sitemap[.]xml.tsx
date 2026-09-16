@@ -61,7 +61,7 @@ export const Route = createFileRoute("/sitemap.xml")({
               .select("slug, content_type, updated_at")
               .eq("status", "published")
               .range(from, to)
-              .then((r) => ({ data: r.data as any, error: r.error })),
+              .then((r) => ({ data: r.data as any, error: r.error as unknown })) as Promise<any>,
           ),
           pageAll<{ slug: string; updated_at: string }>((from, to) =>
             db
@@ -69,7 +69,7 @@ export const Route = createFileRoute("/sitemap.xml")({
               .select("slug, updated_at")
               .eq("is_published", true)
               .range(from, to)
-              .then((r) => ({ data: r.data as any, error: r.error })),
+              .then((r) => ({ data: r.data as any, error: r.error as unknown })) as Promise<any>,
           ),
           pageAll<{ slug: string; updated_at: string }>((from, to) =>
             db
@@ -77,7 +77,7 @@ export const Route = createFileRoute("/sitemap.xml")({
               .select("slug, updated_at")
               .eq("is_published", true)
               .range(from, to)
-              .then((r) => ({ data: r.data as any, error: r.error })),
+              .then((r) => ({ data: r.data as any, error: r.error as unknown })) as Promise<any>,
           ),
           pageAll<{ slug: string; updated_at: string }>((from, to) =>
             db
@@ -85,7 +85,7 @@ export const Route = createFileRoute("/sitemap.xml")({
               .select("slug, updated_at")
               .eq("is_published", true)
               .range(from, to)
-              .then((r) => ({ data: r.data as any, error: r.error })),
+              .then((r) => ({ data: r.data as any, error: r.error as unknown })) as Promise<any>,
           ),
           pageAll<{ slug: string; updated_at: string }>((from, to) =>
             db
@@ -93,7 +93,7 @@ export const Route = createFileRoute("/sitemap.xml")({
               .select("slug, updated_at")
               .eq("status", "published")
               .range(from, to)
-              .then((r) => ({ data: r.data as any, error: r.error })),
+              .then((r) => ({ data: r.data as any, error: r.error as unknown })) as Promise<any>,
           ),
         ]);
 

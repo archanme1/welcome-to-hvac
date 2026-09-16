@@ -7,7 +7,7 @@ type TopicLike = {
     updated_at?: string;
     tags?: string[];
   };
-} | null;
+} | null | undefined;
 
 /** Shared head() for the six topic detail routes: metadata, canonical, Article + breadcrumbs. */
 export function topicHead(options: {
