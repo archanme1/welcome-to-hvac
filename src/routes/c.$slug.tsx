@@ -4,6 +4,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { AppLink } from "@/components/app-link";
 import { TopicCardGrid } from "@/components/content/related-topics";
 import { categoryQuery } from "@/lib/hvac.functions";
+import { canonicalUrl, breadcrumbLd, jsonLdScript, clampDescription } from "@/lib/seo";
 
 export const Route = createFileRoute("/c/$slug")({
   loader: async ({ context, params }) => {
@@ -11,7 +12,8 @@ export const Route = createFileRoute("/c/$slug")({
     if (!data) throw notFound();
     return data;
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
+    const url = canonicalUrl(`/c/${params.slug}`);
     if (!loaderData) {
       return {
         meta: [
@@ -21,14 +23,27 @@ export const Route = createFileRoute("/c/$slug")({
       };
     }
     const title = `${loaderData.category.title} — Welcome to HVAC`;
-    const description =
-      loaderData.category.description ?? `HVAC topics in ${loaderData.category.title}.`;
+    const description = clampDescription(
+      loaderData.category.description ?? `HVAC topics in ${loaderData.category.title}.`,
+    );
     return {
       meta: [
         { title },
         { name: "description", content: description },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        jsonLdScript(
+          breadcrumbLd([
+            { name: "Home", path: "/" },
+            { name: loaderData.category.title, path: `/c/${params.slug}` },
+          ]),
+        ),
       ],
     };
   },

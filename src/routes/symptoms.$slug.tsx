@@ -5,6 +5,7 @@ import { AppLink } from "@/components/app-link";
 import { Badge } from "@/components/ui/badge";
 import { Callout } from "@/components/content/callout";
 import { symptomQuery } from "@/lib/hvac.functions";
+import { canonicalUrl, breadcrumbLd, jsonLdScript, clampDescription } from "@/lib/seo";
 import {
   CONTENT_TYPE_LABEL,
   LOCAL_CODE_NOTICE,
@@ -20,11 +21,15 @@ export const Route = createFileRoute("/symptoms/$slug")({
     if (!data) throw notFound();
     return data;
   },
-  head: ({ loaderData }) => {
-    const title = loaderData ? `${loaderData.symptom.title} — HVAC Symptom` : "HVAC Symptom";
-    const desc =
+  head: ({ loaderData, params }) => {
+    const url = canonicalUrl(`/symptoms/${params.slug}`);
+    const title = loaderData
+      ? `${loaderData.symptom.title} — HVAC Symptom`
+      : "HVAC Symptom";
+    const desc = clampDescription(
       loaderData?.symptom.description ??
-      "What this HVAC symptom means and which topics explain and diagnose it.";
+        "What this HVAC symptom means and which topics explain and diagnose it.",
+    );
     return {
       meta: [
         { title },
@@ -32,7 +37,18 @@ export const Route = createFileRoute("/symptoms/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
         { property: "og:type", content: "article" },
-        { name: "twitter:card", content: "summary" },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        jsonLdScript(
+          breadcrumbLd([
+            { name: "Home", path: "/" },
+            { name: "Symptoms", path: "/symptoms" },
+            { name: loaderData?.symptom.title ?? "Symptom", path: `/symptoms/${params.slug}` },
+          ]),
+        ),
       ],
     };
   },

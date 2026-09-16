@@ -14,13 +14,15 @@ export const Route = createFileRoute("/diagnostics/$slug")({
     if (!data) throw notFound();
     return data;
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
+    const url = canonicalUrl(`/diagnostics/${params.slug}`);
     const title = loaderData
       ? `${loaderData.tree.title} — HVAC Diagnostic Path`
       : "HVAC Diagnostic Path";
-    const desc =
+    const desc = clampDescription(
       loaderData?.tree.intro ??
-      "An ordered diagnostic path: confirm one thing at a time instead of guessing.";
+        "An ordered diagnostic path: confirm one thing at a time instead of guessing.",
+    );
     return {
       meta: [
         { title },
@@ -28,7 +30,18 @@ export const Route = createFileRoute("/diagnostics/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
         { property: "og:type", content: "article" },
-        { name: "twitter:card", content: "summary" },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        jsonLdScript(
+          breadcrumbLd([
+            { name: "Home", path: "/" },
+            { name: "Troubleshooting", path: "/troubleshooting" },
+            { name: loaderData?.tree.title ?? "Diagnostic path", path: `/diagnostics/${params.slug}` },
+          ]),
+        ),
       ],
     };
   },
