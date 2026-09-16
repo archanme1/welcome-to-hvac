@@ -979,6 +979,30 @@ export type Database = {
         }
         Relationships: []
       }
+      visitor_presence: {
+        Row: {
+          first_seen: string
+          last_seen: string
+          path: string | null
+          session_id: string
+          user_id: string | null
+        }
+        Insert: {
+          first_seen?: string
+          last_seen?: string
+          path?: string | null
+          session_id: string
+          user_id?: string | null
+        }
+        Update: {
+          first_seen?: string
+          last_seen?: string
+          path?: string | null
+          session_id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1032,6 +1056,10 @@ export type Database = {
           quizzes: number
           troubleshooting: number
         }[]
+      }
+      presence_ping: {
+        Args: { _path: string; _session_id: string }
+        Returns: undefined
       }
       record_topic_view: { Args: { _content_id: string }; Returns: undefined }
       search_all: {

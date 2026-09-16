@@ -1,0 +1,1 @@
+- [ ] Verify branded signup emails after publishing (sender switched to notify.welcometohvac.com)

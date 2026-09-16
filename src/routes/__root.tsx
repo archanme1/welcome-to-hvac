@@ -15,6 +15,7 @@ import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider } from "@/hooks/use-auth";
 import { AppShell } from "@/components/layout/app-shell";
 import { Toaster } from "@/components/ui/sonner";
+import { useVisitorTracking } from "@/hooks/use-visitor-tracking";
 
 
 function NotFoundComponent() {
@@ -159,6 +160,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useVisitorTracking();
 
   return (
     <QueryClientProvider client={queryClient}>

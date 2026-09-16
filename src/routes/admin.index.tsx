@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { adminOverviewQuery } from "@/lib/admin.functions";
+import { adminIsAdminQuery, liveVisitorsQuery } from "@/lib/analytics.functions";
 import { CONTENT_TYPE_LABEL } from "@/lib/hvac-types";
 
 export const Route = createFileRoute("/admin/")({ component: Dashboard });
@@ -11,6 +12,8 @@ export const Route = createFileRoute("/admin/")({ component: Dashboard });
 function Dashboard() {
   const { isStaff } = useAuth();
   const { data } = useQuery(adminOverviewQuery(isStaff));
+  const { data: isAdmin } = useQuery(adminIsAdminQuery(isStaff));
+  const live = useQuery(liveVisitorsQuery(isAdmin === true));
 
   const stats = [
     { label: "Published", value: data?.published ?? 0 },
@@ -27,6 +30,21 @@ function Dashboard() {
 
   return (
     <div className="space-y-8">
+      {isAdmin ? (
+        <div className="flex flex-wrap items-center gap-4 rounded-lg border border-border bg-card p-4">
+          <div>
+            <div className="text-2xl font-semibold">{live.data?.live ?? 0}</div>
+            <div className="text-xs text-muted-foreground">Live visitors right now</div>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            {live.data?.signedIn ?? 0} signed in · {live.data?.anonymous ?? 0} guests
+          </div>
+          <Button asChild size="sm" variant="outline" className="ml-auto">
+            <Link to="/admin/analytics">View analytics</Link>
+          </Button>
+        </div>
+      ) : null}
+
       <div className="flex flex-wrap gap-2">
         <Button asChild size="sm">
           <Link to="/admin/content/$id" params={{ id: "new" }}>
