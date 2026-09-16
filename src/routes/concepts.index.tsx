@@ -12,7 +12,9 @@ export const Route = createFileRoute("/concepts/")({
       { name: "description", content: "Core HVAC concepts: the refrigeration cycle, heat transfer, psychrometrics, electricity, combustion and airflow." },
       { property: "og:title", content: "Concepts — Welcome to HVAC" },
       { property: "og:description", content: "Core HVAC concepts: the refrigeration cycle, heat transfer, psychrometrics, electricity, combustion and airflow." },
+      { property: "og:url", content: "https://www.welcometohvac.com/concepts" },
     ],
+    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/concepts" }],
   }),
   errorComponent: () => (
     <p className="p-8 text-sm text-muted-foreground">This page didn't load. Please refresh.</p>

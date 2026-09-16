@@ -20,7 +20,9 @@ export const Route = createFileRoute("/symptoms/")({
       { property: "og:description", content: DESC },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { property: "og:url", content: "https://www.welcometohvac.com/symptoms" },
     ],
+    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/symptoms" }],
   }),
   errorComponent: () => (
     <p className="p-8 text-sm text-muted-foreground">Symptoms didn't load. Please refresh.</p>

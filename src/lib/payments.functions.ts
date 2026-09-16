@@ -148,6 +148,104 @@ export const createPortalSession = createServerFn({ method: "POST" })
     }
   });
 
+type CancelResult = { ok: true; accessUntil: string | null } | { error: string };
+
+/** Finds the member's newest live subscription id at the provider. */
+async function findActiveStripeSubscription(
+  stripe: ReturnType<typeof createStripeClient>,
+  userId: string,
+) {
+  const found = await stripe.customers.search({
+    query: `metadata['userId']:'${userId}'`,
+    limit: 1,
+  });
+  const customerId = found.data[0]?.id;
+  if (!customerId) return null;
+  const subs = await stripe.subscriptions.list({
+    customer: customerId,
+    status: "all",
+    limit: 10,
+  });
+  const live = subs.data.filter((s) =>
+    ["active", "trialing", "past_due"].includes(s.status),
+  );
+  return live[0] ?? null;
+}
+
+/** Cancels at the end of the paid period — access and data are kept. */
+export const cancelMySubscription = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { environment: StripeEnv }) => data)
+  .handler(async ({ data, context }): Promise<CancelResult> => {
+    const { userId } = context;
+    try {
+      const stripe = createStripeClient(data.environment);
+      const sub = await findActiveStripeSubscription(stripe, userId);
+      if (!sub) return { error: "No active membership was found to cancel." };
+
+      const updated = await stripe.subscriptions.update(sub.id, {
+        cancel_at_period_end: true,
+      });
+      const item = (updated as any).items?.data?.[0];
+      const periodEnd = item?.current_period_end ?? (updated as any).current_period_end;
+      const accessUntil = periodEnd ? new Date(periodEnd * 1000).toISOString() : null;
+
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await (supabaseAdmin as any)
+        .from("subscriptions")
+        .update({
+          cancel_at_period_end: true,
+          status: updated.status,
+          current_period_end: accessUntil,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("provider_subscription_id", sub.id);
+
+      return { ok: true, accessUntil };
+    } catch (error) {
+      return { error: getStripeErrorMessage(error) };
+    }
+  });
+
+/** Turns a cancelled-but-still-active membership back on, with no new charge. */
+export const resumeMySubscription = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { environment: StripeEnv }) => data)
+  .handler(async ({ data, context }): Promise<CancelResult> => {
+    const { userId } = context;
+    try {
+      const stripe = createStripeClient(data.environment);
+      const sub = await findActiveStripeSubscription(stripe, userId);
+      if (!sub) {
+        return {
+          error: "Your membership has already ended. You can subscribe again from Pricing.",
+        };
+      }
+
+      const updated = await stripe.subscriptions.update(sub.id, {
+        cancel_at_period_end: false,
+      });
+      const item = (updated as any).items?.data?.[0];
+      const periodEnd = item?.current_period_end ?? (updated as any).current_period_end;
+      const accessUntil = periodEnd ? new Date(periodEnd * 1000).toISOString() : null;
+
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await (supabaseAdmin as any)
+        .from("subscriptions")
+        .update({
+          cancel_at_period_end: false,
+          status: updated.status,
+          current_period_end: accessUntil,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("provider_subscription_id", sub.id);
+
+      return { ok: true, accessUntil };
+    } catch (error) {
+      return { error: getStripeErrorMessage(error) };
+    }
+  });
+
 type SyncResult = { pro: boolean; synced: boolean; error?: string };
 
 /**

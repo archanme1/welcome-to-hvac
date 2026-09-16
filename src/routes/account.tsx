@@ -12,7 +12,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { progressQuery } from "@/lib/practice.functions";
 import {
   billingSummaryQuery,
+  cancelMySubscription,
   createPortalSession,
+  resumeMySubscription,
   syncMySubscription,
 } from "@/lib/payments.functions";
 import { getStripeEnvironment, paymentsConfigured } from "@/lib/stripe";
@@ -44,6 +46,47 @@ function Page() {
   );
   const [portalLoading, setPortalLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
+  const [cancelBusy, setCancelBusy] = useState(false);
+  const [confirmingCancel, setConfirmingCancel] = useState(false);
+
+  const cancelMembership = async () => {
+    setCancelBusy(true);
+    try {
+      const result = await cancelMySubscription({
+        data: { environment: getStripeEnvironment() },
+      });
+      if ("error" in result) throw new Error(result.error);
+      await refreshEntitlements();
+      await queryClient.invalidateQueries({ queryKey: ["billing"] });
+      setConfirmingCancel(false);
+      toast.success(
+        result.accessUntil
+          ? `Cancelled. You keep HVAC Pro until ${formatDate(result.accessUntil)}.`
+          : "Your membership has been cancelled.",
+      );
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not cancel your membership.");
+    } finally {
+      setCancelBusy(false);
+    }
+  };
+
+  const resumeMembership = async () => {
+    setCancelBusy(true);
+    try {
+      const result = await resumeMySubscription({
+        data: { environment: getStripeEnvironment() },
+      });
+      if ("error" in result) throw new Error(result.error);
+      await refreshEntitlements();
+      await queryClient.invalidateQueries({ queryKey: ["billing"] });
+      toast.success("Your HVAC Pro membership is active again.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not resume your membership.");
+    } finally {
+      setCancelBusy(false);
+    }
+  };
 
   const openPortal = async () => {
     if (!paymentsConfigured()) {
@@ -207,6 +250,41 @@ function Page() {
           <Button variant="outline" size="sm" disabled={portalLoading} onClick={() => void openPortal()}>
             {portalLoading ? "Opening…" : "Manage billing"}
           </Button>
+        ) : null}
+        {isPro && billing?.managed ? (
+          billing.cancelAtPeriodEnd || billing.status === "canceled" ? (
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={cancelBusy}
+              onClick={() => void resumeMembership()}
+            >
+              {cancelBusy ? "Working…" : "Resume membership"}
+            </Button>
+          ) : confirmingCancel ? (
+            <>
+              <Button
+                variant="destructive"
+                size="sm"
+                disabled={cancelBusy}
+                onClick={() => void cancelMembership()}
+              >
+                {cancelBusy ? "Cancelling…" : "Confirm cancellation"}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={cancelBusy}
+                onClick={() => setConfirmingCancel(false)}
+              >
+                Keep membership
+              </Button>
+            </>
+          ) : (
+            <Button variant="outline" size="sm" onClick={() => setConfirmingCancel(true)}>
+              Cancel membership
+            </Button>
+          )
         ) : null}
         <Button variant="outline" size="sm" disabled={syncing} onClick={() => void recheck()}>
           {syncing ? "Checking…" : "Re-check membership"}

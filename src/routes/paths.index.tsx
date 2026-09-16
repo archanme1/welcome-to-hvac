@@ -20,7 +20,9 @@ export const Route = createFileRoute("/paths/")({
       { property: "og:description", content: DESC },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { property: "og:url", content: "https://www.welcometohvac.com/paths" },
     ],
+    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/paths" }],
   }),
   errorComponent: () => (
     <p className="p-8 text-sm text-muted-foreground">Learning paths didn't load. Please refresh.</p>

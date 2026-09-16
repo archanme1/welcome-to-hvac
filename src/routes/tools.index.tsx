@@ -12,7 +12,9 @@ export const Route = createFileRoute("/tools/")({
       { name: "description", content: "HVAC tools and instruments: what they measure, when to use them and how to read them correctly." },
       { property: "og:title", content: "Tools — Welcome to HVAC" },
       { property: "og:description", content: "HVAC tools and instruments: what they measure, when to use them and how to read them correctly." },
+      { property: "og:url", content: "https://www.welcometohvac.com/tools" },
     ],
+    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/tools" }],
   }),
   errorComponent: () => (
     <p className="p-8 text-sm text-muted-foreground">This page didn't load. Please refresh.</p>

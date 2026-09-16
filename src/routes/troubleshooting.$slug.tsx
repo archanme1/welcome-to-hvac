@@ -3,6 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { TopicPage } from "@/components/content/topic-page";
 import { topicQuery } from "@/lib/hvac.functions";
+import { topicHead } from "@/lib/topic-seo";
 
 export const Route = createFileRoute("/troubleshooting/$slug")({
   loader: async ({ context, params }) => {
@@ -10,21 +11,15 @@ export const Route = createFileRoute("/troubleshooting/$slug")({
     if (!data) throw notFound();
     return data;
   },
-  head: ({ loaderData }) => {
-    if (!loaderData) {
-      return { meta: [{ title: "Unavailable — Welcome to HVAC" }, { name: "robots", content: "noindex" }] };
-    }
-    const title = `${loaderData.topic.title} — Welcome to HVAC`;
-    const description = loaderData.topic.summary ?? "Symptom-based HVAC troubleshooting with likely causes, diagnostic checks and what each reading means.";
-    return {
-      meta: [
-        { title },
-        { name: "description", content: description },
-        { property: "og:title", content: title },
-        { property: "og:description", content: description },
-      ],
-    };
-  },
+  head: ({ loaderData, params }) =>
+    topicHead({
+      segment: "troubleshooting",
+      sectionLabel: "Troubleshooting",
+      slug: params.slug,
+      fallbackDescription:
+        "Symptom-based HVAC troubleshooting with likely causes, diagnostic checks and what each reading means.",
+      loaderData,
+    }),
   errorComponent: () => (
     <p className="p-8 text-sm text-muted-foreground">This topic didn't load. Please refresh.</p>
   ),

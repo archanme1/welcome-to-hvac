@@ -12,7 +12,9 @@ export const Route = createFileRoute("/procedures/")({
       { name: "description", content: "Step-by-step HVAC procedures for installation, startup, charging, maintenance and testing." },
       { property: "og:title", content: "Procedures — Welcome to HVAC" },
       { property: "og:description", content: "Step-by-step HVAC procedures for installation, startup, charging, maintenance and testing." },
+      { property: "og:url", content: "https://www.welcometohvac.com/procedures" },
     ],
+    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/procedures" }],
   }),
   errorComponent: () => (
     <p className="p-8 text-sm text-muted-foreground">This page didn't load. Please refresh.</p>

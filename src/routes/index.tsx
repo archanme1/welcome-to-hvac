@@ -18,7 +18,9 @@ export const Route = createFileRoute("/")({
       { name: "description", content: DESC },
       { property: "og:title", content: "Welcome to HVAC — Learn HVAC Properly" },
       { property: "og:description", content: DESC },
+      { property: "og:url", content: "https://www.welcometohvac.com" },
     ],
+    links: [{ rel: "canonical", href: "https://www.welcometohvac.com" }],
   }),
   errorComponent: () => (
     <p className="p-8 text-sm text-muted-foreground">This page didn't load. Please refresh.</p>

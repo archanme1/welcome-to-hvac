@@ -4,6 +4,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { AppLink } from "@/components/app-link";
 import { Badge } from "@/components/ui/badge";
 import { learningPathQuery } from "@/lib/hvac.functions";
+import { canonicalUrl, breadcrumbLd, jsonLdScript, clampDescription } from "@/lib/seo";
 import { CONTENT_TYPE_LABEL, DIFFICULTY_LABEL, topicHref } from "@/lib/hvac-types";
 
 export const Route = createFileRoute("/paths/$slug")({
@@ -12,12 +13,14 @@ export const Route = createFileRoute("/paths/$slug")({
     if (!data) throw notFound();
     return data;
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
+    const url = canonicalUrl(`/paths/${params.slug}`);
     const title = loaderData
       ? `${loaderData.path.title} — Welcome to HVAC`
       : "Learning Path — Welcome to HVAC";
-    const desc =
-      loaderData?.path.description ?? "An ordered route through the HVAC library, step by step.";
+    const desc = clampDescription(
+      loaderData?.path.description ?? "An ordered route through the HVAC library, step by step.",
+    );
     return {
       meta: [
         { title },
@@ -25,7 +28,31 @@ export const Route = createFileRoute("/paths/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
         { property: "og:type", content: "article" },
-        { name: "twitter:card", content: "summary" },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        jsonLdScript({
+          "@context": "https://schema.org",
+          "@type": "Course",
+          name: loaderData?.path.title ?? "HVAC learning path",
+          description: desc,
+          url,
+          inLanguage: "en",
+          provider: {
+            "@type": "Organization",
+            name: "Welcome to HVAC",
+            url: "https://www.welcometohvac.com",
+          },
+        }),
+        jsonLdScript(
+          breadcrumbLd([
+            { name: "Home", path: "/" },
+            { name: "Learning Paths", path: "/paths" },
+            { name: loaderData?.path.title ?? "Path", path: `/paths/${params.slug}` },
+          ]),
+        ),
       ],
     };
   },
