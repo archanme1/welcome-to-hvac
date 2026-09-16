@@ -22,6 +22,7 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as StartHereRouteImport } from './routes/start-here'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminDiagnosticsRouteImport } from './routes/admin.diagnostics'
 import { Route as AdminFinanceRouteImport } from './routes/admin.finance'
@@ -118,6 +119,11 @@ const StartHereRoute = StartHereRouteImport.update({
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
@@ -295,6 +301,7 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/start-here': typeof StartHereRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/diagnostics': typeof AdminDiagnosticsRoute
   '/admin/finance': typeof AdminFinanceRoute
@@ -341,6 +348,7 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/start-here': typeof StartHereRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/diagnostics': typeof AdminDiagnosticsRoute
   '/admin/finance': typeof AdminFinanceRoute
@@ -389,6 +397,7 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/start-here': typeof StartHereRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/diagnostics': typeof AdminDiagnosticsRoute
   '/admin/finance': typeof AdminFinanceRoute
@@ -438,6 +447,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/sitemap.xml'
     | '/start-here'
+    | '/admin/analytics'
     | '/admin/categories'
     | '/admin/diagnostics'
     | '/admin/finance'
@@ -484,6 +494,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/sitemap.xml'
     | '/start-here'
+    | '/admin/analytics'
     | '/admin/categories'
     | '/admin/diagnostics'
     | '/admin/finance'
@@ -531,6 +542,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/sitemap.xml'
     | '/start-here'
+    | '/admin/analytics'
     | '/admin/categories'
     | '/admin/diagnostics'
     | '/admin/finance'
@@ -694,6 +706,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/analytics': {
+      id: '/admin/analytics'
+      path: '/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AdminAnalyticsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/categories': {
@@ -924,6 +943,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminCategoriesRoute: typeof AdminCategoriesRoute
   AdminDiagnosticsRoute: typeof AdminDiagnosticsRoute
   AdminFinanceRoute: typeof AdminFinanceRoute
@@ -938,6 +958,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminCategoriesRoute: AdminCategoriesRoute,
   AdminDiagnosticsRoute: AdminDiagnosticsRoute,
   AdminFinanceRoute: AdminFinanceRoute,
