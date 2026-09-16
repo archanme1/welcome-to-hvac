@@ -37,8 +37,11 @@ export const Route = createFileRoute("/search")({
       { property: "og:title", content: "Search — Welcome to HVAC" },
       { property: "og:description", content: DESC },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://www.welcometohvac.com/search" },
       { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex, follow" },
     ],
+    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/search" }],
   }),
   errorComponent: () => (
     <p className="p-8 text-sm text-muted-foreground">Search didn't load. Please refresh.</p>
