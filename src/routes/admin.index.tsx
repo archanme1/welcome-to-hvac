@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { adminOverviewQuery } from "@/lib/admin.functions";
+import { adminIsAdminQuery, liveVisitorsQuery } from "@/lib/analytics.functions";
 import { CONTENT_TYPE_LABEL } from "@/lib/hvac-types";
 
 export const Route = createFileRoute("/admin/")({ component: Dashboard });
@@ -11,6 +12,8 @@ export const Route = createFileRoute("/admin/")({ component: Dashboard });
 function Dashboard() {
   const { isStaff } = useAuth();
   const { data } = useQuery(adminOverviewQuery(isStaff));
+  const { data: isAdmin } = useQuery(adminIsAdminQuery(isStaff));
+  const live = useQuery(liveVisitorsQuery(isAdmin === true));
 
   const stats = [
     { label: "Published", value: data?.published ?? 0 },
