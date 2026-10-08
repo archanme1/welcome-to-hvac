@@ -47,7 +47,7 @@ function Page() {
     const row = { ...editing, example: editing.example || null, learn_more_href: editing.learn_more_href || null, learn_more_label: editing.learn_more_label || null, source_note: editing.source_note || null, scheduled_date: editing.scheduled_date || null, month: editing.month || null };
     const { id, ...rest } = row;
     const { error } = id ? await supabase.from("trade_facts").update(rest).eq("id", id) : await supabase.from("trade_facts").insert(rest);
-    if (error) { toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Saved.");
     setEditing(null);
     await qc.invalidateQueries({ queryKey: ["admin", "trade-facts"] });
@@ -55,7 +55,7 @@ function Page() {
   };
   const setStatus = async (f: Fact, status: string) => {
     const { error } = await supabase.from("trade_facts").update({ status }).eq("id", f.id);
-    if (error) { toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     await qc.invalidateQueries({ queryKey: ["admin", "trade-facts"] });
   };
   const runAi = async () => {
@@ -133,9 +133,9 @@ function ShopUrlSetting({ enabled }: { enabled: boolean }) {
     void supabase.from("app_settings").select("value").eq("key", "shop_url").maybeSingle().then(({ data }) => setUrl(typeof data?.value === "string" ? data.value : "https://store.welcometohvac.com/"));
   }, [enabled]);
   const save = async () => {
-    if (!/^https:\/\/[^\s]+$/.test(url)) { toast.error("Enter a full https:// address.");
+    if (!/^https:\/\/[^\s]+$/.test(url)) { toast.error("Enter a full https:// address."); return; }
     const { error } = await supabase.from("app_settings").upsert({ key: "shop_url", value: url });
-    if (error) { toast.error("Only administrators can change the store link.");
+    if (error) { toast.error("Only administrators can change the store link."); return; }
     toast.success("Store link saved.");
     await qc.invalidateQueries({ queryKey: ["shop-url"] });
   };
