@@ -19,6 +19,7 @@ import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as StartHereRouteImport } from './routes/start-here'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
@@ -30,8 +31,11 @@ import { Route as AdminPathsRouteImport } from './routes/admin.paths'
 import { Route as AdminPracticeRouteImport } from './routes/admin.practice'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminSymptomsRouteImport } from './routes/admin.symptoms'
+import { Route as AdminTradeFactsRouteImport } from './routes/admin.trade-facts'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as CSlugRouteImport } from './routes/c.$slug'
+import { Route as CalculatorsIndexRouteImport } from './routes/calculators.index'
+import { Route as CalculatorsSlugRouteImport } from './routes/calculators.$slug'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as ComponentsIndexRouteImport } from './routes/components.index'
 import { Route as ComponentsSlugRouteImport } from './routes/components.$slug'
@@ -52,6 +56,7 @@ import { Route as TroubleshootingIndexRouteImport } from './routes/troubleshooti
 import { Route as TroubleshootingSlugRouteImport } from './routes/troubleshooting.$slug'
 import { Route as AdminContentIndexRouteImport } from './routes/admin.content.index'
 import { Route as AdminContentIdRouteImport } from './routes/admin.content.$id'
+import { Route as CalculatorsCategorySlugRouteImport } from './routes/calculators.category.$slug'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
@@ -104,6 +109,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -161,6 +171,11 @@ const AdminSymptomsRoute = AdminSymptomsRouteImport.update({
   path: '/symptoms',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminTradeFactsRoute = AdminTradeFactsRouteImport.update({
+  id: '/trade-facts',
+  path: '/trade-facts',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -169,6 +184,16 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
 const CSlugRoute = CSlugRouteImport.update({
   id: '/c/$slug',
   path: '/c/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalculatorsIndexRoute = CalculatorsIndexRouteImport.update({
+  id: '/calculators/',
+  path: '/calculators/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalculatorsSlugRoute = CalculatorsSlugRouteImport.update({
+  id: '/calculators/$slug',
+  path: '/calculators/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
@@ -271,6 +296,11 @@ const AdminContentIdRoute = AdminContentIdRouteImport.update({
   path: '/content/$id',
   getParentRoute: () => AdminRoute,
 } as any)
+const CalculatorsCategorySlugRoute = CalculatorsCategorySlugRouteImport.update({
+  id: '/calculators/category/$slug',
+  path: '/calculators/category/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -299,6 +329,7 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
+  '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/start-here': typeof StartHereRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -309,8 +340,10 @@ export interface FileRoutesByFullPath {
   '/admin/practice': typeof AdminPracticeRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/symptoms': typeof AdminSymptomsRoute
+  '/admin/trade-facts': typeof AdminTradeFactsRoute
   '/admin/users': typeof AdminUsersRoute
   '/c/$slug': typeof CSlugRoute
+  '/calculators/$slug': typeof CalculatorsSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
@@ -322,6 +355,7 @@ export interface FileRoutesByFullPath {
   '/tools/$slug': typeof ToolsSlugRoute
   '/troubleshooting/$slug': typeof TroubleshootingSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/calculators/': typeof CalculatorsIndexRoute
   '/components/': typeof ComponentsIndexRoute
   '/concepts/': typeof ConceptsIndexRoute
   '/equipment/': typeof EquipmentIndexRoute
@@ -331,6 +365,7 @@ export interface FileRoutesByFullPath {
   '/tools/': typeof ToolsIndexRoute
   '/troubleshooting/': typeof TroubleshootingIndexRoute
   '/admin/content/$id': typeof AdminContentIdRoute
+  '/calculators/category/$slug': typeof CalculatorsCategorySlugRoute
   '/admin/content/': typeof AdminContentIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -346,6 +381,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
+  '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/start-here': typeof StartHereRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -356,8 +392,10 @@ export interface FileRoutesByTo {
   '/admin/practice': typeof AdminPracticeRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/symptoms': typeof AdminSymptomsRoute
+  '/admin/trade-facts': typeof AdminTradeFactsRoute
   '/admin/users': typeof AdminUsersRoute
   '/c/$slug': typeof CSlugRoute
+  '/calculators/$slug': typeof CalculatorsSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
@@ -369,6 +407,7 @@ export interface FileRoutesByTo {
   '/tools/$slug': typeof ToolsSlugRoute
   '/troubleshooting/$slug': typeof TroubleshootingSlugRoute
   '/admin': typeof AdminIndexRoute
+  '/calculators': typeof CalculatorsIndexRoute
   '/components': typeof ComponentsIndexRoute
   '/concepts': typeof ConceptsIndexRoute
   '/equipment': typeof EquipmentIndexRoute
@@ -378,6 +417,7 @@ export interface FileRoutesByTo {
   '/tools': typeof ToolsIndexRoute
   '/troubleshooting': typeof TroubleshootingIndexRoute
   '/admin/content/$id': typeof AdminContentIdRoute
+  '/calculators/category/$slug': typeof CalculatorsCategorySlugRoute
   '/admin/content': typeof AdminContentIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -395,6 +435,7 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
+  '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/start-here': typeof StartHereRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -405,8 +446,10 @@ export interface FileRoutesById {
   '/admin/practice': typeof AdminPracticeRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/symptoms': typeof AdminSymptomsRoute
+  '/admin/trade-facts': typeof AdminTradeFactsRoute
   '/admin/users': typeof AdminUsersRoute
   '/c/$slug': typeof CSlugRoute
+  '/calculators/$slug': typeof CalculatorsSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/components/$slug': typeof ComponentsSlugRoute
   '/concepts/$slug': typeof ConceptsSlugRoute
@@ -418,6 +461,7 @@ export interface FileRoutesById {
   '/tools/$slug': typeof ToolsSlugRoute
   '/troubleshooting/$slug': typeof TroubleshootingSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/calculators/': typeof CalculatorsIndexRoute
   '/components/': typeof ComponentsIndexRoute
   '/concepts/': typeof ConceptsIndexRoute
   '/equipment/': typeof EquipmentIndexRoute
@@ -427,6 +471,7 @@ export interface FileRoutesById {
   '/tools/': typeof ToolsIndexRoute
   '/troubleshooting/': typeof TroubleshootingIndexRoute
   '/admin/content/$id': typeof AdminContentIdRoute
+  '/calculators/category/$slug': typeof CalculatorsCategorySlugRoute
   '/admin/content/': typeof AdminContentIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -445,6 +490,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/reset-password'
     | '/search'
+    | '/shop'
     | '/sitemap.xml'
     | '/start-here'
     | '/admin/analytics'
@@ -455,8 +501,10 @@ export interface FileRouteTypes {
     | '/admin/practice'
     | '/admin/settings'
     | '/admin/symptoms'
+    | '/admin/trade-facts'
     | '/admin/users'
     | '/c/$slug'
+    | '/calculators/$slug'
     | '/checkout/return'
     | '/components/$slug'
     | '/concepts/$slug'
@@ -468,6 +516,7 @@ export interface FileRouteTypes {
     | '/tools/$slug'
     | '/troubleshooting/$slug'
     | '/admin/'
+    | '/calculators/'
     | '/components/'
     | '/concepts/'
     | '/equipment/'
@@ -477,6 +526,7 @@ export interface FileRouteTypes {
     | '/tools/'
     | '/troubleshooting/'
     | '/admin/content/$id'
+    | '/calculators/category/$slug'
     | '/admin/content/'
     | '/api/public/payments/webhook'
     | '/lovable/email/auth/preview'
@@ -492,6 +542,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/reset-password'
     | '/search'
+    | '/shop'
     | '/sitemap.xml'
     | '/start-here'
     | '/admin/analytics'
@@ -502,8 +553,10 @@ export interface FileRouteTypes {
     | '/admin/practice'
     | '/admin/settings'
     | '/admin/symptoms'
+    | '/admin/trade-facts'
     | '/admin/users'
     | '/c/$slug'
+    | '/calculators/$slug'
     | '/checkout/return'
     | '/components/$slug'
     | '/concepts/$slug'
@@ -515,6 +568,7 @@ export interface FileRouteTypes {
     | '/tools/$slug'
     | '/troubleshooting/$slug'
     | '/admin'
+    | '/calculators'
     | '/components'
     | '/concepts'
     | '/equipment'
@@ -524,6 +578,7 @@ export interface FileRouteTypes {
     | '/tools'
     | '/troubleshooting'
     | '/admin/content/$id'
+    | '/calculators/category/$slug'
     | '/admin/content'
     | '/api/public/payments/webhook'
     | '/lovable/email/auth/preview'
@@ -540,6 +595,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/reset-password'
     | '/search'
+    | '/shop'
     | '/sitemap.xml'
     | '/start-here'
     | '/admin/analytics'
@@ -550,8 +606,10 @@ export interface FileRouteTypes {
     | '/admin/practice'
     | '/admin/settings'
     | '/admin/symptoms'
+    | '/admin/trade-facts'
     | '/admin/users'
     | '/c/$slug'
+    | '/calculators/$slug'
     | '/checkout/return'
     | '/components/$slug'
     | '/concepts/$slug'
@@ -563,6 +621,7 @@ export interface FileRouteTypes {
     | '/tools/$slug'
     | '/troubleshooting/$slug'
     | '/admin/'
+    | '/calculators/'
     | '/components/'
     | '/concepts/'
     | '/equipment/'
@@ -572,6 +631,7 @@ export interface FileRouteTypes {
     | '/tools/'
     | '/troubleshooting/'
     | '/admin/content/$id'
+    | '/calculators/category/$slug'
     | '/admin/content/'
     | '/api/public/payments/webhook'
     | '/lovable/email/auth/preview'
@@ -589,9 +649,11 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SearchRoute: typeof SearchRoute
+  ShopRoute: typeof ShopRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StartHereRoute: typeof StartHereRoute
   CSlugRoute: typeof CSlugRoute
+  CalculatorsSlugRoute: typeof CalculatorsSlugRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   ComponentsSlugRoute: typeof ComponentsSlugRoute
   ConceptsSlugRoute: typeof ConceptsSlugRoute
@@ -602,6 +664,7 @@ export interface RootRouteChildren {
   SymptomsSlugRoute: typeof SymptomsSlugRoute
   ToolsSlugRoute: typeof ToolsSlugRoute
   TroubleshootingSlugRoute: typeof TroubleshootingSlugRoute
+  CalculatorsIndexRoute: typeof CalculatorsIndexRoute
   ComponentsIndexRoute: typeof ComponentsIndexRoute
   ConceptsIndexRoute: typeof ConceptsIndexRoute
   EquipmentIndexRoute: typeof EquipmentIndexRoute
@@ -610,6 +673,7 @@ export interface RootRouteChildren {
   SymptomsIndexRoute: typeof SymptomsIndexRoute
   ToolsIndexRoute: typeof ToolsIndexRoute
   TroubleshootingIndexRoute: typeof TroubleshootingIndexRoute
+  CalculatorsCategorySlugRoute: typeof CalculatorsCategorySlugRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -685,6 +749,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -764,6 +835,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSymptomsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/trade-facts': {
+      id: '/admin/trade-facts'
+      path: '/trade-facts'
+      fullPath: '/admin/trade-facts'
+      preLoaderRoute: typeof AdminTradeFactsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/users': {
       id: '/admin/users'
       path: '/users'
@@ -776,6 +854,20 @@ declare module '@tanstack/react-router' {
       path: '/c/$slug'
       fullPath: '/c/$slug'
       preLoaderRoute: typeof CSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calculators/': {
+      id: '/calculators/'
+      path: '/calculators'
+      fullPath: '/calculators/'
+      preLoaderRoute: typeof CalculatorsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calculators/$slug': {
+      id: '/calculators/$slug'
+      path: '/calculators/$slug'
+      fullPath: '/calculators/$slug'
+      preLoaderRoute: typeof CalculatorsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout/return': {
@@ -918,6 +1010,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminContentIdRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/calculators/category/$slug': {
+      id: '/calculators/category/$slug'
+      path: '/calculators/category/$slug'
+      fullPath: '/calculators/category/$slug'
+      preLoaderRoute: typeof CalculatorsCategorySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -951,6 +1050,7 @@ interface AdminRouteChildren {
   AdminPracticeRoute: typeof AdminPracticeRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSymptomsRoute: typeof AdminSymptomsRoute
+  AdminTradeFactsRoute: typeof AdminTradeFactsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminContentIdRoute: typeof AdminContentIdRoute
@@ -966,6 +1066,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPracticeRoute: AdminPracticeRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminSymptomsRoute: AdminSymptomsRoute,
+  AdminTradeFactsRoute: AdminTradeFactsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminContentIdRoute: AdminContentIdRoute,
@@ -985,9 +1086,11 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SearchRoute: SearchRoute,
+  ShopRoute: ShopRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StartHereRoute: StartHereRoute,
   CSlugRoute: CSlugRoute,
+  CalculatorsSlugRoute: CalculatorsSlugRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   ComponentsSlugRoute: ComponentsSlugRoute,
   ConceptsSlugRoute: ConceptsSlugRoute,
@@ -998,6 +1101,7 @@ const rootRouteChildren: RootRouteChildren = {
   SymptomsSlugRoute: SymptomsSlugRoute,
   ToolsSlugRoute: ToolsSlugRoute,
   TroubleshootingSlugRoute: TroubleshootingSlugRoute,
+  CalculatorsIndexRoute: CalculatorsIndexRoute,
   ComponentsIndexRoute: ComponentsIndexRoute,
   ConceptsIndexRoute: ConceptsIndexRoute,
   EquipmentIndexRoute: EquipmentIndexRoute,
@@ -1006,6 +1110,7 @@ const rootRouteChildren: RootRouteChildren = {
   SymptomsIndexRoute: SymptomsIndexRoute,
   ToolsIndexRoute: ToolsIndexRoute,
   TroubleshootingIndexRoute: TroubleshootingIndexRoute,
+  CalculatorsCategorySlugRoute: CalculatorsCategorySlugRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,

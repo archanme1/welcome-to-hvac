@@ -5,13 +5,18 @@ import { BookOpen, Gauge, Sparkles, Wrench } from "lucide-react";
 import { AppLink } from "@/components/app-link";
 import { Button } from "@/components/ui/button";
 import { navigationQuery } from "@/lib/hvac.functions";
+import { todaysFactQuery } from "@/lib/calculators.functions";
+import { TradeKnowledge } from "@/components/home/trade-knowledge";
 import { CONTENT_TYPE_LABEL, topicHref } from "@/lib/hvac-types";
 
 const DESC =
   "Structured HVAC documentation, diagrams, diagnostics and practice — from the refrigeration cycle to furnace sequence of operation, charging and troubleshooting.";
 
 export const Route = createFileRoute("/")({
-  loader: ({ context }) => context.queryClient.ensureQueryData(navigationQuery),
+  loader: async ({ context }) => {
+    void context.queryClient.prefetchQuery(todaysFactQuery);
+    return context.queryClient.ensureQueryData(navigationQuery);
+  },
   head: () => ({
     meta: [
       { title: "Welcome to HVAC — Learn HVAC Properly" },
@@ -19,6 +24,8 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Welcome to HVAC — Learn HVAC Properly" },
       { property: "og:description", content: DESC },
       { property: "og:url", content: "https://www.welcometohvac.com" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "https://www.welcometohvac.com" }],
   }),
@@ -81,6 +88,8 @@ function Home() {
         </p>
       </section>
 
+      <TradeKnowledge />
+
       <section className="mt-16 grid gap-5 sm:grid-cols-2">
         {PILLARS.map((p) => (
           <div key={p.title} className="rounded-xl border bg-card p-5">
@@ -89,6 +98,16 @@ function Home() {
             <p className="mt-1.5 text-sm leading-6 text-muted-foreground">{p.text}</p>
           </div>
         ))}
+      </section>
+
+      <section className="mt-16 rounded-xl border bg-card p-6">
+        <h2 className="text-base font-semibold">Engineering Tools & Calculators</h2>
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
+          A free universal unit converter plus HVAC calculators for superheat, subcooling, CFM, duct sizing, voltage drop, heat loss, combustion air and more — each with formulas and worked examples.
+        </p>
+        <Button asChild size="sm" variant="outline" className="mt-4">
+          <Link to="/calculators">Browse calculators</Link>
+        </Button>
       </section>
 
       {featured.length ? (

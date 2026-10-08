@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarNav } from "./sidebar-nav";
 import { SearchDialog } from "./search-dialog";
+import { LiveLearners } from "./live-learners";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -67,6 +68,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </Link>
 
           <div className="flex-1" />
+
+          <LiveLearners />
 
           <button
             type="button"
