@@ -24,7 +24,7 @@ const blank: Omit<Fact, "id"> = { headline: "", explanation: "", example: "", ca
 const sel = "h-9 w-full rounded-md border border-input bg-background px-2 text-sm";
 
 function Page() {
-  const { isStaff, isAdmin } = useAuth() as ReturnType<typeof useAuth> & { isAdmin?: boolean };
+  const { isStaff } = useAuth();
   const qc = useQueryClient();
   const draft = useServerFn(draftTradeFact);
   const { data: facts } = useQuery({
@@ -121,7 +121,6 @@ function Page() {
         ))}
         {list.length === 0 ? <p className="p-4 text-sm text-muted-foreground">No facts.</p> : null}
       </div>
-      {isAdmin === false ? null : null}
     </div>
   );
 }

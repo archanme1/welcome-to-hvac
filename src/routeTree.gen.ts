@@ -31,6 +31,7 @@ import { Route as AdminPathsRouteImport } from './routes/admin.paths'
 import { Route as AdminPracticeRouteImport } from './routes/admin.practice'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminSymptomsRouteImport } from './routes/admin.symptoms'
+import { Route as AdminTradeFactsRouteImport } from './routes/admin.trade-facts'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as CSlugRouteImport } from './routes/c.$slug'
 import { Route as CalculatorsIndexRouteImport } from './routes/calculators.index'
@@ -168,6 +169,11 @@ const AdminSettingsRoute = AdminSettingsRouteImport.update({
 const AdminSymptomsRoute = AdminSymptomsRouteImport.update({
   id: '/symptoms',
   path: '/symptoms',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTradeFactsRoute = AdminTradeFactsRouteImport.update({
+  id: '/trade-facts',
+  path: '/trade-facts',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
@@ -334,6 +340,7 @@ export interface FileRoutesByFullPath {
   '/admin/practice': typeof AdminPracticeRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/symptoms': typeof AdminSymptomsRoute
+  '/admin/trade-facts': typeof AdminTradeFactsRoute
   '/admin/users': typeof AdminUsersRoute
   '/c/$slug': typeof CSlugRoute
   '/calculators/$slug': typeof CalculatorsSlugRoute
@@ -385,6 +392,7 @@ export interface FileRoutesByTo {
   '/admin/practice': typeof AdminPracticeRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/symptoms': typeof AdminSymptomsRoute
+  '/admin/trade-facts': typeof AdminTradeFactsRoute
   '/admin/users': typeof AdminUsersRoute
   '/c/$slug': typeof CSlugRoute
   '/calculators/$slug': typeof CalculatorsSlugRoute
@@ -438,6 +446,7 @@ export interface FileRoutesById {
   '/admin/practice': typeof AdminPracticeRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/symptoms': typeof AdminSymptomsRoute
+  '/admin/trade-facts': typeof AdminTradeFactsRoute
   '/admin/users': typeof AdminUsersRoute
   '/c/$slug': typeof CSlugRoute
   '/calculators/$slug': typeof CalculatorsSlugRoute
@@ -492,6 +501,7 @@ export interface FileRouteTypes {
     | '/admin/practice'
     | '/admin/settings'
     | '/admin/symptoms'
+    | '/admin/trade-facts'
     | '/admin/users'
     | '/c/$slug'
     | '/calculators/$slug'
@@ -543,6 +553,7 @@ export interface FileRouteTypes {
     | '/admin/practice'
     | '/admin/settings'
     | '/admin/symptoms'
+    | '/admin/trade-facts'
     | '/admin/users'
     | '/c/$slug'
     | '/calculators/$slug'
@@ -595,6 +606,7 @@ export interface FileRouteTypes {
     | '/admin/practice'
     | '/admin/settings'
     | '/admin/symptoms'
+    | '/admin/trade-facts'
     | '/admin/users'
     | '/c/$slug'
     | '/calculators/$slug'
@@ -823,6 +835,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSymptomsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/trade-facts': {
+      id: '/admin/trade-facts'
+      path: '/trade-facts'
+      fullPath: '/admin/trade-facts'
+      preLoaderRoute: typeof AdminTradeFactsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/users': {
       id: '/admin/users'
       path: '/users'
@@ -1031,6 +1050,7 @@ interface AdminRouteChildren {
   AdminPracticeRoute: typeof AdminPracticeRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSymptomsRoute: typeof AdminSymptomsRoute
+  AdminTradeFactsRoute: typeof AdminTradeFactsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminContentIdRoute: typeof AdminContentIdRoute
@@ -1046,6 +1066,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPracticeRoute: AdminPracticeRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminSymptomsRoute: AdminSymptomsRoute,
+  AdminTradeFactsRoute: AdminTradeFactsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminContentIdRoute: AdminContentIdRoute,
