@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { publicDb } from "@/lib/hvac.server";
 import { SITE_URL } from "@/lib/seo";
 import { topicHref } from "@/lib/hvac-types";
+import { ALL_TOOLS, CATEGORIES, isIndexable } from "@/lib/calculators/catalog";
 import type { ContentType } from "@/lib/hvac-types";
 
 const STATIC_PATHS = [
@@ -19,6 +20,10 @@ const STATIC_PATHS = [
   "/practice",
   "/pricing",
   "/experts",
+  "/calculators",
+  "/shop",
+  ...CATEGORIES.map((c) => `/calculators/category/${c.id}`),
+  ...ALL_TOOLS.filter(isIndexable).map((t) => `/calculators/${t.slug}`),
 ];
 
 type Entry = { loc: string; lastmod?: string | undefined };

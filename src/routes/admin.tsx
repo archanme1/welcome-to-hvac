@@ -25,6 +25,7 @@ const TABS = [
   { to: "/admin/symptoms", label: "Symptoms" },
   { to: "/admin/paths", label: "Paths" },
   { to: "/admin/diagnostics", label: "Diagnostics" },
+  { to: "/admin/trade-facts", label: "Trade Facts" },
   { to: "/admin/users", label: "Users" },
   { to: "/admin/analytics", label: "Analytics" },
   { to: "/admin/finance", label: "Finance" },
