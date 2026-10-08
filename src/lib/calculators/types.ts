@@ -29,7 +29,7 @@ export type CalcInput = {
   help?: string;
 };
 
-export type CalcOutput = { label: string; value: number; unit?: string; digits?: number; text?: string };
+export type CalcOutput = { label: string; value: number; unit?: string | undefined; digits?: number | undefined; text?: string | undefined };
 export type CalcResult = { outputs: CalcOutput[]; notes?: string[] };
 export type CalcValues = Record<string, number | string>;
 export type ComputeFn = (v: CalcValues) => CalcResult;
