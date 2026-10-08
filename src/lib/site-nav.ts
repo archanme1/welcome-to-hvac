@@ -28,6 +28,7 @@ export const SITE_NAV: NavSection[] = [
   { title: "Troubleshooting", href: "/troubleshooting" },
   { title: "Symptoms", href: "/symptoms" },
   { title: "Tools", href: "/tools" },
+  { title: "Engineering Tools & Calculators", href: "/calculators" },
   { title: "Building Science", href: "/c/building-science" },
   { title: "Safety", href: "/c/safety" },
   { title: "Learning Paths", href: "/paths" },
@@ -35,4 +36,5 @@ export const SITE_NAV: NavSection[] = [
   { title: "AI Tutor", href: "/ai-tutor" },
   { title: "Search", href: "/search" },
   { title: "Experts", href: "/experts", badge: "Soon" },
+  { title: "Shop", href: "/shop" },
 ];
