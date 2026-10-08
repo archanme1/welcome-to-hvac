@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791502561021,
+      "tag": "0000_trade_facts_live_learners_shop",
+      "breakpoints": true
+    }
+  ]
+}
