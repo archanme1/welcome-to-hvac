@@ -913,6 +913,57 @@ export type Database = {
           },
         ]
       }
+      trade_facts: {
+        Row: {
+          category: string
+          created_at: string
+          example: string | null
+          explanation: string
+          headline: string
+          id: string
+          learn_more_href: string | null
+          learn_more_label: string | null
+          month: number | null
+          scheduled_date: string | null
+          sort_order: number
+          source_note: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          example?: string | null
+          explanation: string
+          headline: string
+          id?: string
+          learn_more_href?: string | null
+          learn_more_label?: string | null
+          month?: number | null
+          scheduled_date?: string | null
+          sort_order?: number
+          source_note?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          example?: string | null
+          explanation?: string
+          headline?: string
+          id?: string
+          learn_more_href?: string | null
+          learn_more_label?: string | null
+          month?: number | null
+          scheduled_date?: string | null
+          sort_order?: number
+          source_note?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_progress: {
         Row: {
           content_id: string | null
@@ -1026,6 +1077,7 @@ export type Database = {
       is_pro: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
       jsonb_plain_text: { Args: { _body: Json }; Returns: string }
+      live_learner_count: { Args: never; Returns: number }
       nav_tree: {
         Args: never
         Returns: {
@@ -1077,6 +1129,32 @@ export type Database = {
       }
       search_count: { Args: { _kind?: string; _q: string }; Returns: number }
       search_tokens: { Args: { _q: string }; Returns: string[] }
+      shop_url: { Args: never; Returns: string }
+      todays_trade_fact: {
+        Args: never
+        Returns: {
+          category: string
+          created_at: string
+          example: string | null
+          explanation: string
+          headline: string
+          id: string
+          learn_more_href: string | null
+          learn_more_label: string | null
+          month: number | null
+          scheduled_date: string | null
+          sort_order: number
+          source_note: string | null
+          status: string
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "trade_facts"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       username_available: { Args: { _username: string }; Returns: boolean }
     }
     Enums: {
