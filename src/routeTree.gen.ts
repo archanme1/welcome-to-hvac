@@ -19,6 +19,7 @@ import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as StartHereRouteImport } from './routes/start-here'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
@@ -107,6 +108,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -317,6 +323,7 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
+  '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/start-here': typeof StartHereRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -367,6 +374,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
+  '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/start-here': typeof StartHereRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -419,6 +427,7 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
+  '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/start-here': typeof StartHereRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
@@ -472,6 +481,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/reset-password'
     | '/search'
+    | '/shop'
     | '/sitemap.xml'
     | '/start-here'
     | '/admin/analytics'
@@ -522,6 +532,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/reset-password'
     | '/search'
+    | '/shop'
     | '/sitemap.xml'
     | '/start-here'
     | '/admin/analytics'
@@ -573,6 +584,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/reset-password'
     | '/search'
+    | '/shop'
     | '/sitemap.xml'
     | '/start-here'
     | '/admin/analytics'
@@ -625,6 +637,7 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SearchRoute: typeof SearchRoute
+  ShopRoute: typeof ShopRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StartHereRoute: typeof StartHereRoute
   CSlugRoute: typeof CSlugRoute
@@ -724,6 +737,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -1045,6 +1065,7 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SearchRoute: SearchRoute,
+  ShopRoute: ShopRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StartHereRoute: StartHereRoute,
   CSlugRoute: CSlugRoute,
