@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Lock, Check, X, RotateCcw } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,6 +44,22 @@ export function PracticeSection({
   const { user, isPro } = useAuth();
   const unlocked = !!user && isPro;
   const { data, isLoading } = useQuery(practiceQuery(contentId, unlocked));
+  const [tab, setTab] = useState<string | null>(null);
+
+  useEffect(() => {
+    const valid = ["questions", "quiz", "troubleshooting", "equipment"];
+    const apply = () => {
+      const h = window.location.hash.replace("#", "");
+      const key = h === "quizzes" ? "quiz" : h;
+      if (valid.includes(key)) {
+        setTab(key);
+        document.getElementById("practice")?.scrollIntoView({ behavior: "smooth" });
+      }
+    };
+    apply();
+    window.addEventListener("hashchange", apply);
+    return () => window.removeEventListener("hashchange", apply);
+  }, []);
 
   const total = counts.questions + counts.quizzes + counts.troubleshooting + counts.equipment;
   if (total === 0) return null;
@@ -59,6 +75,9 @@ export function PracticeSection({
 
   return (
     <section id="practice" className="scroll-mt-24">
+      {["questions", "quiz", "quizzes", "troubleshooting", "equipment"].map((a) => (
+        <span key={a} id={a} className="block scroll-mt-24" aria-hidden="true" />
+      ))}
       <h2 className="mt-12 flex items-center gap-2 border-b pb-2 text-xl font-semibold tracking-tight sm:text-2xl">
         Practice &amp; Mastery
         {!unlocked ? <Lock className="h-4 w-4 text-muted-foreground" /> : null}
@@ -69,7 +88,7 @@ export function PracticeSection({
       ) : isLoading ? (
         <p className="mt-4 text-sm text-muted-foreground">Loading practice...</p>
       ) : (
-        <Tabs defaultValue={defaultTab} className="mt-5">
+        <Tabs value={tab ?? defaultTab} onValueChange={setTab} className="mt-5">
           <TabsList className="flex-wrap">
             {counts.questions > 0 ? <TabsTrigger value="questions">Questions</TabsTrigger> : null}
             {counts.quizzes > 0 ? <TabsTrigger value="quiz">Quiz</TabsTrigger> : null}
@@ -82,7 +101,11 @@ export function PracticeSection({
           </TabsList>
 
           <TabsContent value="questions" className="mt-4 space-y-4">
-            {(data?.questions ?? []).map((q) => (
+            {(() => {
+              const inQuiz = new Set((data?.quizzes ?? []).flatMap((z: { question_ids?: string[] }) => z.question_ids ?? []));
+              const standalone = (data?.questions ?? []).filter((q) => !inQuiz.has(q.id));
+              return standalone.length ? standalone : (data?.questions ?? []);
+            })().map((q) => (
               <QuestionCard key={q.id} question={q} contentId={contentId} />
             ))}
           </TabsContent>

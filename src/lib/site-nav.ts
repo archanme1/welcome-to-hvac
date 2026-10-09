@@ -34,7 +34,5 @@ export const SITE_NAV: NavSection[] = [
   { title: "Learning Paths", href: "/paths" },
   { title: "Practice & Mastery", href: "/practice" },
   { title: "AI Tutor", href: "/ai-tutor" },
-  { title: "Search", href: "/search" },
-  { title: "Experts", href: "/experts", badge: "Soon" },
   { title: "Shop", href: "/shop" },
 ];
