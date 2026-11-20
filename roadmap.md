@@ -4,3 +4,5 @@
 - [ ] Keyword research (Semrush/Search Console) and per-page SEO audit of existing topic pages (duplicate meta, heading structure, alt text, broken links)
 - [ ] Add verified reference data: refrigerant P-T charts, pipe sizing, conductor ampacity, pipe schedules, bolt torque, flue-gas efficiency
 - [x] Test marketplace messaging, ratings, reporting and moderation with test accounts; fixed email-prefix leak in seller names
+- [x] Apply cobalt blue as the shared brand accent in light and dark themes without changing layouts
+- [x] Keep the sidebar closed on homepage initial load while preserving manual open/close controls

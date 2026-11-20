@@ -141,16 +141,16 @@ function Analytics() {
                     type="monotone"
                     dataKey="views"
                     name="Page views"
-                    stroke="hsl(var(--primary))"
-                    fill="hsl(var(--primary))"
+                    stroke="var(--primary)"
+                    fill="var(--primary)"
                     fillOpacity={0.15}
                   />
                   <Area
                     type="monotone"
                     dataKey="visitors"
                     name="Visitors"
-                    stroke="hsl(var(--muted-foreground))"
-                    fill="hsl(var(--muted-foreground))"
+                    stroke="var(--muted-foreground)"
+                    fill="var(--muted-foreground)"
                     fillOpacity={0.1}
                   />
                 </AreaChart>
@@ -167,7 +167,7 @@ function Analytics() {
                   <XAxis dataKey="day" fontSize={11} tickLine={false} axisLine={false} />
                   <YAxis fontSize={11} tickLine={false} axisLine={false} allowDecimals={false} />
                   <Tooltip />
-                  <Bar dataKey="signups" name="New accounts" fill="hsl(var(--primary))" />
+                  <Bar dataKey="signups" name="New accounts" fill="var(--primary)" />
                 </BarChart>
               </ResponsiveContainer>
             </div>

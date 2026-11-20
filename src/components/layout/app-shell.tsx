@@ -1,6 +1,6 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Menu, PanelLeftClose, PanelLeftOpen, Home, BookOpen, Calculator, Bot, Store, ShoppingBag, Search, Moon, Sun, User2, LogOut, Shield, Sparkles } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -22,19 +22,33 @@ import { useQueryClient } from "@tanstack/react-query";
 import hvacLogo from "@/assets/hvac-logo.png.asset.json";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(pathname === "/");
+  const isInitialPath = useRef(true);
 
-  // Remember the desktop sidebar preference (read after hydration).
+  // Initial homepage state is already closed; later arrivals reset on the path change.
   useEffect(() => {
+    if (isInitialPath.current) {
+      isInitialPath.current = false;
+      if (pathname !== "/") {
+        setCollapsed(window.localStorage.getItem("wth-sidebar-collapsed") === "1");
+      }
+      return;
+    }
+    if (pathname === "/") {
+      setCollapsed(true);
+      setMobileOpen(false);
+      return;
+    }
     setCollapsed(window.localStorage.getItem("wth-sidebar-collapsed") === "1");
-  }, []);
-  const toggleCollapsed = () =>
-    setCollapsed((v) => {
-      window.localStorage.setItem("wth-sidebar-collapsed", v ? "0" : "1");
-      return !v;
-    });
+  }, [pathname]);
+  const toggleCollapsed = () => {
+    const next = !collapsed;
+    setCollapsed(next);
+    window.localStorage.setItem("wth-sidebar-collapsed", next ? "1" : "0");
+  };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
