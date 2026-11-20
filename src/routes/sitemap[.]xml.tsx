@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { publicDb } from "@/lib/hvac.server";
+import { marketplaceSitemapEntries } from "@/lib/marketplace.functions";
 import { SITE_URL } from "@/lib/seo";
 import { topicHref } from "@/lib/hvac-types";
 import { ALL_TOOLS, CATEGORIES, isIndexable } from "@/lib/calculators/catalog";
@@ -22,6 +23,7 @@ const STATIC_PATHS = [
   "/experts",
   "/calculators",
   "/shop",
+  "/marketplace",
   ...CATEGORIES.map((c) => `/calculators/category/${c.id}`),
   ...ALL_TOOLS.filter(isIndexable).map((t) => `/calculators/${t.slug}`),
 ];
@@ -59,6 +61,7 @@ export const Route = createFileRoute("/sitemap.xml")({
       GET: async () => {
         const db = publicDb();
 
+        const market = await marketplaceSitemapEntries().catch(() => ({ listings: [], categories: [] as string[] }));
         const [content, symptoms, categories, paths, trees] = await Promise.all([
           pageAll<{ slug: string; content_type: ContentType; updated_at: string }>((from, to) =>
             db
@@ -122,6 +125,11 @@ export const Route = createFileRoute("/sitemap.xml")({
           })),
           ...trees.map((row) => ({
             loc: `${SITE_URL}/diagnostics/${row.slug}`,
+            lastmod: row.updated_at?.slice(0, 10),
+          })),
+          ...market.categories.map((slug) => ({ loc: `${SITE_URL}/marketplace/c/${slug}` })),
+          ...market.listings.map((row) => ({
+            loc: `${SITE_URL}/marketplace/listing/${row.slug}`,
             lastmod: row.updated_at?.slice(0, 10),
           })),
         ];

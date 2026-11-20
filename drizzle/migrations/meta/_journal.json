@@ -15,6 +15,13 @@
       "when": 1795211059877,
       "tag": "0001_tighten_analytics_and_settings",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795212863487,
+      "tag": "0002_trades_marketplace",
+      "breakpoints": true
     }
   ]
 }

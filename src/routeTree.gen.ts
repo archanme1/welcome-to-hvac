@@ -27,6 +27,7 @@ import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminDiagnosticsRouteImport } from './routes/admin.diagnostics'
 import { Route as AdminFinanceRouteImport } from './routes/admin.finance'
+import { Route as AdminMarketplaceRouteImport } from './routes/admin.marketplace'
 import { Route as AdminPathsRouteImport } from './routes/admin.paths'
 import { Route as AdminPracticeRouteImport } from './routes/admin.practice'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
@@ -44,6 +45,10 @@ import { Route as ConceptsSlugRouteImport } from './routes/concepts.$slug'
 import { Route as DiagnosticsSlugRouteImport } from './routes/diagnostics.$slug'
 import { Route as EquipmentIndexRouteImport } from './routes/equipment.index'
 import { Route as EquipmentSlugRouteImport } from './routes/equipment.$slug'
+import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
+import { Route as MarketplaceMessagesRouteImport } from './routes/marketplace.messages'
+import { Route as MarketplaceMineRouteImport } from './routes/marketplace.mine'
+import { Route as MarketplaceNewRouteImport } from './routes/marketplace.new'
 import { Route as PathsIndexRouteImport } from './routes/paths.index'
 import { Route as PathsSlugRouteImport } from './routes/paths.$slug'
 import { Route as ProceduresIndexRouteImport } from './routes/procedures.index'
@@ -57,6 +62,9 @@ import { Route as TroubleshootingSlugRouteImport } from './routes/troubleshootin
 import { Route as AdminContentIndexRouteImport } from './routes/admin.content.index'
 import { Route as AdminContentIdRouteImport } from './routes/admin.content.$id'
 import { Route as CalculatorsCategorySlugRouteImport } from './routes/calculators.category.$slug'
+import { Route as MarketplaceCSlugRouteImport } from './routes/marketplace.c.$slug'
+import { Route as MarketplaceEditIdRouteImport } from './routes/marketplace.edit.$id'
+import { Route as MarketplaceListingSlugRouteImport } from './routes/marketplace.listing.$slug'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
@@ -151,6 +159,11 @@ const AdminFinanceRoute = AdminFinanceRouteImport.update({
   path: '/finance',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminMarketplaceRoute = AdminMarketplaceRouteImport.update({
+  id: '/marketplace',
+  path: '/marketplace',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPathsRoute = AdminPathsRouteImport.update({
   id: '/paths',
   path: '/paths',
@@ -236,6 +249,26 @@ const EquipmentSlugRoute = EquipmentSlugRouteImport.update({
   path: '/equipment/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
+  id: '/marketplace/',
+  path: '/marketplace/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceMessagesRoute = MarketplaceMessagesRouteImport.update({
+  id: '/marketplace/messages',
+  path: '/marketplace/messages',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceMineRoute = MarketplaceMineRouteImport.update({
+  id: '/marketplace/mine',
+  path: '/marketplace/mine',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceNewRoute = MarketplaceNewRouteImport.update({
+  id: '/marketplace/new',
+  path: '/marketplace/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PathsIndexRoute = PathsIndexRouteImport.update({
   id: '/paths/',
   path: '/paths/',
@@ -301,6 +334,21 @@ const CalculatorsCategorySlugRoute = CalculatorsCategorySlugRouteImport.update({
   path: '/calculators/category/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MarketplaceCSlugRoute = MarketplaceCSlugRouteImport.update({
+  id: '/marketplace/c/$slug',
+  path: '/marketplace/c/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceEditIdRoute = MarketplaceEditIdRouteImport.update({
+  id: '/marketplace/edit/$id',
+  path: '/marketplace/edit/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceListingSlugRoute = MarketplaceListingSlugRouteImport.update({
+  id: '/marketplace/listing/$slug',
+  path: '/marketplace/listing/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -336,6 +384,7 @@ export interface FileRoutesByFullPath {
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/diagnostics': typeof AdminDiagnosticsRoute
   '/admin/finance': typeof AdminFinanceRoute
+  '/admin/marketplace': typeof AdminMarketplaceRoute
   '/admin/paths': typeof AdminPathsRoute
   '/admin/practice': typeof AdminPracticeRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -349,6 +398,9 @@ export interface FileRoutesByFullPath {
   '/concepts/$slug': typeof ConceptsSlugRoute
   '/diagnostics/$slug': typeof DiagnosticsSlugRoute
   '/equipment/$slug': typeof EquipmentSlugRoute
+  '/marketplace/messages': typeof MarketplaceMessagesRoute
+  '/marketplace/mine': typeof MarketplaceMineRoute
+  '/marketplace/new': typeof MarketplaceNewRoute
   '/paths/$slug': typeof PathsSlugRoute
   '/procedures/$slug': typeof ProceduresSlugRoute
   '/symptoms/$slug': typeof SymptomsSlugRoute
@@ -359,6 +411,7 @@ export interface FileRoutesByFullPath {
   '/components/': typeof ComponentsIndexRoute
   '/concepts/': typeof ConceptsIndexRoute
   '/equipment/': typeof EquipmentIndexRoute
+  '/marketplace/': typeof MarketplaceIndexRoute
   '/paths/': typeof PathsIndexRoute
   '/procedures/': typeof ProceduresIndexRoute
   '/symptoms/': typeof SymptomsIndexRoute
@@ -366,6 +419,9 @@ export interface FileRoutesByFullPath {
   '/troubleshooting/': typeof TroubleshootingIndexRoute
   '/admin/content/$id': typeof AdminContentIdRoute
   '/calculators/category/$slug': typeof CalculatorsCategorySlugRoute
+  '/marketplace/c/$slug': typeof MarketplaceCSlugRoute
+  '/marketplace/edit/$id': typeof MarketplaceEditIdRoute
+  '/marketplace/listing/$slug': typeof MarketplaceListingSlugRoute
   '/admin/content/': typeof AdminContentIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -388,6 +444,7 @@ export interface FileRoutesByTo {
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/diagnostics': typeof AdminDiagnosticsRoute
   '/admin/finance': typeof AdminFinanceRoute
+  '/admin/marketplace': typeof AdminMarketplaceRoute
   '/admin/paths': typeof AdminPathsRoute
   '/admin/practice': typeof AdminPracticeRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -401,6 +458,9 @@ export interface FileRoutesByTo {
   '/concepts/$slug': typeof ConceptsSlugRoute
   '/diagnostics/$slug': typeof DiagnosticsSlugRoute
   '/equipment/$slug': typeof EquipmentSlugRoute
+  '/marketplace/messages': typeof MarketplaceMessagesRoute
+  '/marketplace/mine': typeof MarketplaceMineRoute
+  '/marketplace/new': typeof MarketplaceNewRoute
   '/paths/$slug': typeof PathsSlugRoute
   '/procedures/$slug': typeof ProceduresSlugRoute
   '/symptoms/$slug': typeof SymptomsSlugRoute
@@ -411,6 +471,7 @@ export interface FileRoutesByTo {
   '/components': typeof ComponentsIndexRoute
   '/concepts': typeof ConceptsIndexRoute
   '/equipment': typeof EquipmentIndexRoute
+  '/marketplace': typeof MarketplaceIndexRoute
   '/paths': typeof PathsIndexRoute
   '/procedures': typeof ProceduresIndexRoute
   '/symptoms': typeof SymptomsIndexRoute
@@ -418,6 +479,9 @@ export interface FileRoutesByTo {
   '/troubleshooting': typeof TroubleshootingIndexRoute
   '/admin/content/$id': typeof AdminContentIdRoute
   '/calculators/category/$slug': typeof CalculatorsCategorySlugRoute
+  '/marketplace/c/$slug': typeof MarketplaceCSlugRoute
+  '/marketplace/edit/$id': typeof MarketplaceEditIdRoute
+  '/marketplace/listing/$slug': typeof MarketplaceListingSlugRoute
   '/admin/content': typeof AdminContentIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -442,6 +506,7 @@ export interface FileRoutesById {
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/diagnostics': typeof AdminDiagnosticsRoute
   '/admin/finance': typeof AdminFinanceRoute
+  '/admin/marketplace': typeof AdminMarketplaceRoute
   '/admin/paths': typeof AdminPathsRoute
   '/admin/practice': typeof AdminPracticeRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -455,6 +520,9 @@ export interface FileRoutesById {
   '/concepts/$slug': typeof ConceptsSlugRoute
   '/diagnostics/$slug': typeof DiagnosticsSlugRoute
   '/equipment/$slug': typeof EquipmentSlugRoute
+  '/marketplace/messages': typeof MarketplaceMessagesRoute
+  '/marketplace/mine': typeof MarketplaceMineRoute
+  '/marketplace/new': typeof MarketplaceNewRoute
   '/paths/$slug': typeof PathsSlugRoute
   '/procedures/$slug': typeof ProceduresSlugRoute
   '/symptoms/$slug': typeof SymptomsSlugRoute
@@ -465,6 +533,7 @@ export interface FileRoutesById {
   '/components/': typeof ComponentsIndexRoute
   '/concepts/': typeof ConceptsIndexRoute
   '/equipment/': typeof EquipmentIndexRoute
+  '/marketplace/': typeof MarketplaceIndexRoute
   '/paths/': typeof PathsIndexRoute
   '/procedures/': typeof ProceduresIndexRoute
   '/symptoms/': typeof SymptomsIndexRoute
@@ -472,6 +541,9 @@ export interface FileRoutesById {
   '/troubleshooting/': typeof TroubleshootingIndexRoute
   '/admin/content/$id': typeof AdminContentIdRoute
   '/calculators/category/$slug': typeof CalculatorsCategorySlugRoute
+  '/marketplace/c/$slug': typeof MarketplaceCSlugRoute
+  '/marketplace/edit/$id': typeof MarketplaceEditIdRoute
+  '/marketplace/listing/$slug': typeof MarketplaceListingSlugRoute
   '/admin/content/': typeof AdminContentIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -497,6 +569,7 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/diagnostics'
     | '/admin/finance'
+    | '/admin/marketplace'
     | '/admin/paths'
     | '/admin/practice'
     | '/admin/settings'
@@ -510,6 +583,9 @@ export interface FileRouteTypes {
     | '/concepts/$slug'
     | '/diagnostics/$slug'
     | '/equipment/$slug'
+    | '/marketplace/messages'
+    | '/marketplace/mine'
+    | '/marketplace/new'
     | '/paths/$slug'
     | '/procedures/$slug'
     | '/symptoms/$slug'
@@ -520,6 +596,7 @@ export interface FileRouteTypes {
     | '/components/'
     | '/concepts/'
     | '/equipment/'
+    | '/marketplace/'
     | '/paths/'
     | '/procedures/'
     | '/symptoms/'
@@ -527,6 +604,9 @@ export interface FileRouteTypes {
     | '/troubleshooting/'
     | '/admin/content/$id'
     | '/calculators/category/$slug'
+    | '/marketplace/c/$slug'
+    | '/marketplace/edit/$id'
+    | '/marketplace/listing/$slug'
     | '/admin/content/'
     | '/api/public/payments/webhook'
     | '/lovable/email/auth/preview'
@@ -549,6 +629,7 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/diagnostics'
     | '/admin/finance'
+    | '/admin/marketplace'
     | '/admin/paths'
     | '/admin/practice'
     | '/admin/settings'
@@ -562,6 +643,9 @@ export interface FileRouteTypes {
     | '/concepts/$slug'
     | '/diagnostics/$slug'
     | '/equipment/$slug'
+    | '/marketplace/messages'
+    | '/marketplace/mine'
+    | '/marketplace/new'
     | '/paths/$slug'
     | '/procedures/$slug'
     | '/symptoms/$slug'
@@ -572,6 +656,7 @@ export interface FileRouteTypes {
     | '/components'
     | '/concepts'
     | '/equipment'
+    | '/marketplace'
     | '/paths'
     | '/procedures'
     | '/symptoms'
@@ -579,6 +664,9 @@ export interface FileRouteTypes {
     | '/troubleshooting'
     | '/admin/content/$id'
     | '/calculators/category/$slug'
+    | '/marketplace/c/$slug'
+    | '/marketplace/edit/$id'
+    | '/marketplace/listing/$slug'
     | '/admin/content'
     | '/api/public/payments/webhook'
     | '/lovable/email/auth/preview'
@@ -602,6 +690,7 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/diagnostics'
     | '/admin/finance'
+    | '/admin/marketplace'
     | '/admin/paths'
     | '/admin/practice'
     | '/admin/settings'
@@ -615,6 +704,9 @@ export interface FileRouteTypes {
     | '/concepts/$slug'
     | '/diagnostics/$slug'
     | '/equipment/$slug'
+    | '/marketplace/messages'
+    | '/marketplace/mine'
+    | '/marketplace/new'
     | '/paths/$slug'
     | '/procedures/$slug'
     | '/symptoms/$slug'
@@ -625,6 +717,7 @@ export interface FileRouteTypes {
     | '/components/'
     | '/concepts/'
     | '/equipment/'
+    | '/marketplace/'
     | '/paths/'
     | '/procedures/'
     | '/symptoms/'
@@ -632,6 +725,9 @@ export interface FileRouteTypes {
     | '/troubleshooting/'
     | '/admin/content/$id'
     | '/calculators/category/$slug'
+    | '/marketplace/c/$slug'
+    | '/marketplace/edit/$id'
+    | '/marketplace/listing/$slug'
     | '/admin/content/'
     | '/api/public/payments/webhook'
     | '/lovable/email/auth/preview'
@@ -659,6 +755,9 @@ export interface RootRouteChildren {
   ConceptsSlugRoute: typeof ConceptsSlugRoute
   DiagnosticsSlugRoute: typeof DiagnosticsSlugRoute
   EquipmentSlugRoute: typeof EquipmentSlugRoute
+  MarketplaceMessagesRoute: typeof MarketplaceMessagesRoute
+  MarketplaceMineRoute: typeof MarketplaceMineRoute
+  MarketplaceNewRoute: typeof MarketplaceNewRoute
   PathsSlugRoute: typeof PathsSlugRoute
   ProceduresSlugRoute: typeof ProceduresSlugRoute
   SymptomsSlugRoute: typeof SymptomsSlugRoute
@@ -668,12 +767,16 @@ export interface RootRouteChildren {
   ComponentsIndexRoute: typeof ComponentsIndexRoute
   ConceptsIndexRoute: typeof ConceptsIndexRoute
   EquipmentIndexRoute: typeof EquipmentIndexRoute
+  MarketplaceIndexRoute: typeof MarketplaceIndexRoute
   PathsIndexRoute: typeof PathsIndexRoute
   ProceduresIndexRoute: typeof ProceduresIndexRoute
   SymptomsIndexRoute: typeof SymptomsIndexRoute
   ToolsIndexRoute: typeof ToolsIndexRoute
   TroubleshootingIndexRoute: typeof TroubleshootingIndexRoute
   CalculatorsCategorySlugRoute: typeof CalculatorsCategorySlugRoute
+  MarketplaceCSlugRoute: typeof MarketplaceCSlugRoute
+  MarketplaceEditIdRoute: typeof MarketplaceEditIdRoute
+  MarketplaceListingSlugRoute: typeof MarketplaceListingSlugRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -807,6 +910,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminFinanceRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/marketplace': {
+      id: '/admin/marketplace'
+      path: '/marketplace'
+      fullPath: '/admin/marketplace'
+      preLoaderRoute: typeof AdminMarketplaceRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/paths': {
       id: '/admin/paths'
       path: '/paths'
@@ -926,6 +1036,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EquipmentSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/marketplace/': {
+      id: '/marketplace/'
+      path: '/marketplace'
+      fullPath: '/marketplace/'
+      preLoaderRoute: typeof MarketplaceIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketplace/messages': {
+      id: '/marketplace/messages'
+      path: '/marketplace/messages'
+      fullPath: '/marketplace/messages'
+      preLoaderRoute: typeof MarketplaceMessagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketplace/mine': {
+      id: '/marketplace/mine'
+      path: '/marketplace/mine'
+      fullPath: '/marketplace/mine'
+      preLoaderRoute: typeof MarketplaceMineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketplace/new': {
+      id: '/marketplace/new'
+      path: '/marketplace/new'
+      fullPath: '/marketplace/new'
+      preLoaderRoute: typeof MarketplaceNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/paths/': {
       id: '/paths/'
       path: '/paths'
@@ -1017,6 +1155,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalculatorsCategorySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/marketplace/c/$slug': {
+      id: '/marketplace/c/$slug'
+      path: '/marketplace/c/$slug'
+      fullPath: '/marketplace/c/$slug'
+      preLoaderRoute: typeof MarketplaceCSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketplace/edit/$id': {
+      id: '/marketplace/edit/$id'
+      path: '/marketplace/edit/$id'
+      fullPath: '/marketplace/edit/$id'
+      preLoaderRoute: typeof MarketplaceEditIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketplace/listing/$slug': {
+      id: '/marketplace/listing/$slug'
+      path: '/marketplace/listing/$slug'
+      fullPath: '/marketplace/listing/$slug'
+      preLoaderRoute: typeof MarketplaceListingSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -1046,6 +1205,7 @@ interface AdminRouteChildren {
   AdminCategoriesRoute: typeof AdminCategoriesRoute
   AdminDiagnosticsRoute: typeof AdminDiagnosticsRoute
   AdminFinanceRoute: typeof AdminFinanceRoute
+  AdminMarketplaceRoute: typeof AdminMarketplaceRoute
   AdminPathsRoute: typeof AdminPathsRoute
   AdminPracticeRoute: typeof AdminPracticeRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
@@ -1062,6 +1222,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCategoriesRoute: AdminCategoriesRoute,
   AdminDiagnosticsRoute: AdminDiagnosticsRoute,
   AdminFinanceRoute: AdminFinanceRoute,
+  AdminMarketplaceRoute: AdminMarketplaceRoute,
   AdminPathsRoute: AdminPathsRoute,
   AdminPracticeRoute: AdminPracticeRoute,
   AdminSettingsRoute: AdminSettingsRoute,
@@ -1096,6 +1257,9 @@ const rootRouteChildren: RootRouteChildren = {
   ConceptsSlugRoute: ConceptsSlugRoute,
   DiagnosticsSlugRoute: DiagnosticsSlugRoute,
   EquipmentSlugRoute: EquipmentSlugRoute,
+  MarketplaceMessagesRoute: MarketplaceMessagesRoute,
+  MarketplaceMineRoute: MarketplaceMineRoute,
+  MarketplaceNewRoute: MarketplaceNewRoute,
   PathsSlugRoute: PathsSlugRoute,
   ProceduresSlugRoute: ProceduresSlugRoute,
   SymptomsSlugRoute: SymptomsSlugRoute,
@@ -1105,12 +1269,16 @@ const rootRouteChildren: RootRouteChildren = {
   ComponentsIndexRoute: ComponentsIndexRoute,
   ConceptsIndexRoute: ConceptsIndexRoute,
   EquipmentIndexRoute: EquipmentIndexRoute,
+  MarketplaceIndexRoute: MarketplaceIndexRoute,
   PathsIndexRoute: PathsIndexRoute,
   ProceduresIndexRoute: ProceduresIndexRoute,
   SymptomsIndexRoute: SymptomsIndexRoute,
   ToolsIndexRoute: ToolsIndexRoute,
   TroubleshootingIndexRoute: TroubleshootingIndexRoute,
   CalculatorsCategorySlugRoute: CalculatorsCategorySlugRoute,
+  MarketplaceCSlugRoute: MarketplaceCSlugRoute,
+  MarketplaceEditIdRoute: MarketplaceEditIdRoute,
+  MarketplaceListingSlugRoute: MarketplaceListingSlugRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,

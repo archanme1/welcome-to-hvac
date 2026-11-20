@@ -549,6 +549,314 @@ export type Database = {
         }
         Relationships: []
       }
+      marketplace_categories: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          parent_id: string | null
+          slug: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          parent_id?: string | null
+          slug: string
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          parent_id?: string | null
+          slug?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marketplace_conversations: {
+        Row: {
+          buyer_id: string
+          buyer_last_read: string
+          created_at: string
+          id: string
+          last_message_at: string
+          listing_id: string
+          seller_id: string
+          seller_last_read: string
+        }
+        Insert: {
+          buyer_id: string
+          buyer_last_read?: string
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          listing_id: string
+          seller_id: string
+          seller_last_read?: string
+        }
+        Update: {
+          buyer_id?: string
+          buyer_last_read?: string
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          listing_id?: string
+          seller_id?: string
+          seller_last_read?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_conversations_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marketplace_listing_images: {
+        Row: {
+          created_at: string
+          id: string
+          listing_id: string
+          path: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          listing_id: string
+          path: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          listing_id?: string
+          path?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_listing_images_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marketplace_listings: {
+        Row: {
+          approx_age: string | null
+          brand: string | null
+          category_id: string
+          city: string
+          condition: string
+          country: string
+          created_at: string
+          currency: string
+          delivery: boolean
+          description: string
+          id: string
+          listing_type: string
+          model_number: string | null
+          negotiable: boolean
+          pickup: boolean
+          price: number
+          region: string
+          search_vector: unknown
+          seller_id: string
+          slug: string
+          specs: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          approx_age?: string | null
+          brand?: string | null
+          category_id: string
+          city: string
+          condition: string
+          country: string
+          created_at?: string
+          currency?: string
+          delivery?: boolean
+          description: string
+          id?: string
+          listing_type: string
+          model_number?: string | null
+          negotiable?: boolean
+          pickup?: boolean
+          price?: number
+          region: string
+          search_vector?: unknown
+          seller_id: string
+          slug?: string
+          specs?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          approx_age?: string | null
+          brand?: string | null
+          category_id?: string
+          city?: string
+          condition?: string
+          country?: string
+          created_at?: string
+          currency?: string
+          delivery?: boolean
+          description?: string
+          id?: string
+          listing_type?: string
+          model_number?: string | null
+          negotiable?: boolean
+          pickup?: boolean
+          price?: number
+          region?: string
+          search_vector?: unknown
+          seller_id?: string
+          slug?: string
+          specs?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_listings_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marketplace_messages: {
+        Row: {
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marketplace_ratings: {
+        Row: {
+          created_at: string
+          id: string
+          listing_id: string
+          rater_id: string
+          seller_id: string
+          stars: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          listing_id: string
+          rater_id: string
+          seller_id: string
+          stars: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          listing_id?: string
+          rater_id?: string
+          seller_id?: string
+          stars?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_ratings_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marketplace_reports: {
+        Row: {
+          created_at: string
+          details: string | null
+          id: string
+          listing_id: string
+          reason: string
+          reporter_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          listing_id: string
+          reason: string
+          reporter_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          listing_id?: string
+          reason?: string
+          reporter_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_reports_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       media: {
         Row: {
           alt_text: string | null
@@ -649,6 +957,7 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          marketplace_country: string | null
           updated_at: string
           username: string | null
         }
@@ -657,6 +966,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id: string
+          marketplace_country?: string | null
           updated_at?: string
           username?: string | null
         }
@@ -665,6 +975,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          marketplace_country?: string | null
           updated_at?: string
           username?: string | null
         }
@@ -1078,6 +1389,57 @@ export type Database = {
       is_staff: { Args: { _user_id: string }; Returns: boolean }
       jsonb_plain_text: { Args: { _body: Json }; Returns: string }
       live_learner_count: { Args: never; Returns: number }
+      marketplace_can_rate: {
+        Args: { _listing: string; _rater: string }
+        Returns: boolean
+      }
+      marketplace_mark_read: {
+        Args: { _conversation_id: string }
+        Returns: undefined
+      }
+      marketplace_search: {
+        Args: {
+          _category: string
+          _city: string
+          _condition: string
+          _country: string
+          _limit: number
+          _max: number
+          _min: number
+          _offset: number
+          _q: string
+          _region: string
+          _sort: string
+          _type: string
+        }
+        Returns: {
+          category_id: string
+          city: string
+          condition: string
+          country: string
+          created_at: string
+          currency: string
+          id: string
+          image_path: string
+          listing_type: string
+          price: number
+          region: string
+          seller_id: string
+          slug: string
+          title: string
+          total: number
+        }[]
+      }
+      marketplace_sellers: {
+        Args: { _ids: string[] }
+        Returns: {
+          id: string
+          member_since: string
+          name: string
+          rating_avg: number
+          rating_count: number
+        }[]
+      }
       nav_tree: {
         Args: never
         Returns: {

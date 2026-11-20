@@ -110,6 +110,23 @@ function Home() {
         </Button>
       </section>
 
+      <section className="mt-16 rounded-xl border bg-card p-6">
+        <h2 className="text-base font-semibold">The Trades Marketplace</h2>
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
+          Buy, sell, and discover tools, equipment, parts, and supplies from professionals across the trades community.
+        </p>
+        <ul className="mt-3 grid gap-1 text-sm text-muted-foreground sm:grid-cols-2">
+          <li>• Browse listings for free</li>
+          <li>• Discover new and used equipment</li>
+          <li>• Find products available in your area</li>
+          <li>• Join Pro to post listings and contact sellers</li>
+        </ul>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button asChild size="sm" variant="outline"><Link to="/marketplace">Browse Marketplace</Link></Button>
+          <Button asChild size="sm" variant="ghost"><Link to="/pricing">Become a Pro Seller</Link></Button>
+        </div>
+      </section>
+
       {featured.length ? (
         <section className="mt-16">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">

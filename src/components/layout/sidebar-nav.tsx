@@ -129,7 +129,7 @@ function SidebarSection({
   pathname: string;
   onNavigate?: (() => void) | undefined;
 }) {
-  const sectionActive = pathname === href || pathname.startsWith(href + "/");
+  const sectionActive = pathname === href || (href !== "/marketplace" && pathname.startsWith(href + "/"));
   const childActive = children.some((c) => pathname === c.href);
   const [open, setOpen] = useState(sectionActive || childActive);
 

@@ -17,5 +17,9 @@ Disallow: /account
 Disallow: /checkout
 Disallow: /auth
 Disallow: /reset-password
+Disallow: /marketplace/new
+Disallow: /marketplace/edit/
+Disallow: /marketplace/mine
+Disallow: /marketplace/messages
 
 Sitemap: https://www.welcometohvac.com/sitemap.xml

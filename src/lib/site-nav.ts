@@ -12,7 +12,7 @@ export type NavSection = {
   badge?: string;
   staticChildren?: NavLeaf[];
   /** Sections sharing a group render inside one expandable heading. */
-  group?: "Documentation";
+  group?: "Documentation" | "Marketplace";
 };
 
 export const SITE_NAV: NavSection[] = [
@@ -36,5 +36,9 @@ export const SITE_NAV: NavSection[] = [
   { title: "Learning Paths", href: "/paths" },
   { title: "Practice & Mastery", href: "/practice" },
   { title: "AI Tutor", href: "/ai-tutor" },
+  { title: "Explore", href: "/marketplace", group: "Marketplace" },
+  { title: "Post a Listing", href: "/marketplace/new", group: "Marketplace", badge: "Pro" },
+  { title: "My Listings", href: "/marketplace/mine", group: "Marketplace", badge: "Pro" },
+  { title: "Messages / Inquiries", href: "/marketplace/messages", group: "Marketplace", badge: "Pro" },
   { title: "Shop", href: "/shop" },
 ];
