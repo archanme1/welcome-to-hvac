@@ -11,6 +11,8 @@ export type NavSection = {
   topicType?: ContentType;
   badge?: string;
   staticChildren?: NavLeaf[];
+  /** Sections sharing a group render inside one expandable heading. */
+  group?: "Documentation";
 };
 
 export const SITE_NAV: NavSection[] = [
@@ -18,15 +20,15 @@ export const SITE_NAV: NavSection[] = [
   {
     title: "HVAC Fundamentals",
     href: "/c/hvac-fundamentals",
-    categorySlug: "hvac-fundamentals",
+    categorySlug: "hvac-fundamentals", group: "Documentation",
   },
 
-  { title: "Equipment", href: "/equipment", categorySlug: "equipment" },
-  { title: "Components", href: "/components", categorySlug: "components" },
-  { title: "Installation", href: "/c/installation", categorySlug: "installation" },
-  { title: "Service & Maintenance", href: "/c/service-maintenance" },
-  { title: "Troubleshooting", href: "/troubleshooting" },
-  { title: "Symptoms", href: "/symptoms" },
+  { title: "Equipment", href: "/equipment", categorySlug: "equipment", group: "Documentation" },
+  { title: "Components", href: "/components", categorySlug: "components", group: "Documentation" },
+  { title: "Installation", href: "/c/installation", categorySlug: "installation", group: "Documentation" },
+  { title: "Service & Maintenance", href: "/c/service-maintenance", group: "Documentation" },
+  { title: "Troubleshooting", href: "/troubleshooting", group: "Documentation" },
+  { title: "Symptoms", href: "/symptoms", group: "Documentation" },
   { title: "Tools", href: "/tools" },
   { title: "Engineering Tools & Calculators", href: "/calculators" },
   { title: "Building Science", href: "/c/building-science" },

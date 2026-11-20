@@ -2,7 +2,7 @@ import { useRouterState } from "@tanstack/react-router";
 import { AppLink } from "@/components/app-link";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRight } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 import { SITE_NAV } from "@/lib/site-nav";
@@ -42,19 +42,73 @@ export function SidebarNav({ onNavigate }: { onNavigate?: (() => void) | undefin
 
   return (
     <nav className="flex flex-col gap-0.5 pb-16 text-sm">
-      {sections.map(({ section, children, lazyCategoryId }) => (
-        <SidebarSection
-          key={section.title}
-          title={section.title}
-          href={section.href}
-          badge={section.badge}
-          pathname={pathname}
-          children={children}
-          lazyCategoryId={lazyCategoryId}
-          onNavigate={onNavigate}
-        />
-      ))}
+      {sections.map(({ section, children, lazyCategoryId }, i) => {
+        const node = (
+          <SidebarSection
+            key={section.title}
+            title={section.title}
+            href={section.href}
+            badge={section.badge}
+            pathname={pathname}
+            children={children}
+            lazyCategoryId={lazyCategoryId}
+            onNavigate={onNavigate}
+          />
+        );
+        if (!section.group) return node;
+        // Render the whole group once, at its first member.
+        if (sections.findIndex((s) => s.section.group === section.group) !== i) return null;
+        const members = sections.filter((s) => s.section.group === section.group);
+        return (
+          <NavGroup
+            key={section.group}
+            title={section.group}
+            active={members.some(
+              (m) => pathname === m.section.href || pathname.startsWith(m.section.href + "/"),
+            )}
+          >
+            {members.map((m) => (
+              <SidebarSection
+                key={m.section.title}
+                title={m.section.title}
+                href={m.section.href}
+                badge={m.section.badge}
+                pathname={pathname}
+                children={m.children}
+                lazyCategoryId={m.lazyCategoryId}
+                onNavigate={onNavigate}
+              />
+            ))}
+          </NavGroup>
+        );
+      })}
     </nav>
+  );
+}
+
+function NavGroup({
+  title,
+  active,
+  children,
+}: {
+  title: string;
+  active: boolean;
+  children: ReactNode;
+}) {
+  const [open, setOpen] = useState(active);
+  return (
+    <div>
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between rounded-md px-2 py-1.5 font-medium text-sidebar-foreground transition-colors hover:bg-sidebar-accent/60"
+      >
+        {title}
+        <ChevronRight className={cn("h-3.5 w-3.5 text-muted-foreground transition-transform", open && "rotate-90")} />
+      </button>
+      {open ? <div className="ml-3 mt-0.5 flex flex-col gap-0.5 border-l pl-2">{children}</div> : null}
+    </div>
   );
 }
 
