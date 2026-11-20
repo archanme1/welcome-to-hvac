@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, Search, Moon, Sun, User2, LogOut, Shield, Sparkles } from "lucide-react";
+import { Menu, PanelLeftClose, PanelLeftOpen, Home, BookOpen, Calculator, Bot, Store, ShoppingBag, Search, Moon, Sun, User2, LogOut, Shield, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,17 @@ import hvacLogo from "@/assets/hvac-logo.png.asset.json";
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+
+  // Remember the desktop sidebar preference (read after hydration).
+  useEffect(() => {
+    setCollapsed(window.localStorage.getItem("wth-sidebar-collapsed") === "1");
+  }, []);
+  const toggleCollapsed = () =>
+    setCollapsed((v) => {
+      window.localStorage.setItem("wth-sidebar-collapsed", v ? "0" : "1");
+      return !v;
+    });
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -48,13 +59,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </SheetTrigger>
             <SheetContent side="left" className="w-[19rem] p-0">
               <SheetTitle className="border-b px-4 py-3.5 text-sm font-semibold">
-                Documentation
+                Menu
               </SheetTitle>
               <ScrollArea className="h-[calc(100vh-3.5rem)] px-3 py-3">
                 <SidebarNav onNavigate={() => setMobileOpen(false)} />
               </ScrollArea>
             </SheetContent>
           </Sheet>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hidden lg:inline-flex"
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-expanded={!collapsed}
+            onClick={toggleCollapsed}
+          >
+            {collapsed ? <PanelLeftOpen className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
+          </Button>
 
           <Link to="/" className="flex min-w-0 items-center gap-2">
             <img
@@ -98,11 +120,30 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </header>
 
       <div className="mx-auto flex max-w-[1400px]">
-        <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-[17rem] shrink-0 border-r lg:block">
-          <ScrollArea className="h-full px-4 py-5">
-            <SidebarNav />
-          </ScrollArea>
-        </aside>
+        {collapsed ? (
+          <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-14 shrink-0 flex-col items-center gap-1 border-r py-4 lg:flex">
+            {RAIL.map((r) => (
+              <Link
+                key={r.to}
+                to={r.to}
+                title={r.label}
+                aria-label={r.label}
+                onClick={r.expand ? toggleCollapsed : () => undefined}
+                activeProps={{ className: "bg-sidebar-accent text-sidebar-accent-foreground" }}
+                activeOptions={{ exact: r.to === "/" }}
+                className="grid h-9 w-9 place-items-center rounded-md text-sidebar-foreground transition-colors hover:bg-sidebar-accent/60"
+              >
+                <r.icon className="h-4.5 w-4.5" />
+              </Link>
+            ))}
+          </aside>
+        ) : (
+          <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-[17rem] shrink-0 border-r lg:block">
+            <ScrollArea className="h-full px-4 py-5">
+              <SidebarNav />
+            </ScrollArea>
+          </aside>
+        )}
         <main className="min-w-0 flex-1">{children}</main>
       </div>
 
@@ -110,6 +151,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+
+const RAIL: { to: string; label: string; icon: typeof Home; expand?: boolean }[] = [
+  { to: "/", label: "Home", icon: Home },
+  { to: "/start-here", label: "Start Here", icon: Sparkles },
+  { to: "/c/hvac-fundamentals", label: "Documentation", icon: BookOpen, expand: true },
+  { to: "/calculators", label: "Engineering Tools & Calculators", icon: Calculator },
+  { to: "/ai-tutor", label: "AI Tutor", icon: Bot },
+  { to: "/marketplace", label: "Marketplace", icon: Store },
+  { to: "/shop", label: "Shop", icon: ShoppingBag },
+];
 
 function ThemeToggle() {
   const { theme, toggle } = useTheme();
