@@ -30,7 +30,6 @@ export const SITE_NAV: NavSection[] = [
   { title: "Troubleshooting", href: "/troubleshooting", group: "Documentation" },
   { title: "Symptoms", href: "/symptoms", group: "Documentation" },
   { title: "Tools", href: "/tools", group: "Documentation" },
-  { title: "Engineering Tools & Calculators", href: "/calculators" },
   { title: "Building Science", href: "/c/building-science", group: "Documentation" },
   { title: "Safety", href: "/c/safety", group: "Documentation" },
   { title: "Learning Paths", href: "/paths", group: "Documentation" },
@@ -41,4 +40,5 @@ export const SITE_NAV: NavSection[] = [
   { title: "My Listings", href: "/marketplace/mine", group: "Marketplace", badge: "Pro" },
   { title: "Messages / Inquiries", href: "/marketplace/messages", group: "Marketplace", badge: "Pro" },
   { title: "Shop", href: "/shop" },
+  { title: "Engineering Tools & Calculators", href: "/calculators" },
 ];
