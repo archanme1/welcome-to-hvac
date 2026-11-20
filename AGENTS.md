@@ -11,3 +11,5 @@
 - Calculators are defined in `src/lib/calculators/registry.ts` (metadata) with formulas in `compute-free.ts` (runs in browser) and `compute-pro.ts` (only imported by the server function, which checks `is_pro`) — keeps Pro results server-gated and new tools a one-entry addition.
 - Live learner count comes from the `live_learner_count()` RPC over the existing presence heartbeat — returns only a number, never visitor details.
 - Today's Trade Knowledge is picked in the database (`todays_trade_fact()`, Toronto date) so every visitor sees the same fact all day; AI only creates drafts.
+- Marketplace Pro rules are enforced by database policies using `is_pro()`; the browser writes listings/messages/ratings directly through RLS, and public pages read via `marketplace_search`/server functions — keeps the gate server-side without duplicating checks.
+- Marketplace photos live in a private bucket and are shown through signed URLs (workspace blocks public buckets).
