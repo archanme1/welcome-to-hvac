@@ -29,6 +29,13 @@
       "when": 1795215899226,
       "tag": "0003_marketplace_seller_name_privacy",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1795217521505,
+      "tag": "0004_restrict_marketplace_photo_reads",
+      "breakpoints": true
     }
   ]
 }
