@@ -1,5 +1,5 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Menu, PanelLeftClose, PanelLeftOpen, Home, BookOpen, Calculator, Bot, Store, ShoppingBag, Search, Moon, Sun, User2, LogOut, Shield, Sparkles } from "lucide-react";
+import { Menu, PanelLeftClose, PanelLeftOpen, Home, BookOpen, Calculator, Bot, Store, ShoppingBag, Search, Moon, Sun, User2, LogOut, Shield, Sparkles, FileText } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarNav } from "./sidebar-nav";
+import { NAV_RAIL } from "@/lib/site-nav";
 import { SearchDialog } from "./search-dialog";
 import { LiveLearners } from "./live-learners";
 import { useTheme } from "@/hooks/use-theme";
@@ -166,15 +167,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-const RAIL: { to: string; label: string; icon: typeof Home; expand?: boolean }[] = [
-  { to: "/", label: "Home", icon: Home },
-  { to: "/start-here", label: "Start Here", icon: Sparkles },
-  { to: "/c/hvac-fundamentals", label: "Documentation", icon: BookOpen, expand: true },
-  { to: "/calculators", label: "Engineering Tools & Calculators", icon: Calculator },
-  { to: "/ai-tutor", label: "AI Tutor", icon: Bot },
-  { to: "/marketplace", label: "Marketplace", icon: Store },
-  { to: "/shop", label: "Shop", icon: ShoppingBag },
-];
+const RAIL_ICONS: Record<string, typeof Home> = {
+  Home: Home,
+  "Start Here": Sparkles,
+  Documentation: BookOpen,
+  "AI Tutor": Bot,
+  Marketplace: Store,
+  Shop: ShoppingBag,
+  "Engineering Tools & Calculators": Calculator,
+};
+
+const RAIL = NAV_RAIL.map((r) => ({ ...r, icon: RAIL_ICONS[r.iconKey] ?? FileText }));
 
 function ThemeToggle() {
   const { theme, toggle } = useTheme();

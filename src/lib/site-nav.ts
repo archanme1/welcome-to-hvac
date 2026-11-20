@@ -16,6 +16,7 @@ export type NavSection = {
 };
 
 export const SITE_NAV: NavSection[] = [
+  { title: "Home", href: "/" },
   { title: "Start Here", href: "/start-here" },
   {
     title: "HVAC Fundamentals",
@@ -42,3 +43,35 @@ export const SITE_NAV: NavSection[] = [
   { title: "Shop", href: "/shop" },
   { title: "Engineering Tools & Calculators", href: "/calculators" },
 ];
+
+/** One collapsed-rail entry: same target and label as the expanded sidebar row. */
+export type NavRailEntry = {
+  to: string;
+  label: string;
+  /** Key used to look up the icon in the shell. */
+  iconKey: string;
+  /** Groups open the full sidebar instead of staying icon-only. */
+  expand?: boolean;
+};
+
+/**
+ * The icon rail is derived from SITE_NAV, so the collapsed and expanded
+ * sidebars can never drift apart in items or order.
+ */
+export const NAV_RAIL: NavRailEntry[] = SITE_NAV.flatMap(
+  (section, i): NavRailEntry[] => {
+    if (!section.group) {
+      return [{ to: section.href, label: section.title, iconKey: section.title }];
+    }
+    // A group renders once, at its first member, under the group name.
+    if (SITE_NAV.findIndex((s) => s.group === section.group) !== i) return [];
+    return [
+      {
+        to: section.href,
+        label: section.group,
+        iconKey: section.group,
+        expand: section.group === "Documentation",
+      },
+    ];
+  },
+);
