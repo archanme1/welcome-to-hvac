@@ -1,3 +1,4 @@
+import { getConversationNames } from "@/lib/marketplace.functions";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
@@ -40,9 +41,7 @@ function Inbox() {
         .select("id, listing_id, buyer_id, seller_id, buyer_last_read, seller_last_read, last_message_at, listing:marketplace_listings(title, slug, status)")
         .order("last_message_at", { ascending: false }).limit(100);
       const list = (convs ?? []) as unknown as Conv[];
-      const others = list.map((x) => (x.buyer_id === user!.id ? x.seller_id : x.buyer_id));
-      const { data: names } = others.length ? await supabase.rpc("marketplace_sellers", { _ids: Array.from(new Set(others)) }) : { data: [] };
-      const nameMap = Object.fromEntries((names ?? []).map((n) => [n.id, n.name]));
+      const nameMap: Record<string, string> = list.length ? await getConversationNames().catch(() => ({})) : {};
       return list.map((x) => {
         const mine = x.buyer_id === user!.id ? x.buyer_last_read : x.seller_last_read;
         return { ...x, other: nameMap[x.buyer_id === user!.id ? x.seller_id : x.buyer_id] ?? "Member", role: x.buyer_id === user!.id ? "Buying" : "Selling", unread: new Date(x.last_message_at) > new Date(mine) };

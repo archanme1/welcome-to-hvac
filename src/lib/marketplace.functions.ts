@@ -3,6 +3,7 @@ import { queryOptions } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { publicDb } from "@/lib/hvac.server";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { exploreSearchSchema, PAGE_SIZE, type ExploreSearch } from "@/lib/marketplace/shared";
 
 export type MkCategory = { id: string; slug: string; title: string; parent_id: string | null; sort_order: number };
@@ -15,7 +16,9 @@ export type MkCard = {
 
 const SIGN_SECONDS = 60 * 60 * 24 * 7;
 
-async function signPaths(db: ReturnType<typeof publicDb>, paths: string[]): Promise<Map<string, string>> {
+/** Signs only paths the caller already read from active listings; storage itself is owner/staff-only. */
+async function signPaths(_db: ReturnType<typeof publicDb>, paths: string[]): Promise<Map<string, string>> {
+  const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
   const map = new Map<string, string>();
   const unique = Array.from(new Set(paths.filter(Boolean)));
   if (!unique.length) return map;
@@ -24,7 +27,8 @@ async function signPaths(db: ReturnType<typeof publicDb>, paths: string[]): Prom
   return map;
 }
 
-async function sellers(db: ReturnType<typeof publicDb>, ids: string[]): Promise<Record<string, MkSeller>> {
+async function sellers(_db: ReturnType<typeof publicDb>, ids: string[]): Promise<Record<string, MkSeller>> {
+  const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
   const unique = Array.from(new Set(ids));
   if (!unique.length) return {};
   const { data } = await db.rpc("marketplace_sellers", { _ids: unique });
@@ -115,3 +119,14 @@ export async function marketplaceSitemapEntries() {
   const catSlugs = (cats ?? []).filter((c) => used.has(c.id) || (cats ?? []).some((k) => k.parent_id === c.id && used.has(k.id))).map((c) => c.slug);
   return { listings: listings ?? [], categories: catSlugs };
 }
+
+/** Names of the signed-in member's conversation partners (only people they share a conversation with). */
+export const getConversationNames = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: convs } = await context.supabase.from("marketplace_conversations").select("buyer_id, seller_id").limit(500);
+    const ids = new Set<string>();
+    for (const c of convs ?? []) ids.add(c.buyer_id === context.userId ? c.seller_id : c.buyer_id);
+    const map = await sellers(publicDb(), Array.from(ids));
+    return Object.fromEntries(Object.values(map).map((s) => [s.id, s.name])) as Record<string, string>;
+  });
