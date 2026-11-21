@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PAGE_SIZE, searchQuery } from "@/lib/hvac.functions";
+import { pageMeta } from "@/lib/seo";
 import {
   CONTENT_TYPE_LABEL,
   DIFFICULTY_LABEL,
@@ -30,19 +31,10 @@ export const Route = createFileRoute("/search")({
     kind: typeof search["kind"] === "string" ? search["kind"] : "all",
     page: Number(search["page"]) > 0 ? Number(search["page"]) : 1,
   }),
-  head: () => ({
-    meta: [
-      { title: "Search — Welcome to HVAC" },
-      { name: "description", content: DESC },
-      { property: "og:title", content: "Search — Welcome to HVAC" },
-      { property: "og:description", content: DESC },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://www.welcometohvac.com/search" },
-      { name: "twitter:card", content: "summary" },
-      { name: "robots", content: "noindex, follow" },
-    ],
-    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/search" }],
-  }),
+  head: () => {
+    const base = pageMeta({ title: "Search — Welcome to HVAC", description: DESC, path: "/search" });
+    return { ...base, meta: [...base.meta, { name: "robots", content: "noindex, follow" }] };
+  },
   errorComponent: () => (
     <p className="p-8 text-sm text-muted-foreground">Search didn't load. Please refresh.</p>
   ),

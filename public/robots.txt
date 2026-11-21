@@ -1,14 +1,58 @@
 User-agent: Googlebot
 Allow: /
+Disallow: /admin
+Disallow: /account
+Disallow: /checkout
+Disallow: /auth
+Disallow: /reset-password
+Disallow: /marketplace/new
+Disallow: /marketplace/edit/
+Disallow: /marketplace/mine
+Disallow: /marketplace/messages
+Disallow: /api/
+Disallow: /lovable/
 
 User-agent: Bingbot
 Allow: /
+Disallow: /admin
+Disallow: /account
+Disallow: /checkout
+Disallow: /auth
+Disallow: /reset-password
+Disallow: /marketplace/new
+Disallow: /marketplace/edit/
+Disallow: /marketplace/mine
+Disallow: /marketplace/messages
+Disallow: /api/
+Disallow: /lovable/
 
 User-agent: Twitterbot
 Allow: /
+Disallow: /admin
+Disallow: /account
+Disallow: /checkout
+Disallow: /auth
+Disallow: /reset-password
+Disallow: /marketplace/new
+Disallow: /marketplace/edit/
+Disallow: /marketplace/mine
+Disallow: /marketplace/messages
+Disallow: /api/
+Disallow: /lovable/
 
 User-agent: facebookexternalhit
 Allow: /
+Disallow: /admin
+Disallow: /account
+Disallow: /checkout
+Disallow: /auth
+Disallow: /reset-password
+Disallow: /marketplace/new
+Disallow: /marketplace/edit/
+Disallow: /marketplace/mine
+Disallow: /marketplace/messages
+Disallow: /api/
+Disallow: /lovable/
 
 User-agent: *
 Allow: /
@@ -21,5 +65,7 @@ Disallow: /marketplace/new
 Disallow: /marketplace/edit/
 Disallow: /marketplace/mine
 Disallow: /marketplace/messages
+Disallow: /api/
+Disallow: /lovable/
 
 Sitemap: https://www.welcometohvac.com/sitemap.xml

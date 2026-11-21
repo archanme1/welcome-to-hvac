@@ -4,7 +4,8 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { AppLink } from "@/components/app-link";
 import { TopicCardGrid } from "@/components/content/related-topics";
 import { categoryQuery } from "@/lib/hvac.functions";
-import { canonicalUrl, breadcrumbLd, jsonLdScript, clampDescription } from "@/lib/seo";
+import { breadcrumbLd, canonicalUrl, clampDescription, itemListLd, jsonLdScript, pageMeta } from "@/lib/seo";
+import { topicHref } from "@/lib/hvac-types";
 
 export const Route = createFileRoute("/c/$slug")({
   loader: async ({ context, params }) => {
@@ -22,22 +23,31 @@ export const Route = createFileRoute("/c/$slug")({
         ],
       };
     }
-    const title = `${loaderData.category.title} — Welcome to HVAC`;
+    const title = `${loaderData.category.title} — HVAC Guides & Reference | Welcome to HVAC`;
     const description = clampDescription(
       loaderData.category.description ?? `HVAC topics in ${loaderData.category.title}.`,
     );
+    const base = pageMeta({ title, description, path: `/c/${params.slug}` });
+    const items = loaderData.topics.map((topic) => ({
+      name: topic.title,
+      path: topicHref(topic.content_type, topic.slug),
+    }));
     return {
+      ...base,
       meta: [
-        { title },
-        { name: "description", content: description },
-        { property: "og:title", content: title },
-        { property: "og:description", content: description },
-        { property: "og:type", content: "website" },
-        { property: "og:url", content: url },
-        { name: "twitter:card", content: "summary_large_image" },
+        ...base.meta,
+        ...(loaderData.topics.length === 0 ? [{ name: "robots", content: "noindex, follow" }] : []),
       ],
-      links: [{ rel: "canonical", href: url }],
       scripts: [
+        jsonLdScript({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: title,
+          description,
+          url,
+          inLanguage: "en",
+        }),
+        ...(items.length ? [jsonLdScript(itemListLd(loaderData.category.title, items))] : []),
         jsonLdScript(
           breadcrumbLd([
             { name: "Home", path: "/" },
@@ -64,6 +74,11 @@ function Page() {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:py-12">
+      <nav aria-label="Breadcrumb" className="mb-4 flex items-center gap-1.5 text-xs text-muted-foreground">
+        <AppLink to="/" className="hover:text-foreground">Home</AppLink>
+        <span>/</span>
+        <span className="text-foreground">{category.title}</span>
+      </nav>
       <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{category.title}</h1>
       {category.description ? (
         <p className="mt-3 max-w-2xl text-base leading-7 text-muted-foreground">

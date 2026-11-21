@@ -97,7 +97,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "Learn HVAC properly: documentation, diagrams, diagnostics and practice.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Welcome to HVAC" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "google-site-verification", content: "bwm4toAQo5n29doc3v48yTIZVLhd5RyO04KKZR4rDSg" },
     ],
     links: [
       {

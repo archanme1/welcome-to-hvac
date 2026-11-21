@@ -5,7 +5,7 @@ import { AppLink } from "@/components/app-link";
 import { Badge } from "@/components/ui/badge";
 import { Callout } from "@/components/content/callout";
 import { symptomQuery } from "@/lib/hvac.functions";
-import { canonicalUrl, breadcrumbLd, jsonLdScript, clampDescription } from "@/lib/seo";
+import { canonicalUrl, breadcrumbLd, jsonLdScript, clampDescription, pageMeta } from "@/lib/seo";
 import {
   CONTENT_TYPE_LABEL,
   LOCAL_CODE_NOTICE,
@@ -22,31 +22,32 @@ export const Route = createFileRoute("/symptoms/$slug")({
     return data;
   },
   head: ({ loaderData, params }) => {
+    if (!loaderData) {
+      return { meta: [{ title: "Symptom unavailable — Welcome to HVAC" }, { name: "robots", content: "noindex" }] };
+    }
     const url = canonicalUrl(`/symptoms/${params.slug}`);
-    const title = loaderData
-      ? `${loaderData.symptom.title} — HVAC Symptom`
-      : "HVAC Symptom";
+    const title = `${loaderData.symptom.title} — HVAC Symptom | Welcome to HVAC`;
     const desc = clampDescription(
-      loaderData?.symptom.description ??
+      loaderData.symptom.description ??
         "What this HVAC symptom means and which topics explain and diagnose it.",
     );
+    const base = pageMeta({ title, description: desc, path: `/symptoms/${params.slug}`, type: "article" });
     return {
-      meta: [
-        { title },
-        { name: "description", content: desc },
-        { property: "og:title", content: title },
-        { property: "og:description", content: desc },
-        { property: "og:type", content: "article" },
-        { property: "og:url", content: url },
-        { name: "twitter:card", content: "summary_large_image" },
-      ],
-      links: [{ rel: "canonical", href: url }],
+      ...base,
       scripts: [
+        jsonLdScript({
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          name: loaderData.symptom.title,
+          description: desc,
+          url,
+          inLanguage: "en",
+        }),
         jsonLdScript(
           breadcrumbLd([
             { name: "Home", path: "/" },
             { name: "Symptoms", path: "/symptoms" },
-            { name: loaderData?.symptom.title ?? "Symptom", path: `/symptoms/${params.slug}` },
+            { name: loaderData.symptom.title, path: `/symptoms/${params.slug}` },
           ]),
         ),
       ],

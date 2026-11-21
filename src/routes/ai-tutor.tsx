@@ -4,22 +4,14 @@ import { useState } from "react";
 
 import { TutorPanel } from "@/components/content/tutor-panel";
 import { navigationQuery } from "@/lib/hvac.functions";
+import { pageMeta } from "@/lib/seo";
 
 const DESC =
   "Ask the Welcome to HVAC AI Tutor about equipment, components, diagnostics and procedures. Included with HVAC Pro.";
 
 export const Route = createFileRoute("/ai-tutor")({
   loader: ({ context }) => context.queryClient.ensureQueryData(navigationQuery),
-  head: () => ({
-    meta: [
-      { title: "AI Tutor — Welcome to HVAC" },
-      { name: "description", content: DESC },
-      { property: "og:title", content: "AI Tutor — Welcome to HVAC" },
-      { property: "og:description", content: DESC },
-      { property: "og:url", content: "https://www.welcometohvac.com/ai-tutor" },
-    ],
-    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/ai-tutor" }],
-  }),
+  head: () => pageMeta({ title: "AI Tutor — Welcome to HVAC", description: DESC, path: "/ai-tutor" }),
   component: Page,
 });
 

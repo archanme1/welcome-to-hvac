@@ -24,12 +24,16 @@ export const Route = createFileRoute("/calculators/$slug")({
       meta: [...base.meta, ...(tool.kind === "pending" ? [{ name: "robots", content: "noindex" }] : []), ...(tool.keywords ? [{ name: "keywords", content: tool.keywords.join(", ") }] : [])],
       links: base.links,
       scripts: [
-        jsonLdScript({
+        ...(tool.kind === "pending" ? [] : [jsonLdScript(tool.kind === "checklist" ? {
+          "@context": "https://schema.org", "@type": "WebPage", name: tool.title, description: tool.description,
+          url: canonicalUrl(path), inLanguage: "en",
+          publisher: { "@type": "Organization", name: "Welcome to HVAC", url: SITE_URL },
+        } : {
           "@context": "https://schema.org", "@type": "SoftwareApplication", name: tool.title, description: tool.description,
           applicationCategory: "UtilitiesApplication", operatingSystem: "Web", url: canonicalUrl(path),
-          offers: { "@type": "Offer", price: tool.tier === "free" ? "0" : "5", priceCurrency: "USD" },
+          ...(tool.tier === "free" ? { offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } } : {}),
           publisher: { "@type": "Organization", name: "Welcome to HVAC", url: SITE_URL },
-        }),
+        })]),
         jsonLdScript(breadcrumbLd([{ name: "Home", path: "/" }, { name: "Calculators", path: "/calculators" }, { name: categoryTitle(tool.category), path: `/calculators/category/${tool.category}` }, { name: tool.short, path }])),
       ],
     };

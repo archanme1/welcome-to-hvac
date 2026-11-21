@@ -20,21 +20,26 @@ const STATIC_PATHS = [
   "/paths",
   "/practice",
   "/pricing",
-  "/experts",
   "/calculators",
   "/shop",
   "/marketplace",
-  ...CATEGORIES.map((c) => `/calculators/category/${c.id}`),
+  ...CATEGORIES.filter((category) =>
+    ALL_TOOLS.some((tool) => tool.category === category.id && isIndexable(tool)),
+  ).map((c) => `/calculators/category/${c.id}`),
   ...ALL_TOOLS.filter(isIndexable).map((t) => `/calculators/${t.slug}`),
 ];
 
 type Entry = { loc: string; lastmod?: string | undefined };
 
+function escapeXml(value: string): string {
+  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 function xml(entries: Entry[]): string {
   const urls = entries
     .map(
       (entry) =>
-        `  <url><loc>${entry.loc}</loc>${entry.lastmod ? `<lastmod>${entry.lastmod}</lastmod>` : ""}</url>`,
+        `  <url><loc>${escapeXml(entry.loc)}</loc>${entry.lastmod ? `<lastmod>${entry.lastmod}</lastmod>` : ""}</url>`,
     )
     .join("\n");
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
@@ -61,12 +66,12 @@ export const Route = createFileRoute("/sitemap.xml")({
       GET: async () => {
         const db = publicDb();
 
-        const market = await marketplaceSitemapEntries().catch(() => ({ listings: [], categories: [] as string[] }));
+        const market = await marketplaceSitemapEntries();
         const [content, symptoms, categories, paths, trees] = await Promise.all([
-          pageAll<{ slug: string; content_type: ContentType; updated_at: string }>((from, to) =>
+          pageAll<{ slug: string; content_type: ContentType; category_id: string | null; updated_at: string }>((from, to) =>
             db
               .from("content")
-              .select("slug, content_type, updated_at")
+              .select("slug, content_type, category_id, updated_at")
               .eq("status", "published")
               .range(from, to)
               .then((r) => ({ data: r.data as any, error: r.error as unknown })) as Promise<any>,
@@ -79,10 +84,10 @@ export const Route = createFileRoute("/sitemap.xml")({
               .range(from, to)
               .then((r) => ({ data: r.data as any, error: r.error as unknown })) as Promise<any>,
           ),
-          pageAll<{ slug: string; updated_at: string }>((from, to) =>
+          pageAll<{ id: string; slug: string; parent_id: string | null; updated_at: string }>((from, to) =>
             db
               .from("categories")
-              .select("slug, updated_at")
+              .select("id, slug, parent_id, updated_at")
               .eq("is_published", true)
               .range(from, to)
               .then((r) => ({ data: r.data as any, error: r.error as unknown })) as Promise<any>,
@@ -105,6 +110,14 @@ export const Route = createFileRoute("/sitemap.xml")({
           ),
         ]);
 
+        const usedCategoryIds = new Set(
+          content.map((row) => row.category_id).filter((id): id is string => !!id),
+        );
+        const indexableCategories = categories.filter((category) =>
+          usedCategoryIds.has(category.id) ||
+          categories.some((child) => child.parent_id === category.id && usedCategoryIds.has(child.id)),
+        );
+
         const entries: Entry[] = [
           ...STATIC_PATHS.map((path) => ({ loc: `${SITE_URL}${path === "/" ? "" : path}` })),
           ...content.map((row) => ({
@@ -115,7 +128,7 @@ export const Route = createFileRoute("/sitemap.xml")({
             loc: `${SITE_URL}/symptoms/${row.slug}`,
             lastmod: row.updated_at?.slice(0, 10),
           })),
-          ...categories.map((row) => ({
+          ...indexableCategories.map((row) => ({
             loc: `${SITE_URL}/c/${row.slug}`,
             lastmod: row.updated_at?.slice(0, 10),
           })),
@@ -134,7 +147,8 @@ export const Route = createFileRoute("/sitemap.xml")({
           })),
         ];
 
-        return new Response(xml(entries), {
+        const uniqueEntries = Array.from(new Map(entries.map((entry) => [entry.loc, entry])).values());
+        return new Response(xml(uniqueEntries), {
           headers: {
             "Content-Type": "application/xml; charset=utf-8",
             "Cache-Control": "public, max-age=3600",

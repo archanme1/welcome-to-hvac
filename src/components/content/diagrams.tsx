@@ -250,7 +250,7 @@ function HeatPumpDiagram() {
           },
           {
             label: "Metering Device",
-            href: "/components/txv",
+            href: "/components/metering-devices",
             tone: "neutral",
             step: "The metering device drops pressure so the liquid can boil at a low temperature.",
           },
@@ -288,19 +288,19 @@ const DIAGRAMS: Record<string, () => React.ReactElement> = {
         },
         {
           label: "Condenser",
-          href: "/components/condenser",
+          href: "/concepts/refrigeration-cycle",
           tone: "hot",
           step: "The gas rejects heat, desuperheats, condenses to liquid and subcools slightly.",
         },
         {
           label: "Metering Device",
-          href: "/components/txv",
+          href: "/components/metering-devices",
           tone: "cold",
           step: "Pressure drops sharply, so the liquid can boil at a low temperature.",
         },
         {
           label: "Evaporator",
-          href: "/components/evaporator",
+          href: "/concepts/refrigeration-cycle",
           tone: "cold",
           step: "Refrigerant boils, absorbing heat from the air, and leaves as superheated vapor.",
         },
@@ -315,19 +315,19 @@ const DIAGRAMS: Record<string, () => React.ReactElement> = {
       nodes={[
         {
           label: "Thermostat Call",
-          href: "/components/thermostat",
+          href: "/components/thermostats",
           tone: "electric",
           step: "The thermostat closes R to W, sending a 24V call for heat.",
         },
         {
           label: "Control Board",
-          href: "/components/control-board",
+          href: "/concepts/gas-furnace-sequence-of-operation",
           tone: "electric",
           step: "The board checks its safety string and starts the sequence.",
         },
         {
           label: "Inducer",
-          href: "/components/inducer-motor",
+          href: "/concepts/venting-and-draft",
           step: "The inducer runs first to establish draft through the heat exchanger and vent.",
         },
         {
@@ -337,25 +337,25 @@ const DIAGRAMS: Record<string, () => React.ReactElement> = {
         },
         {
           label: "Ignitor",
-          href: "/components/hot-surface-ignitor",
+          href: "/concepts/ignition-systems",
           tone: "hot",
           step: "The ignitor warms up during a short pre-purge and warm-up period.",
         },
         {
           label: "Gas Valve",
-          href: "/components/gas-valve",
+          href: "/concepts/gas-furnace-sequence-of-operation",
           tone: "hot",
           step: "The valve opens and gas reaches the burners for a limited trial for ignition.",
         },
         {
           label: "Flame Sensor",
-          href: "/components/flame-sensor",
+          href: "/concepts/flame-sensing",
           tone: "hot",
           step: "Flame rectification must prove flame, or the board closes the valve and retries or locks out.",
         },
         {
           label: "Blower",
-          href: "/components/blower-motor",
+          href: "/troubleshooting/indoor-blower-will-not-run",
           step: "After a fan-on delay the blower starts, moving heated air to the house.",
         },
       ]}
@@ -369,7 +369,7 @@ const DIAGRAMS: Record<string, () => React.ReactElement> = {
       nodes={[
         { label: "Transformer 24V", href: "/components/transformer", tone: "electric" },
         { label: "R terminal", tone: "electric" },
-        { label: "Thermostat", href: "/components/thermostat", tone: "electric" },
+        { label: "Thermostat", href: "/components/thermostats", tone: "electric" },
         { label: "Y / W / G", tone: "electric" },
         { label: "Contactor / Relay", href: "/components/contactor", tone: "electric" },
         { label: "C common", tone: "electric" },
@@ -424,7 +424,7 @@ const DIAGRAMS: Record<string, () => React.ReactElement> = {
         { label: "Return grilles" },
         { label: "Return trunk" },
         { label: "Filter" },
-        { label: "Air handler", href: "/equipment/air-handler" },
+        { label: "Air handler", href: "/concepts/airflow-fundamentals" },
         { label: "Supply plenum" },
         { label: "Supply trunk" },
         { label: "Branch runs" },
@@ -438,7 +438,7 @@ const DIAGRAMS: Record<string, () => React.ReactElement> = {
       nodes={[
         { label: "Return Grille" },
         { label: "Filter" },
-        { label: "Blower", href: "/components/blower-motor" },
+        { label: "Blower", href: "/troubleshooting/indoor-blower-will-not-run" },
         { label: "Coil / Heat Exchanger" },
         { label: "Supply Duct" },
         { label: "Registers" },
@@ -453,7 +453,7 @@ const DIAGRAMS: Record<string, () => React.ReactElement> = {
         { label: "Combustion Air", tone: "cold" },
         { label: "Burner", tone: "hot" },
         { label: "Heat Exchanger", tone: "hot" },
-        { label: "Inducer", href: "/components/inducer-motor" },
+        { label: "Inducer", href: "/concepts/venting-and-draft" },
         { label: "Vent Pipe", tone: "hot" },
         { label: "Termination" },
       ]}
@@ -463,8 +463,8 @@ const DIAGRAMS: Record<string, () => React.ReactElement> = {
     <FlowDiagram
       title="Hydronic heating loop"
       nodes={[
-        { label: "Boiler", href: "/equipment/gas-boiler", tone: "hot" },
-        { label: "Circulator", href: "/components/circulator" },
+        { label: "Boiler", href: "/equipment/boiler", tone: "hot" },
+        { label: "Circulator", href: "/components/circulator-pump" },
         { label: "Zone Valve", href: "/components/zone-valve" },
         { label: "Emitter" },
         { label: "Return", tone: "cold" },
@@ -478,7 +478,7 @@ const DIAGRAMS: Record<string, () => React.ReactElement> = {
       note="two separate air streams exchange heat without mixing"
       nodes={[
         { label: "Outdoor Air", tone: "cold" },
-        { label: "Core", href: "/components/hrv-core" },
+        { label: "Core", href: "/equipment/hrv-erv" },
         { label: "Supply to House", tone: "hot" },
         { label: "Stale Air Return", tone: "hot" },
         { label: "Exhaust Outdoors", tone: "cold" },
@@ -500,10 +500,10 @@ const DIAGRAMS: Record<string, () => React.ReactElement> = {
     <FlowDiagram
       title="A basic HVAC system"
       nodes={[
-        { label: "Thermostat", href: "/components/thermostat", tone: "electric" },
+        { label: "Thermostat", href: "/components/thermostats", tone: "electric" },
         { label: "Heating Source", tone: "hot" },
         { label: "Cooling Source", tone: "cold" },
-        { label: "Air Handler", href: "/equipment/air-handler" },
+        { label: "Air Handler", href: "/concepts/airflow-fundamentals" },
         { label: "Duct System" },
         { label: "Conditioned Space" },
       ]}

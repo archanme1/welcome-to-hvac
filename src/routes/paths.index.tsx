@@ -5,6 +5,7 @@ import { AppLink } from "@/components/app-link";
 import { Badge } from "@/components/ui/badge";
 import { learningPathsQuery } from "@/lib/hvac.functions";
 import { DIFFICULTY_LABEL } from "@/lib/hvac-types";
+import { breadcrumbLd, itemListLd, jsonLdScript, pageMeta } from "@/lib/seo";
 
 const TITLE = "HVAC Learning Paths — Welcome to HVAC";
 const DESC =
@@ -12,18 +13,17 @@ const DESC =
 
 export const Route = createFileRoute("/paths/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(learningPathsQuery),
-  head: () => ({
-    meta: [
-      { title: TITLE },
-      { name: "description", content: DESC },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESC },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { property: "og:url", content: "https://www.welcometohvac.com/paths" },
-    ],
-    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/paths" }],
-  }),
+  head: ({ loaderData }) => {
+    const base = pageMeta({ title: TITLE, description: DESC, path: "/paths" });
+    const items = (loaderData ?? []).map((path) => ({ name: path.title, path: `/paths/${path.slug}` }));
+    return {
+      ...base,
+      scripts: [
+        ...(items.length ? [jsonLdScript(itemListLd("HVAC learning paths", items))] : []),
+        jsonLdScript(breadcrumbLd([{ name: "Home", path: "/" }, { name: "Learning Paths", path: "/paths" }])),
+      ],
+    };
+  },
   errorComponent: () => (
     <p className="p-8 text-sm text-muted-foreground">Learning paths didn't load. Please refresh.</p>
   ),

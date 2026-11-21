@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { navigationQuery, practiceCatalogQuery } from "@/lib/hvac.functions";
 import { progressQuery } from "@/lib/practice.functions";
 import { CONTENT_TYPE_LABEL, topicHref } from "@/lib/hvac-types";
+import { pageMeta } from "@/lib/seo";
 
 const DESC =
   "Practice HVAC questions, quizzes, troubleshooting scenarios and equipment scenarios, and track your progress.";
@@ -18,16 +19,7 @@ export const Route = createFileRoute("/practice")({
       context.queryClient.ensureQueryData(navigationQuery),
       context.queryClient.ensureQueryData(practiceCatalogQuery),
     ]),
-  head: () => ({
-    meta: [
-      { title: "Practice & Mastery — Welcome to HVAC" },
-      { name: "description", content: DESC },
-      { property: "og:title", content: "Practice & Mastery — Welcome to HVAC" },
-      { property: "og:description", content: DESC },
-      { property: "og:url", content: "https://www.welcometohvac.com/practice" },
-    ],
-    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/practice" }],
-  }),
+  head: () => pageMeta({ title: "Practice & Mastery — Welcome to HVAC", description: DESC, path: "/practice" }),
   errorComponent: () => (
     <p className="p-8 text-sm text-muted-foreground">This page didn't load. Please refresh.</p>
   ),

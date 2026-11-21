@@ -27,6 +27,16 @@ async function signPaths(_db: ReturnType<typeof publicDb>, paths: string[]): Pro
   return map;
 }
 
+async function signShareImage(path: string | undefined): Promise<string | null> {
+  if (!path) return null;
+  const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await db.storage.from("marketplace").createSignedUrl(path, 60 * 60, {
+    transform: { width: 1200, height: 630, resize: "cover" },
+  });
+  if (error) return null;
+  return data?.signedUrl ?? null;
+}
+
 async function sellers(_db: ReturnType<typeof publicDb>, ids: string[]): Promise<Record<string, MkSeller>> {
   const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
   const unique = Array.from(new Set(ids));
@@ -98,11 +108,13 @@ export const getListing = createServerFn({ method: "GET" })
     if (!row) return null;
     const { data: imgs } = await db.from("marketplace_listing_images").select("path").eq("listing_id", row.id).order("sort_order");
     const signed = await signPaths(db, (imgs ?? []).map((i) => i.path));
+    const shareImage = await signShareImage(imgs?.[0]?.path);
     const sellerMap = await sellers(db, [row.seller_id]);
     const related = await runSearch({ categoryId: row.category_id, limit: 4, excludeId: row.id });
     return {
       listing: { ...row, price: Number(row.price) },
       images: (imgs ?? []).map((i) => signed.get(i.path)).filter((u): u is string => !!u),
+      shareImage,
       seller: sellerMap[row.seller_id] ?? { id: row.seller_id, name: "Member", rating_avg: null, rating_count: 0, member_since: null },
       related: related.items,
     };
@@ -110,14 +122,39 @@ export const getListing = createServerFn({ method: "GET" })
 export const listingQuery = (slug: string) =>
   queryOptions({ queryKey: ["mk", "listing", slug], queryFn: () => getListing({ data: { slug } }), staleTime: 30_000 });
 
-/** For the sitemap: active listings and categories that hold at least one. */
+/** For the sitemap: every active listing and categories that hold at least one. */
 export async function marketplaceSitemapEntries() {
   const db = publicDb();
-  const { data: listings } = await db.from("marketplace_listings").select("slug, category_id, updated_at").eq("status", "active").order("updated_at", { ascending: false }).limit(20000);
-  const { data: cats } = await db.from("marketplace_categories").select("id, slug, parent_id").eq("is_active", true);
-  const used = new Set((listings ?? []).map((l) => l.category_id));
-  const catSlugs = (cats ?? []).filter((c) => used.has(c.id) || (cats ?? []).some((k) => k.parent_id === c.id && used.has(k.id))).map((c) => c.slug);
-  return { listings: listings ?? [], categories: catSlugs };
+  const listings: { slug: string; category_id: string; updated_at: string }[] = [];
+  const size = 1000;
+
+  for (let from = 0; ; from += size) {
+    const { data, error } = await db
+      .from("marketplace_listings")
+      .select("slug, category_id, updated_at")
+      .eq("status", "active")
+      .order("updated_at", { ascending: false })
+      .range(from, from + size - 1);
+    if (error) throw new Error("Marketplace listings are unavailable for the sitemap.");
+    const rows = (data ?? []) as typeof listings;
+    listings.push(...rows);
+    if (rows.length < size) break;
+  }
+
+  const { data: cats, error } = await db
+    .from("marketplace_categories")
+    .select("id, slug, parent_id")
+    .eq("is_active", true);
+  if (error) throw new Error("Marketplace categories are unavailable for the sitemap.");
+
+  const categories = (cats ?? []) as { id: string; slug: string; parent_id: string | null }[];
+  const used = new Set(listings.map((listing) => listing.category_id));
+  const catSlugs = categories
+    .filter((category) =>
+      used.has(category.id) ||
+      categories.some((child) => child.parent_id === category.id && used.has(child.id)))
+    .map((category) => category.slug);
+  return { listings, categories: catSlugs };
 }
 
 /** Names of the signed-in member's conversation partners (only people they share a conversation with). */

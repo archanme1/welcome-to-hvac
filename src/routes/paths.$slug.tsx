@@ -4,7 +4,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { AppLink } from "@/components/app-link";
 import { Badge } from "@/components/ui/badge";
 import { learningPathQuery } from "@/lib/hvac.functions";
-import { canonicalUrl, breadcrumbLd, jsonLdScript, clampDescription } from "@/lib/seo";
+import { canonicalUrl, breadcrumbLd, jsonLdScript, clampDescription, pageMeta } from "@/lib/seo";
 import { CONTENT_TYPE_LABEL, DIFFICULTY_LABEL, topicHref } from "@/lib/hvac-types";
 
 export const Route = createFileRoute("/paths/$slug")({
@@ -14,29 +14,22 @@ export const Route = createFileRoute("/paths/$slug")({
     return data;
   },
   head: ({ loaderData, params }) => {
+    if (!loaderData) {
+      return { meta: [{ title: "Learning path unavailable — Welcome to HVAC" }, { name: "robots", content: "noindex" }] };
+    }
     const url = canonicalUrl(`/paths/${params.slug}`);
-    const title = loaderData
-      ? `${loaderData.path.title} — Welcome to HVAC`
-      : "Learning Path — Welcome to HVAC";
+    const title = `${loaderData.path.title} — Welcome to HVAC`;
     const desc = clampDescription(
-      loaderData?.path.description ?? "An ordered route through the HVAC library, step by step.",
+      loaderData.path.description ?? "An ordered route through the HVAC library, step by step.",
     );
+    const base = pageMeta({ title, description: desc, path: `/paths/${params.slug}`, type: "article" });
     return {
-      meta: [
-        { title },
-        { name: "description", content: desc },
-        { property: "og:title", content: title },
-        { property: "og:description", content: desc },
-        { property: "og:type", content: "article" },
-        { property: "og:url", content: url },
-        { name: "twitter:card", content: "summary_large_image" },
-      ],
-      links: [{ rel: "canonical", href: url }],
+      ...base,
       scripts: [
         jsonLdScript({
           "@context": "https://schema.org",
           "@type": "Course",
-          name: loaderData?.path.title ?? "HVAC learning path",
+          name: loaderData.path.title,
           description: desc,
           url,
           inLanguage: "en",
@@ -50,7 +43,7 @@ export const Route = createFileRoute("/paths/$slug")({
           breadcrumbLd([
             { name: "Home", path: "/" },
             { name: "Learning Paths", path: "/paths" },
-            { name: loaderData?.path.title ?? "Path", path: `/paths/${params.slug}` },
+            { name: loaderData.path.title, path: `/paths/${params.slug}` },
           ]),
         ),
       ],

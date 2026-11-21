@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Callout } from "@/components/content/callout";
 import { diagnosticTreeQuery } from "@/lib/hvac.functions";
 import { LOCAL_CODE_NOTICE, topicHref, type DiagnosticNode } from "@/lib/hvac-types";
-import { canonicalUrl, breadcrumbLd, jsonLdScript, clampDescription } from "@/lib/seo";
+import { canonicalUrl, breadcrumbLd, jsonLdScript, clampDescription, pageMeta } from "@/lib/seo";
 
 export const Route = createFileRoute("/diagnostics/$slug")({
   loader: async ({ context, params }) => {
@@ -16,31 +16,32 @@ export const Route = createFileRoute("/diagnostics/$slug")({
     return data;
   },
   head: ({ loaderData, params }) => {
+    if (!loaderData) {
+      return { meta: [{ title: "Diagnostic path unavailable — Welcome to HVAC" }, { name: "robots", content: "noindex" }] };
+    }
     const url = canonicalUrl(`/diagnostics/${params.slug}`);
-    const title = loaderData
-      ? `${loaderData.tree.title} — HVAC Diagnostic Path`
-      : "HVAC Diagnostic Path";
+    const title = `${loaderData.tree.title} — HVAC Diagnostic Path | Welcome to HVAC`;
     const desc = clampDescription(
-      loaderData?.tree.intro ??
+      loaderData.tree.intro ??
         "An ordered diagnostic path: confirm one thing at a time instead of guessing.",
     );
+    const base = pageMeta({ title, description: desc, path: `/diagnostics/${params.slug}`, type: "article" });
     return {
-      meta: [
-        { title },
-        { name: "description", content: desc },
-        { property: "og:title", content: title },
-        { property: "og:description", content: desc },
-        { property: "og:type", content: "article" },
-        { property: "og:url", content: url },
-        { name: "twitter:card", content: "summary_large_image" },
-      ],
-      links: [{ rel: "canonical", href: url }],
+      ...base,
       scripts: [
+        jsonLdScript({
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          name: loaderData.tree.title,
+          description: desc,
+          url,
+          inLanguage: "en",
+        }),
         jsonLdScript(
           breadcrumbLd([
             { name: "Home", path: "/" },
             { name: "Troubleshooting", path: "/troubleshooting" },
-            { name: loaderData?.tree.title ?? "Diagnostic path", path: `/diagnostics/${params.slug}` },
+            { name: loaderData.tree.title, path: `/diagnostics/${params.slug}` },
           ]),
         ),
       ],

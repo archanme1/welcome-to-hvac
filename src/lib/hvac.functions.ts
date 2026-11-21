@@ -384,6 +384,7 @@ export const getCategory = createServerFn({ method: "GET" })
       .from("categories")
       .select("*")
       .eq("slug", data.slug)
+      .eq("is_published", true)
       .maybeSingle();
 
     if (!category) return null;
@@ -392,6 +393,7 @@ export const getCategory = createServerFn({ method: "GET" })
       .from("categories")
       .select("*")
       .eq("parent_id", category.id)
+      .eq("is_published", true)
       .order("sort_order")
       .order("title");
 

@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { ProCheckout } from "@/components/payments/pro-checkout";
 import { PaymentTestModeBanner } from "@/components/payments/test-mode-banner";
 import { PRICE_MONTHLY, PRICE_YEARLY, paymentsConfigured } from "@/lib/stripe";
+import { pageMeta } from "@/lib/seo";
 
 const DESC =
   "HVAC Pro is $5/month or $50/year — two months free on the annual plan. Includes practice, scenarios, quizzes, progress tracking and the AI Tutor.";
@@ -29,16 +30,7 @@ const PRO = [
 ];
 
 export const Route = createFileRoute("/pricing")({
-  head: () => ({
-    meta: [
-      { title: "HVAC Pro Pricing — Welcome to HVAC" },
-      { name: "description", content: DESC },
-      { property: "og:title", content: "HVAC Pro Pricing — Welcome to HVAC" },
-      { property: "og:description", content: DESC },
-      { property: "og:url", content: "https://www.welcometohvac.com/pricing" },
-    ],
-    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/pricing" }],
-  }),
+  head: () => pageMeta({ title: "HVAC Pro Pricing — Welcome to HVAC", description: DESC, path: "/pricing" }),
   component: Page,
 });
 

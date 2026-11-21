@@ -37,6 +37,7 @@ export const Route = createFileRoute("/marketplace/listing/$slug")({
     const path = `/marketplace/listing/${params.slug}`;
     const base = pageMeta({ title, description, path });
     const image = data.images[0];
+    const shareImage = data.shareImage;
     const ld: Record<string, unknown> = {
       "@context": "https://schema.org", "@type": "Product", name: l.title, description: clampDescription(l.description, 500),
       ...(l.brand ? { brand: { "@type": "Brand", name: l.brand } } : {}), ...(l.model_number ? { mpn: l.model_number } : {}),
@@ -51,7 +52,14 @@ export const Route = createFileRoute("/marketplace/listing/$slug")({
     return {
       ...base,
       meta: [...base.meta.map((m) => ("property" in m && m.property === "og:type" ? { property: "og:type", content: "product" } : m)),
-        ...(image ? [{ property: "og:image", content: image }, { name: "twitter:image", content: image }] : [])],
+        ...(shareImage ? [
+          { property: "og:image", content: shareImage },
+          { property: "og:image:width", content: "1200" },
+          { property: "og:image:height", content: "630" },
+          { property: "og:image:alt", content: l.title },
+          { name: "twitter:image", content: shareImage },
+          { name: "twitter:image:alt", content: l.title },
+        ] : [])],
       scripts: [jsonLdScript(ld), jsonLdScript(breadcrumbLd([
         { name: "Marketplace", path: "/marketplace" },
         ...(category ? [{ name: category.title, path: `/marketplace/c/${category.slug}` }] : []),
@@ -91,7 +99,7 @@ function ListingPage() {
         <div>
           <div className="aspect-[4/3] overflow-hidden rounded-xl border bg-muted">
             {data.images[active] ? (
-              <img src={data.images[active]} alt={`${l.title} — photo ${active + 1}`} className="h-full w-full object-contain" />
+              <img src={data.images[active]} alt={`${l.title} — photo ${active + 1}`} decoding="async" className="h-full w-full object-contain" />
             ) : <div className="flex h-full items-center justify-center text-muted-foreground"><ImageOff className="h-8 w-8" /></div>}
           </div>
           {data.images.length > 1 ? (

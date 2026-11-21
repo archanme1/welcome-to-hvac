@@ -15,10 +15,13 @@ export const Route = createFileRoute("/calculators/category/$slug")({
     const { cat } = loaderData;
     const path = `/calculators/category/${params.slug}`;
     const tools = ALL_TOOLS.filter((t) => t.category === cat.id);
+    const indexableTools = tools.filter(isIndexable);
+    const base = pageMeta({ title: `${cat.title} Calculators — Welcome to HVAC`, description: `${cat.blurb} ${indexableTools.length} HVAC tools with formulas, examples and unit conversion.`, path });
     return {
-      ...pageMeta({ title: `${cat.title} Calculators — Welcome to HVAC`, description: `${cat.blurb} ${tools.length} HVAC tools with formulas, examples and unit conversion.`, path }),
+      ...base,
+      meta: [...base.meta, ...(indexableTools.length === 0 ? [{ name: "robots", content: "noindex, follow" }] : [])],
       scripts: [
-        jsonLdScript(itemListLd(`${cat.title} calculators`, tools.filter(isIndexable).map((t) => ({ name: t.title, path: `/calculators/${t.slug}` })))),
+        ...(indexableTools.length ? [jsonLdScript(itemListLd(`${cat.title} calculators`, indexableTools.map((t) => ({ name: t.title, path: `/calculators/${t.slug}` }))))] : []),
         jsonLdScript(breadcrumbLd([{ name: "Home", path: "/" }, { name: "Calculators", path: "/calculators" }, { name: cat.title, path }])),
       ],
     };

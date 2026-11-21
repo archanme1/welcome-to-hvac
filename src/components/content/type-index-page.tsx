@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 
 import { TopicCardGrid } from "./related-topics";
+import { AppLink } from "@/components/app-link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -60,6 +61,11 @@ export function TypeIndexPage({
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:py-12">
+      <nav aria-label="Breadcrumb" className="mb-4 flex items-center gap-1.5 text-xs text-muted-foreground">
+        <AppLink to="/" className="hover:text-foreground">Home</AppLink>
+        <span>/</span>
+        <span className="text-foreground">{CONTENT_TYPE_PLURAL[type]}</span>
+      </nav>
       <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
         {CONTENT_TYPE_PLURAL[type]}
       </h1>

@@ -11,6 +11,7 @@ import { navigationQuery } from "@/lib/hvac.functions";
 import { todaysFactQuery } from "@/lib/calculators.functions";
 import { TradeKnowledge } from "@/components/home/trade-knowledge";
 import { CONTENT_TYPE_LABEL, topicHref } from "@/lib/hvac-types";
+import { pageMeta } from "@/lib/seo";
 
 const DESC =
   "Learn HVAC fundamentals, equipment and components, troubleshoot real problems and use professional calculators. Structured HVAC documentation, diagrams, diagnostics and practice — from the refrigeration cycle to furnace sequence of operation, charging and troubleshooting.";
@@ -20,17 +21,10 @@ export const Route = createFileRoute("/")({
     void context.queryClient.prefetchQuery(todaysFactQuery);
     return context.queryClient.ensureQueryData(navigationQuery);
   },
-  head: () => ({
-    meta: [
-      { title: "Welcome to HVAC — Learn HVAC, Master the Trade" },
-      { name: "description", content: DESC },
-      { property: "og:title", content: "Welcome to HVAC — Learn HVAC, Master the Trade" },
-      { property: "og:description", content: DESC },
-      { property: "og:url", content: "https://www.welcometohvac.com" },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "https://www.welcometohvac.com" }],
+  head: () => pageMeta({
+    title: "Welcome to HVAC — Learn HVAC, Master the Trade",
+    description: DESC,
+    path: "/",
   }),
   errorComponent: () => (
     <p className="p-8 text-sm text-muted-foreground">This page didn't load. Please refresh.</p>

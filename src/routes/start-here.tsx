@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
+import { pageMeta } from "@/lib/seo";
 
 const DESC =
   "New to HVAC? Start here for the learning path: fundamentals, equipment, components, diagnostics and practice.";
@@ -39,16 +40,7 @@ const PATH = [
 ];
 
 export const Route = createFileRoute("/start-here")({
-  head: () => ({
-    meta: [
-      { title: "Start Here — Welcome to HVAC" },
-      { name: "description", content: DESC },
-      { property: "og:title", content: "Start Here — Welcome to HVAC" },
-      { property: "og:description", content: DESC },
-      { property: "og:url", content: "https://www.welcometohvac.com/start-here" },
-    ],
-    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/start-here" }],
-  }),
+  head: () => pageMeta({ title: "Start Here — Welcome to HVAC", description: DESC, path: "/start-here" }),
   component: Page,
 });
 

@@ -3,18 +3,16 @@ import { createFileRoute } from "@tanstack/react-router";
 import { TypeIndexPage } from "@/components/content/type-index-page";
 import { listTopicsQuery } from "@/lib/hvac.functions";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { topicIndexHead } from "@/lib/topic-seo";
 
 export const Route = createFileRoute("/tools/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(listTopicsQuery("tool")),
-  head: () => ({
-    meta: [
-      { title: "Tools — Welcome to HVAC" },
-      { name: "description", content: "HVAC tools and instruments: what they measure, when to use them and how to read them correctly." },
-      { property: "og:title", content: "Tools — Welcome to HVAC" },
-      { property: "og:description", content: "HVAC tools and instruments: what they measure, when to use them and how to read them correctly." },
-      { property: "og:url", content: "https://www.welcometohvac.com/tools" },
-    ],
-    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/tools" }],
+  head: ({ loaderData }) => topicIndexHead({
+    segment: "tools",
+    sectionLabel: "Tools",
+    title: "Tools — Welcome to HVAC",
+    description: "HVAC tools and instruments: what they measure, when to use them and how to read them correctly.",
+    loaderData,
   }),
   errorComponent: () => (
     <p className="p-8 text-sm text-muted-foreground">This page didn't load. Please refresh.</p>

@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { AppLink } from "@/components/app-link";
 import { symptomsQuery } from "@/lib/hvac.functions";
 import type { SymptomRecord } from "@/lib/hvac-types";
+import { breadcrumbLd, itemListLd, jsonLdScript, pageMeta } from "@/lib/seo";
 
 const TITLE = "HVAC Symptoms — Welcome to HVAC";
 const DESC =
@@ -12,18 +13,17 @@ const DESC =
 
 export const Route = createFileRoute("/symptoms/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(symptomsQuery),
-  head: () => ({
-    meta: [
-      { title: TITLE },
-      { name: "description", content: DESC },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESC },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { property: "og:url", content: "https://www.welcometohvac.com/symptoms" },
-    ],
-    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/symptoms" }],
-  }),
+  head: ({ loaderData }) => {
+    const base = pageMeta({ title: TITLE, description: DESC, path: "/symptoms" });
+    const items = (loaderData ?? []).map((symptom) => ({ name: symptom.title, path: `/symptoms/${symptom.slug}` }));
+    return {
+      ...base,
+      scripts: [
+        ...(items.length ? [jsonLdScript(itemListLd("HVAC symptoms", items))] : []),
+        jsonLdScript(breadcrumbLd([{ name: "Home", path: "/" }, { name: "Symptoms", path: "/symptoms" }])),
+      ],
+    };
+  },
   errorComponent: () => (
     <p className="p-8 text-sm text-muted-foreground">Symptoms didn't load. Please refresh.</p>
   ),

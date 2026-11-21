@@ -2,21 +2,16 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Clock } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { pageMeta } from "@/lib/seo";
 
 const DESC =
   "Expert Help connects you with experienced HVAC professionals. It is coming soon to Welcome to HVAC.";
 
 export const Route = createFileRoute("/experts")({
-  head: () => ({
-    meta: [
-      { title: "Expert Help (Coming Soon) — Welcome to HVAC" },
-      { name: "description", content: DESC },
-      { property: "og:title", content: "Expert Help (Coming Soon) — Welcome to HVAC" },
-      { property: "og:description", content: DESC },
-      { property: "og:url", content: "https://www.welcometohvac.com/experts" },
-    ],
-    links: [{ rel: "canonical", href: "https://www.welcometohvac.com/experts" }],
-  }),
+  head: () => {
+    const base = pageMeta({ title: "Expert Help (Coming Soon) — Welcome to HVAC", description: DESC, path: "/experts" });
+    return { ...base, meta: [...base.meta, { name: "robots", content: "noindex, follow" }] };
+  },
   component: Page,
 });
 

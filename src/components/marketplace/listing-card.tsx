@@ -10,7 +10,7 @@ export function ListingCard({ item, seller, categoryTitle }: { item: MkCard; sel
     <AppLink to={`/marketplace/listing/${item.slug}`} className="group flex flex-col overflow-hidden rounded-lg border bg-card transition-colors hover:bg-accent/40">
       <div className="aspect-[4/3] w-full bg-muted">
         {item.image ? (
-          <img src={item.image} alt={item.title} loading="lazy" className="h-full w-full object-cover" />
+          <img src={item.image} alt={item.title} loading="lazy" decoding="async" className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full items-center justify-center text-muted-foreground"><ImageOff className="h-6 w-6" /></div>
         )}
