@@ -1,6 +1,9 @@
 - [ ] Verify a fresh signup or password-reset email uses noreply@notify.welcometohvac.com (managed auth-email handoff is now active)
 - [x] Live learners badge, Today's Trade Knowledge (+ admin), Shop page/link
 - [x] Calculators hub, ~60 calculators/checklists, Pro server gating, calculator SEO pages + sitemap
+- [ ] Complete uploaded SEO audit: inventory public routes; verify metadata, headings, canonicals, structured data, internal links, crawlable HTML and social tags
+- [ ] Validate sitemap/robots coverage, public Marketplace listings/categories, private-page exclusion and duplicate/filter URL handling
+- [ ] Check Search Console/Bing readiness and representative desktop/mobile pages; document owner-only verification steps
 - [ ] Keyword research (Semrush/Search Console) and per-page SEO audit of existing topic pages (duplicate meta, heading structure, alt text, broken links)
 - [ ] Add verified reference data: refrigerant P-T charts, pipe sizing, conductor ampacity, pipe schedules, bolt torque, flue-gas efficiency
 - [x] Test marketplace messaging, ratings, reporting and moderation with test accounts; fixed email-prefix leak in seller names
