@@ -107,20 +107,24 @@ Semrush Canadian-database estimates, retrieved 2026-11-21. These are third-party
 
 | Existing opportunity | Estimated Canadian volume | Estimated difficulty | Recommended page |
 |---|---:|---:|---|
-| refrigeration cycle | 720/month | 33/100 | `/concepts/refrigeration-cycle` |
 | cycle of refrigerant | 880/month | Not separately assessed | Support the existing refrigeration-cycle page naturally; do not create a duplicate page |
+| refrigeration cycle | 720/month | 33/100 | `/concepts/refrigeration-cycle` |
+| superheat | 480/month | Not separately assessed | Existing superheat/subcooling topic and calculator |
 | furnace troubleshooting | 480/month | 18/100 | Existing furnace troubleshooting/symptom content |
+| superheat calculator | 140/month | Not separately assessed | Existing superheat calculator |
 | HVAC training Ontario | 110/month | 41/100 | Existing Start Here and learning-path content |
 | HVAC certification Ontario | 110/month | 35/100 | Future owner-reviewed opportunity only; no certification guide was created in this pass |
+| superheat and subcooling | 90/month | 16/100 | `/concepts/superheat-and-subcooling` |
+| gas furnace sequence of operation | 20/month | 0/100 | `/concepts/gas-furnace-sequence-of-operation` |
 
 The certification-guide suggestion remains outside this implementation because the requested scope prohibits generating new educational content.
 
 ## 13. Verification performed and limits
 
-- Three focused SEO unit tests pass.
-- Fifteen existing navigation/calculator/marketplace tests pass.
+- All 18 tests pass across four files, including three focused SEO tests and the existing navigation/calculator/marketplace suites.
 - Latest preview build reports `build OK`.
 - Updated sitemap: 230 URLs, no duplicates, no non-200 sitemap destinations, no canonical mismatches, no duplicate titles/descriptions, no broken internal links, no invalid JSON-LD, no missing image alt text, and no noindex URLs in the sitemap.
+- Heading-level audit found no hierarchy jumps across 229 checkable preview pages.
 - Desktop homepage/topic and phone category rendering checked in Chromium; settled pages rendered with no console errors or failed requests.
 - Development-only limitation: `/components` can be intercepted by Vite as the root `components.json` configuration file. The published production route works; no application file was renamed to work around a development-server-only conflict.
 - Marketplace had no active public listings for an end-to-end listing/social-image browser check.
